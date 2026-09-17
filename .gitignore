@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.label-studio/
+dist/
+build/
+*.egg-info/
+
+# Downloaded third-party images and generated artifacts stay out of Git.
+data/raw/
+data/curated/
+data/reports/
+data/annotations/
+models/

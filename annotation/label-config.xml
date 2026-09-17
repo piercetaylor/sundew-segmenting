@@ -1,0 +1,13 @@
+<View>
+  <Header value="Trace all visible living sundew tissue. Follow data/annotation-policy.md."/>
+  <Image name="image" value="$image" zoom="true" zoomControl="true" rotateControl="true"/>
+  <BrushLabels name="label" toName="image">
+    <Label value="sundew" background="#F43F5E"/>
+  </BrushLabels>
+  <Choices name="quality" toName="image" choice="single" showInLine="true" required="true">
+    <Choice value="complete"/>
+    <Choice value="ambiguous"/>
+    <Choice value="reject"/>
+  </Choices>
+  <TextArea name="notes" toName="image" placeholder="Boundary uncertainty, occlusion, or rejection reason"/>
+</View>
