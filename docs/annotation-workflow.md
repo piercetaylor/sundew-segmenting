@@ -40,15 +40,25 @@ Generate one provisional mask for each task with a CLIPSeg text prompt guiding
 MobileSAM toward sundew tissue:
 
 ```powershell
-.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload
+.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload --skip-reviewed
 ```
 
 The first run downloads `CIDAS/clipseg-rd64-refined` into `.tools/huggingface`.
 Generated PNGs go to `data/annotations/sam-proposals/`, and Label Studio receives
 the same masks as model predictions. Neither location is used by the baseline
-training scripts. Use `--replace` to regenerate only predictions from this exact
-model version. A JSON quality report and a small overlay audit are written under
-`data/reports/sam-preannotations/`.
+training scripts. Use `--replace` to replace earlier predictions from this
+generator while preserving human annotations. A JSON quality report and a small
+overlay audit are written under `data/reports/sam-preannotations/`.
+
+The generator can retain as many as five spatially distinct, high-confidence SAM
+regions and merge them into one binary mask, so separated sundew plants are still
+foreground. It uses the task's species metadata in the CLIPSeg prompt and negative
+prompts for pitcher plants, moss, grass, and substrate. Compare a revised proposal
+method with completed human reviews before replacing predictions:
+
+```powershell
+.tools\label-studio-venv\Scripts\python.exe scripts/evaluate_sam_preannotations.py
+```
 
 Open `http://127.0.0.1:8080/projects/1/data` after both services are ready. Select
 the smart point or smart rectangle tool and place a prompt on a rosette. MobileSAM

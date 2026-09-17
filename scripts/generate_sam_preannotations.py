@@ -27,7 +27,8 @@ from PIL import Image, ImageDraw
 
 
 LABEL_STUDIO_URL = "http://127.0.0.1:8080"
-MODEL_VERSION = "MobileSAM-CLIPSeg-autoprompt-v1"
+MODEL_VERSION = "MobileSAM-CLIPSeg-multiplant-v2"
+MODEL_FAMILY_PREFIX = "MobileSAM-CLIPSeg-"
 PROMPT_FRACTIONS = (
     (0.50, 0.50),
     (0.32, 0.32),
@@ -106,7 +107,7 @@ def candidate_score(
     )
 
 
-def semantic_prompt_points(semantic_heat: np.ndarray, count: int = 5) -> list[tuple[int, int]]:
+def semantic_prompt_points(semantic_heat: np.ndarray, count: int = 12) -> list[tuple[int, int]]:
     height, width = semantic_heat.shape
     working = cv2.GaussianBlur(semantic_heat, (0, 0), sigmaX=max(min(width, height) / 100, 2))
     working = working.copy()
@@ -120,12 +121,12 @@ def semantic_prompt_points(semantic_heat: np.ndarray, count: int = 5) -> list[tu
     if global_peak < 0.25:
         return [(int(x * width), int(y * height)) for x, y in PROMPT_FRACTIONS]
     points = []
-    radius = max(int(min(width, height) * 0.14), 1)
+    radius = max(int(min(width, height) * 0.08), 1)
     yy, xx = np.ogrid[:height, :width]
     for _ in range(count):
         flat_index = int(np.argmax(working))
         y, x = np.unravel_index(flat_index, working.shape)
-        if float(working[y, x]) < global_peak * 0.62:
+        if float(working[y, x]) < max(0.20, global_peak * 0.45):
             break
         points.append((int(x), int(y)))
         working[(xx - x) ** 2 + (yy - y) ** 2 <= radius**2] = 0
@@ -154,19 +155,37 @@ class SemanticGuide:
                 model_id,
                 cache_dir=cache_dir,
             ).eval()
-        self.prompts = ["a sundew carnivorous plant", "a Drosera plant with sticky leaves"]
+        self.positive_prompt_count = 3
+        self.negative_prompts = [
+            "a pitcher plant or Sarracenia",
+            "moss grass and ordinary ground vegetation",
+            "soil rocks water and background vegetation",
+        ]
 
-    def heatmap(self, image: np.ndarray) -> np.ndarray:
+    def heatmap(self, image: np.ndarray, species: str) -> np.ndarray:
         pil_image = Image.fromarray(image)
+        prompts = [
+            f"{species}, a sundew carnivorous plant",
+            "a Drosera sundew plant with sticky tentacled leaves",
+            "a red or green sundew rosette covered in glistening hairs",
+            *self.negative_prompts,
+        ]
         inputs = self.processor(
-            text=self.prompts,
-            images=[pil_image] * len(self.prompts),
+            text=prompts,
+            images=[pil_image] * len(prompts),
             return_tensors="pt",
             padding=True,
         )
         with torch.no_grad():
             logits = self.model(**inputs).logits
-        heat = torch.sigmoid(logits).amax(dim=0).cpu().numpy()
+        probabilities = torch.sigmoid(logits)
+        positive = probabilities[: self.positive_prompt_count].amax(dim=0)
+        negative = probabilities[self.positive_prompt_count :].amax(dim=0)
+        margin = torch.sigmoid(
+            logits[: self.positive_prompt_count].amax(dim=0)
+            - logits[self.positive_prompt_count :].amax(dim=0)
+        )
+        heat = (positive * (0.35 + 0.65 * margin) * (1.0 - 0.35 * negative)).cpu().numpy()
         heat = cv2.resize(heat, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_CUBIC)
         return np.clip(heat, 0.0, 1.0)
 
@@ -175,11 +194,11 @@ def propose_mask(
     predictor: SamPredictor,
     image: np.ndarray,
     semantic_heat: np.ndarray | None = None,
-) -> tuple[np.ndarray, float, tuple[int, int]]:
+) -> tuple[np.ndarray, float, list[tuple[int, int]], int]:
     height, width = image.shape[:2]
     saturation = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)[..., 1].astype(np.float32) / 255.0
     predictor.set_image(image)
-    best: tuple[float, np.ndarray, float, tuple[int, int]] | None = None
+    candidates: list[tuple[float, np.ndarray, float, tuple[int, int]]] = []
     points = (
         semantic_prompt_points(semantic_heat)
         if semantic_heat is not None
@@ -191,13 +210,47 @@ def propose_mask(
             point_labels=np.asarray([1], dtype=np.int32),
             multimask_output=True,
         )
+        point_candidates = []
         for mask, predicted_iou in zip(masks, scores):
             rank = candidate_score(mask, float(predicted_iou), point, saturation, semantic_heat)
-            if best is None or rank > best[0]:
-                best = (rank, mask, float(predicted_iou), point)
-    if best is None or not math.isfinite(best[0]):
+            if math.isfinite(rank):
+                point_candidates.append((rank, mask, float(predicted_iou), point))
+        if point_candidates:
+            candidates.append(max(point_candidates, key=lambda item: item[0]))
+    if not candidates:
         raise RuntimeError("MobileSAM did not return a usable proposal")
-    return best[1], float(np.clip(best[2], 0.0, 1.0)), best[3]
+
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    best_rank = candidates[0][0]
+    selected = [candidates[0]]
+    if semantic_heat is not None:
+        peak = float(semantic_heat.max())
+        semantic_floor = max(0.24, peak * 0.60)
+        for candidate in candidates[1:]:
+            rank, mask, predicted_iou, point = candidate
+            point_heat = float(semantic_heat[point[1], point[0]])
+            semantic_fraction = float((semantic_heat[mask] >= semantic_floor).mean())
+            overlap = max(
+                float(np.logical_and(mask, chosen[1]).sum())
+                / max(float(min(mask.sum(), chosen[1].sum())), 1.0)
+                for chosen in selected
+            )
+            if (
+                predicted_iou >= 0.65
+                and point_heat >= semantic_floor
+                and semantic_fraction >= 0.24
+                and float(mask.mean()) <= 0.25
+                and rank >= best_rank - 0.20
+                and overlap < 0.50
+            ):
+                selected.append(candidate)
+                if len(selected) == 5:
+                    break
+
+    union = np.logical_or.reduce([item[1] for item in selected])
+    selected_scores = [float(np.clip(item[2], 0.0, 1.0)) for item in selected]
+    selected_points = [item[3] for item in selected]
+    return union, float(np.mean(selected_scores)), selected_points, len(selected)
 
 
 def prediction_result(mask: np.ndarray, width: int, height: int, score: float) -> dict[str, Any]:
@@ -219,17 +272,23 @@ def prediction_result(mask: np.ndarray, width: int, height: int, score: float) -
     }
 
 
-def save_overlay(image: np.ndarray, mask: np.ndarray, point: tuple[int, int], destination: Path) -> None:
+def save_overlay(
+    image: np.ndarray,
+    mask: np.ndarray,
+    points: list[tuple[int, int]],
+    destination: Path,
+) -> None:
     overlay = image.copy()
     tint = np.asarray([244, 63, 94], dtype=np.uint8)
     overlay[mask] = (0.58 * overlay[mask] + 0.42 * tint).astype(np.uint8)
     rendered = Image.fromarray(overlay)
     draw = ImageDraw.Draw(rendered)
     radius = max(5, min(rendered.size) // 100)
-    draw.ellipse(
-        (point[0] - radius, point[1] - radius, point[0] + radius, point[1] + radius),
-        fill=(245, 158, 11),
-    )
+    for point in points:
+        draw.ellipse(
+            (point[0] - radius, point[1] - radius, point[0] + radius, point[1] + radius),
+            fill=(245, 158, 11),
+        )
     destination.parent.mkdir(parents=True, exist_ok=True)
     rendered.thumbnail((640, 640), Image.Resampling.LANCZOS)
     rendered.save(destination, quality=88)
@@ -242,15 +301,25 @@ def main() -> None:
     parser.add_argument("--replace", action="store_true", help="Replace predictions from this model version")
     parser.add_argument("--overlay-limit", type=int, default=12)
     parser.add_argument("--no-semantic-guide", action="store_true")
+    parser.add_argument(
+        "--skip-reviewed",
+        action="store_true",
+        help="Do not regenerate tasks that already contain a human annotation",
+    )
     parser.add_argument("--report", type=Path, default=Path("data/reports/sam-preannotations/report.json"))
     args = parser.parse_args()
 
     credentials = json.loads(Path(".tools/label-studio-credentials.json").read_text(encoding="utf-8"))
     project = json.loads(Path(".tools/label-studio-project.json").read_text(encoding="utf-8"))
     token = credentials["token"]
-    tasks_payload = request_json(f"/api/tasks?project={project['id']}&page_size=1000", token)
+    tasks_payload = request_json(
+        f"/api/tasks?project={project['id']}&page_size=1000&fields=all",
+        token,
+    )
     tasks = tasks_payload.get("tasks") or tasks_payload.get("results") or tasks_payload
     tasks = sorted(tasks, key=lambda item: item["id"])
+    if args.skip_reviewed:
+        tasks = [task for task in tasks if not task.get("annotations")]
     if args.limit is not None:
         tasks = tasks[: args.limit]
 
@@ -262,7 +331,12 @@ def main() -> None:
         if item.get("model_version") == MODEL_VERSION
     }
     if args.upload and args.replace:
-        for item in existing.values():
+        generated = [
+            item
+            for item in predictions
+            if item.get("model_version", "").startswith(MODEL_FAMILY_PREFIX)
+        ]
+        for item in generated:
             request_json(f"/api/predictions/{item['id']}/", token, method="DELETE")
         existing.clear()
 
@@ -285,15 +359,19 @@ def main() -> None:
         image = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
         height, width = image.shape[:2]
         item_started = time.perf_counter()
-        semantic_heat = semantic_guide.heatmap(image) if semantic_guide is not None else None
-        mask, score, point = propose_mask(predictor, image, semantic_heat)
+        semantic_heat = (
+            semantic_guide.heatmap(image, task["data"]["species"])
+            if semantic_guide is not None
+            else None
+        )
+        mask, score, points, component_count = propose_mask(predictor, image, semantic_heat)
         split = task["data"]["split"]
         mask_path = proposal_root / split / f"{image_path.stem}.png"
         mask_path.parent.mkdir(parents=True, exist_ok=True)
         Image.fromarray(mask.astype(np.uint8) * 255).save(mask_path)
 
         if index <= args.overlay_limit:
-            save_overlay(image, mask, point, overlay_root / f"{index:03d}-{image_path.stem}.jpg")
+            save_overlay(image, mask, points, overlay_root / f"{index:03d}-{image_path.stem}.jpg")
 
         uploaded = False
         if args.upload and task["id"] not in existing:
@@ -316,14 +394,15 @@ def main() -> None:
             "split": split,
             "score": round(score, 6),
             "foreground_fraction": round(float(mask.mean()), 6),
-            "prompt_xy": list(point),
+            "prompt_xys": [list(point) for point in points],
+            "component_proposals": component_count,
             "seconds": round(time.perf_counter() - item_started, 3),
             "uploaded": uploaded,
         }
         rows.append(row)
         print(
             f"[{index}/{len(tasks)}] task={task['id']} score={score:.3f} "
-            f"area={mask.mean():.3f} seconds={row['seconds']:.2f}",
+            f"area={mask.mean():.3f} components={component_count} seconds={row['seconds']:.2f}",
             flush=True,
         )
 

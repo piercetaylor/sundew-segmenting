@@ -44,7 +44,7 @@ newer, start Label Studio and the MobileSAM service, then initialize the project
 powershell -ExecutionPolicy Bypass -File scripts/start_label_studio.ps1
 powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
 .tools\label-studio-venv\Scripts\python.exe scripts/initialize_label_studio_project.py
-.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload
+.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload --skip-reviewed
 ```
 
 The batch command downloads the CLIPSeg semantic guide on its first run, then stores
