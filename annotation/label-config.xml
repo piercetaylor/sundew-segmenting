@@ -4,6 +4,12 @@
   <BrushLabels name="label" toName="image">
     <Label value="sundew" background="#F43F5E"/>
   </BrushLabels>
+  <KeyPointLabels name="sam_points" toName="image" smart="true">
+    <Label value="sundew" background="#F59E0B" smart="true" showInline="true"/>
+  </KeyPointLabels>
+  <RectangleLabels name="sam_box" toName="image" smart="true">
+    <Label value="sundew" background="#8B5CF6" showInline="true"/>
+  </RectangleLabels>
   <Choices name="quality" toName="image" choice="single" showInLine="true" required="true">
     <Choice value="complete"/>
     <Choice value="ambiguous"/>

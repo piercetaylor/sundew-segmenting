@@ -1,6 +1,7 @@
 # Annotation workflow
 
-The prepared Label Studio project uses a brush mask plus a required quality flag.
+The prepared Label Studio project uses SAM-aware point and box prompts, a brush mask,
+and a required quality flag.
 The task list points at the normalized files under `data/curated` and carries the
 split, species, source, creator, and license metadata into the labeling interface.
 
@@ -22,6 +23,22 @@ python scripts/export_label_studio_tasks.py
    directory as a second set of tasks.
 6. Follow `data/annotation-policy.md` and export a versioned snapshot after each
    labeling session.
+
+For the local project environment prepared by this repository, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_annotation_stack.ps1 -Python "C:\path\to\python.exe"
+powershell -ExecutionPolicy Bypass -File scripts/start_label_studio.ps1
+powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
+.tools\label-studio-venv\Scripts\python.exe scripts/initialize_label_studio_project.py
+.tools\label-studio-venv\Scripts\python.exe scripts/smoke_test_annotation_stack.py
+```
+
+Open `http://127.0.0.1:8080/projects/1/data` after both services are ready. Select
+the smart point or smart rectangle tool and place a prompt on a rosette. MobileSAM
+returns a brush-mask proposal; inspect its edges, correct missed or extra tissue,
+choose a quality value, and submit it. Hold `Alt` while placing a point to mark a
+negative prompt.
 
 Label Studio documents the local-file URL form used here and recommends limiting
 the document root to the image directory:

@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+.tools/
 .env
 .label-studio/
 dist/
@@ -13,4 +14,5 @@ data/raw/
 data/curated/
 data/reports/
 data/annotations/
+data/label-studio/
 models/
