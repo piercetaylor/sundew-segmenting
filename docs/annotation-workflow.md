@@ -34,11 +34,27 @@ powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
 .tools\label-studio-venv\Scripts\python.exe scripts/smoke_test_annotation_stack.py
 ```
 
+## Prefill every task
+
+Generate one provisional mask for each task with a CLIPSeg text prompt guiding
+MobileSAM toward sundew tissue:
+
+```powershell
+.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload
+```
+
+The first run downloads `CIDAS/clipseg-rd64-refined` into `.tools/huggingface`.
+Generated PNGs go to `data/annotations/sam-proposals/`, and Label Studio receives
+the same masks as model predictions. Neither location is used by the baseline
+training scripts. Use `--replace` to regenerate only predictions from this exact
+model version. A JSON quality report and a small overlay audit are written under
+`data/reports/sam-preannotations/`.
+
 Open `http://127.0.0.1:8080/projects/1/data` after both services are ready. Select
 the smart point or smart rectangle tool and place a prompt on a rosette. MobileSAM
-returns a brush-mask proposal; inspect its edges, correct missed or extra tissue,
-choose a quality value, and submit it. Hold `Alt` while placing a point to mark a
-negative prompt.
+returns a brush-mask proposal. Batch predictions appear when the task opens.
+Inspect the edges, correct missed or extra tissue, choose a quality value, and
+submit it. Hold `Alt` while placing a point to mark a negative prompt.
 
 Label Studio documents the local-file URL form used here and recommends limiting
 the document root to the image directory:

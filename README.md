@@ -13,6 +13,8 @@ This project builds a reproducible dataset and model for segmenting visible sund
 - A 250-image core set is normalized and split by observer for mask annotation.
 - A local Label Studio project and CPU MobileSAM backend provide interactive mask
   proposals for those 250 images.
+- CLIPSeg-guided MobileSAM can prefill all 250 tasks with reviewable model proposals;
+  these remain separate from accepted annotations and training masks.
 - Downloaded images remain outside Git; source, attribution, curation, and split manifests are reproducible.
 
 ## Acquire candidate images
@@ -42,9 +44,13 @@ newer, start Label Studio and the MobileSAM service, then initialize the project
 powershell -ExecutionPolicy Bypass -File scripts/start_label_studio.ps1
 powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
 .tools\label-studio-venv\Scripts\python.exe scripts/initialize_label_studio_project.py
+.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload
 ```
 
-See [the annotation workflow](docs/annotation-workflow.md) for the review process.
+The batch command downloads the CLIPSeg semantic guide on its first run, then stores
+its unreviewed masks under `data/annotations/sam-proposals/` and displays them as
+predictions in Label Studio. See [the annotation workflow](docs/annotation-workflow.md)
+for the review process.
 
 ## Usage constraint
 

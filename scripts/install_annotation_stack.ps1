@@ -18,6 +18,7 @@ if (-not (Test-Path -LiteralPath $EnvironmentPython)) {
 & $EnvironmentPython -m pip install --upgrade pip
 & $EnvironmentPython -m pip install "label-studio==1.23.0"
 & $EnvironmentPython -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+& $EnvironmentPython -m pip install "transformers==5.17.0"
 
 function Install-PinnedRepository {
     param(
