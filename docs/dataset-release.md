@@ -37,3 +37,15 @@ the per-image attribution fields, and obtain permission where the source terms
 require it. Model-generated or SAM-assisted masks are proposals until a person
 reviews and accepts them. A valid benchmark release should include accepted
 masks, the annotation export, annotation policy/version, and the split summary.
+
+After every task has a review decision and the mask audit passes, freeze the
+accepted pairs for training:
+
+```powershell
+python scripts/freeze_reviewed_dataset.py
+```
+
+This creates `dist/sundew-segmenting-reviewed-v0.3.0/` and a matching ZIP file.
+The snapshot contains only accepted image-mask pairs, their image-level license
+and attribution metadata, all review decisions, and SHA-256 checksums. Treat the
+test directory as locked until model and threshold selection are finished.

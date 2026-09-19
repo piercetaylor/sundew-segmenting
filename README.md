@@ -81,6 +81,7 @@ false negatives more heavily to preserve thin leaves and branches. The default
 ```powershell
 $env:PYTHONPATH = "src"
 python scripts/export_reviewed_masks.py
+python scripts/freeze_reviewed_dataset.py
 python scripts/train_baseline.py --model unet-resnet34
 python scripts/train_baseline.py --model segformer-b0
 ```
@@ -103,3 +104,5 @@ Annotation instructions are in [the annotation workflow](docs/annotation-workflo
 the label definition is in [the annotation policy](data/annotation-policy.md), and
 the release-ready documentation starts with [the dataset card](reports/dataset-card.md),
 and the metadata release procedure is in [the release guide](docs/dataset-release.md).
+The final GPU comparison can be submitted with the
+[Hellbender training guide](docs/hellbender-training.md).
