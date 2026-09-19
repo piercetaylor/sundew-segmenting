@@ -90,6 +90,15 @@ validation. Pass `--no-allow-partial` for a release run that requires every imag
 to have a same-size mask. Ambiguous and rejected annotations are never exported
 as training masks.
 
+### First development result
+
+A five-epoch CPU check at 256 pixels used 143 complete training masks and 19
+observer-held-out validation masks. The best checkpoint reached mean per-image
+validation Dice 0.749 and IoU 0.609. The test split remained locked. This is a
+pipeline check rather than the final benchmark: thin linear and forked forms were
+the weakest validation slice, and the final model comparison should run at 768
+pixels on a GPU. The versioned metrics are under `reports/experiments/`.
+
 Annotation instructions are in [the annotation workflow](docs/annotation-workflow.md),
 the label definition is in [the annotation policy](data/annotation-policy.md), and
 the release-ready documentation starts with [the dataset card](reports/dataset-card.md),

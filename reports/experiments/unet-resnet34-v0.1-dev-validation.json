@@ -1,0 +1,223 @@
+{
+  "checkpoint": "models/unet-resnet34-v0.1-dev/unet-resnet34-best.pt",
+  "split": "validation",
+  "samples": 19,
+  "mean_metrics": {
+    "iou": 0.6093343764266105,
+    "dice": 0.7491495543423939,
+    "precision": 0.7502188930617253,
+    "recall": 0.7915961478830527,
+    "pixel_accuracy": 0.9003215589021382
+  },
+  "rows": [
+    {
+      "image": "data/curated/images/validation/inat_166646661.jpg",
+      "mask": "data/curated/masks/validation/inat_166646661.png",
+      "species": "Drosera cistiflora",
+      "growth_form": "erect_or_branching",
+      "iou": 0.598385926731955,
+      "dice": 0.7487377318885801,
+      "precision": 0.6704256832266585,
+      "recall": 0.847764645426516,
+      "pixel_accuracy": 0.9324188232421875
+    },
+    {
+      "image": "data/curated/images/validation/inat_215691773.jpg",
+      "mask": "data/curated/masks/validation/inat_215691773.png",
+      "species": "Drosera anglica",
+      "growth_form": "rosette",
+      "iou": 0.45240612396726576,
+      "dice": 0.6229746852505864,
+      "precision": 0.6533589685591495,
+      "recall": 0.595290844453604,
+      "pixel_accuracy": 0.7866058349609375
+    },
+    {
+      "image": "data/curated/images/validation/inat_226982389.jpg",
+      "mask": "data/curated/masks/validation/inat_226982389.png",
+      "species": "Drosera aberrans",
+      "growth_form": "rosette",
+      "iou": 0.7054144705318639,
+      "dice": 0.8272645538323219,
+      "precision": 0.7706777413275634,
+      "recall": 0.8928196005498504,
+      "pixel_accuracy": 0.859283447265625
+    },
+    {
+      "image": "data/curated/images/validation/inat_248413041.jpg",
+      "mask": "data/curated/masks/validation/inat_248413041.png",
+      "species": "Drosera spatulata",
+      "growth_form": "rosette",
+      "iou": 0.8681662870159453,
+      "dice": 0.929431489102271,
+      "precision": 0.8764012647312446,
+      "recall": 0.9892926670992862,
+      "pixel_accuracy": 0.9929351806640625
+    },
+    {
+      "image": "data/curated/images/validation/inat_345326816.jpg",
+      "mask": "data/curated/masks/validation/inat_345326816.png",
+      "species": "Drosera arcturi",
+      "growth_form": "linear_or_forked",
+      "iou": 0.4077608142493639,
+      "dice": 0.57930411206507,
+      "precision": 0.9751521298174443,
+      "recall": 0.41204199700021427,
+      "pixel_accuracy": 0.9573822021484375
+    },
+    {
+      "image": "data/curated/images/validation/inat_399814050.jpg",
+      "mask": "data/curated/masks/validation/inat_399814050.png",
+      "species": "Drosera trinervia",
+      "growth_form": "rosette",
+      "iou": 0.6688716688716688,
+      "dice": 0.8015855039637599,
+      "precision": 0.7767778753292361,
+      "recall": 0.828029948525971,
+      "pixel_accuracy": 0.9732666015625
+    },
+    {
+      "image": "data/curated/images/validation/inat_40815173.jpg",
+      "mask": "data/curated/masks/validation/inat_40815173.png",
+      "species": "Drosera grantsaui",
+      "growth_form": "erect_or_branching",
+      "iou": 0.5134458356015242,
+      "dice": 0.6785123372419251,
+      "precision": 0.5662144315043823,
+      "recall": 0.8463747307968413,
+      "pixel_accuracy": 0.9318084716796875
+    },
+    {
+      "image": "data/curated/images/validation/inat_430092977.jpg",
+      "mask": "data/curated/masks/validation/inat_430092977.png",
+      "species": "Drosera variegata",
+      "growth_form": "erect_or_branching",
+      "iou": 0.6125715064015255,
+      "dice": 0.7597449216605431,
+      "precision": 0.6165181631254284,
+      "recall": 0.9896578281439102,
+      "pixel_accuracy": 0.9131927490234375
+    },
+    {
+      "image": "data/curated/images/validation/inat_502632600.jpg",
+      "mask": "data/curated/masks/validation/inat_502632600.png",
+      "species": "Drosera rotundifolia",
+      "growth_form": "rosette",
+      "iou": 0.5988509631632308,
+      "dice": 0.7491016698372437,
+      "precision": 0.6485695113768072,
+      "recall": 0.886517134995414,
+      "pixel_accuracy": 0.891326904296875
+    },
+    {
+      "image": "data/curated/images/validation/inat_568453741.jpg",
+      "mask": "data/curated/masks/validation/inat_568453741.png",
+      "species": "Drosera pygmaea",
+      "growth_form": "dense_mat",
+      "iou": 0.7861296575489984,
+      "dice": 0.8802604606294465,
+      "precision": 0.8011413520632134,
+      "recall": 0.9767192935509768,
+      "pixel_accuracy": 0.9848480224609375
+    },
+    {
+      "image": "data/curated/images/validation/inat_585690408.jpg",
+      "mask": "data/curated/masks/validation/inat_585690408.png",
+      "species": "Drosera capensis",
+      "growth_form": "linear_or_forked",
+      "iou": 0.42849779508619207,
+      "dice": 0.5999278354648598,
+      "precision": 0.9229630543391106,
+      "recall": 0.44439164909571466,
+      "pixel_accuracy": 0.695465087890625
+    },
+    {
+      "image": "data/curated/images/validation/inat_586954980.jpg",
+      "mask": "data/curated/masks/validation/inat_586954980.png",
+      "species": "Drosera xerophila",
+      "growth_form": "rosette",
+      "iou": 0.7563890203502129,
+      "dice": 0.8613001010441226,
+      "precision": 0.8485532253782851,
+      "recall": 0.87443578169881,
+      "pixel_accuracy": 0.9685821533203125
+    },
+    {
+      "image": "data/curated/images/validation/inat_619439720.jpg",
+      "mask": "data/curated/masks/validation/inat_619439720.png",
+      "species": "Drosera floridana",
+      "growth_form": "linear_or_forked",
+      "iou": 0.5084725393582502,
+      "dice": 0.6741555130656469,
+      "precision": 0.6390273372602326,
+      "recall": 0.7133704265722475,
+      "pixel_accuracy": 0.937591552734375
+    },
+    {
+      "image": "data/curated/images/validation/inat_655423913.jpg",
+      "mask": "data/curated/masks/validation/inat_655423913.png",
+      "species": "Drosera rotundifolia",
+      "growth_form": "rosette",
+      "iou": 0.7746924428822496,
+      "dice": 0.8730441671618142,
+      "precision": 0.8018919410587593,
+      "recall": 0.9580525972614649,
+      "pixel_accuracy": 0.96087646484375
+    },
+    {
+      "image": "data/curated/images/validation/inat_668083152.jpg",
+      "mask": "data/curated/masks/validation/inat_668083152.png",
+      "species": "Drosera roraimae",
+      "growth_form": "rosette",
+      "iou": 0.6452415686947567,
+      "dice": 0.7843730440225328,
+      "precision": 0.669367043532449,
+      "recall": 0.9470966116639375,
+      "pixel_accuracy": 0.936920166015625
+    },
+    {
+      "image": "data/curated/images/validation/inat_684351411.jpg",
+      "mask": "data/curated/masks/validation/inat_684351411.png",
+      "species": "Drosera linearis",
+      "growth_form": "linear_or_forked",
+      "iou": 0.45913236669784846,
+      "dice": 0.6293224345874905,
+      "precision": 0.6037518259398785,
+      "recall": 0.6571548117154812,
+      "pixel_accuracy": 0.8588409423828125
+    },
+    {
+      "image": "data/curated/images/validation/inat_711172074.jpg",
+      "mask": "data/curated/masks/validation/inat_711172074.png",
+      "species": "Drosera anglica",
+      "growth_form": "rosette",
+      "iou": 0.4982450542437779,
+      "dice": 0.6651048876583964,
+      "precision": 0.567027779458936,
+      "recall": 0.804206008583691,
+      "pixel_accuracy": 0.8560333251953125
+    },
+    {
+      "image": "data/curated/images/validation/inat_83543138.jpg",
+      "mask": "data/curated/masks/validation/inat_83543138.png",
+      "species": "Drosera intermedia",
+      "growth_form": "erect_or_branching",
+      "iou": 0.5983838383838384,
+      "dice": 0.7487360970677452,
+      "precision": 0.9565282193958664,
+      "recall": 0.615111821086262,
+      "pixel_accuracy": 0.802825927734375
+    },
+    {
+      "image": "data/curated/images/validation/inat_87980339.jpg",
+      "mask": "data/curated/masks/validation/inat_87980339.png",
+      "species": "Drosera spatulata",
+      "growth_form": "rosette",
+      "iou": 0.6962952723251313,
+      "dice": 0.8209599869611278,
+      "precision": 0.8898114207481341,
+      "recall": 0.7619984115578079,
+      "pixel_accuracy": 0.86590576171875
+    }
+  ]
+}

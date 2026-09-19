@@ -117,6 +117,28 @@ The exporter unions all brush regions in an annotation, validates dimensions,
 and writes binary PNGs to `data/curated/masks/<split>/`. Ambiguous and rejected
 reviews stay in Label Studio and are excluded.
 
+## Freeze and audit a completed labeling pass
+
+Run the task-level and pixel-level audits before training:
+
+```powershell
+$env:PYTHONPATH = "src"
+.tools\label-studio-venv\Scripts\python.exe scripts\audit_annotations.py
+.tools\label-studio-venv\Scripts\python.exe scripts\export_reviewed_masks.py
+.tools\label-studio-venv\Scripts\python.exe scripts\audit_reviewed_masks.py
+```
+
+The annotation audit reports missing and duplicate submissions. The mask audit
+checks binary values, dimensions, empty masks, and extreme foreground fractions.
+Its local `foreground-extremes.jpg` contact sheet should be inspected before the
+dataset version is frozen.
+
+After the audit passes, train on `train`, select checkpoints using `validation`,
+and keep `test` locked until the model family, resolution, loss, and threshold
+have been chosen. Use `scripts/evaluate_checkpoint.py` for validation overlays;
+green is a correct foreground pixel, yellow is a false positive, and magenta is
+a missed sundew pixel.
+
 Label Studio documents the local-file URL form used here and recommends limiting
 the document root to the image directory:
 https://labelstud.io/guide/storage_local
