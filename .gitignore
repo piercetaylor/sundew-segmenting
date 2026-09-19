@@ -16,3 +16,4 @@ data/reports/
 data/annotations/
 data/label-studio/
 models/
+logs/
