@@ -9,6 +9,7 @@ import json
 
 from sundew_segmentation.acquisition import read_manifest
 from sundew_segmentation.curation import normalize_image, select_core_set, split_for_observer, write_jsonl
+from sundew_segmentation.growth_forms import growth_form_for_taxon
 
 
 # Initial visual screen from the indexed contact sheets. These frames are dominated
@@ -61,6 +62,7 @@ def main() -> None:
     split_counts: Counter[str] = Counter()
     license_counts: Counter[str] = Counter()
     species_counts: Counter[str] = Counter()
+    growth_form_counts: Counter[str] = Counter()
     total_bytes = 0
     expected_images: set[Path] = set()
 
@@ -100,12 +102,14 @@ def main() -> None:
                 "curated_width": width,
                 "curated_height": height,
                 "change_notice": "EXIF orientation applied, converted to RGB JPEG, and resized to at most 1600 px; segmentation annotation pending.",
+                "growth_form": growth_form_for_taxon(str(row["taxon_name"])),
             })
             curation_record["split"] = split
             records.append(row)
             split_counts[split] += 1
             license_counts[str(row["license_code"])] += 1
             species_counts[str(row["taxon_name"])] += 1
+            growth_form_counts[str(row["growth_form"])] += 1
             total_bytes += destination.stat().st_size
 
         curation_rows.append(curation_record)
@@ -125,6 +129,7 @@ def main() -> None:
         "split_counts": dict(sorted(split_counts.items())),
         "license_counts": dict(sorted(license_counts.items())),
         "species_count": len(species_counts),
+        "growth_form_counts": dict(sorted(growth_form_counts.items())),
         "top_species": species_counts.most_common(15),
         "curated_bytes": total_bytes,
         "selection": {

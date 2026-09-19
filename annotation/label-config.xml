@@ -1,5 +1,5 @@
 <View>
-  <Header value="Trace all visible living sundew tissue. Follow data/annotation-policy.md."/>
+  <Header value="Trace all visible living sundew tissue. Species: $species | growth form: $growth_form"/>
   <Image name="image" value="$image" zoom="true" zoomControl="true" rotateControl="true"/>
   <BrushLabels name="label" toName="image">
     <Label value="sundew" background="#F43F5E"/>

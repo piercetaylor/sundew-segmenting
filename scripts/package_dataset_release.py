@@ -15,6 +15,8 @@ import shutil
 
 RELEASE_FILES = (
     Path("reports/dataset-card.md"),
+    Path("data/annotation-policy.md"),
+    Path("docs/annotation-workflow.md"),
     Path("data/raw/inaturalist/metadata.jsonl"),
     Path("data/raw/inaturalist/acquisition.json"),
     Path("data/curated/metadata.jsonl"),
@@ -32,7 +34,7 @@ def digest(path: Path) -> str:
     return value.hexdigest()
 
 
-def build_release(root: Path, output: Path) -> Path:
+def build_release(root: Path, output: Path, version: str = "v0.1.0-metadata") -> Path:
     missing = [path.as_posix() for path in RELEASE_FILES if not (root / path).is_file()]
     if missing:
         raise FileNotFoundError("Missing release inputs: " + ", ".join(missing))
@@ -47,7 +49,7 @@ def build_release(root: Path, output: Path) -> Path:
         inventory.append({"path": source.as_posix(), "sha256": digest(target), "bytes": target.stat().st_size})
     manifest = {
         "release_name": "sundew-segmenting-core",
-        "release_version": "v0.1.0-metadata",
+        "release_version": version,
         "payload": "metadata_only",
         "images_included": False,
         "masks_included": False,
@@ -61,8 +63,9 @@ def build_release(root: Path, output: Path) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=Path("dist/sundew-segmenting-metadata-v0.1.0"))
+    parser.add_argument("--version", default="v0.1.0-metadata")
     args = parser.parse_args()
-    result = build_release(Path.cwd(), args.output)
+    result = build_release(Path.cwd(), args.output, args.version)
     print(f"Built metadata-only dataset release at {result}")
 
 

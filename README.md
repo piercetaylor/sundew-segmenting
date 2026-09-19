@@ -15,6 +15,8 @@ This project builds a reproducible dataset and model for segmenting visible sund
   proposals for those 250 images.
 - CLIPSeg-guided MobileSAM can prefill all 250 tasks with reviewable model proposals;
   these remain separate from accepted annotations and training masks.
+- Growth-form metadata separates rosette, branching, linear/forked, and dense-mat
+  examples for annotation priority, balanced sampling, and stratified evaluation.
 - Downloaded images remain outside Git; source, attribution, curation, and split manifests are reproducible.
 
 ## Acquire candidate images
@@ -67,15 +69,26 @@ $env:PYTHONPATH = "src"
 python scripts/baseline_smoke.py
 ```
 
-The smoke output verifies deterministic image loading and records a simple sanity mask statistic. It is not a quality benchmark. `scripts/baseline_data_check.py` refuses to train when reviewed masks are missing. Once they exist, `scripts/train_baseline.py` trains either architecture with combined BCE and Dice loss, AdamW regularization, cosine learning-rate scheduling, and early stopping, then records IoU, Dice, precision, recall, and pixel accuracy on the observer-held-out validation split.
+The smoke output verifies deterministic image loading and records a simple sanity
+mask statistic. It is not a quality benchmark. Once reviewed masks exist,
+`scripts/train_baseline.py` trains either architecture with combined BCE and
+Tversky loss by default, AdamW regularization, cosine learning-rate scheduling,
+and early stopping. Training samples are balanced by growth form, and the report
+records overall and growth-form-specific validation metrics. Tversky weights
+false negatives more heavily to preserve thin leaves and branches. The default
+768-pixel input retains more fine structure than the earlier 512-pixel setup.
 
 ```powershell
 $env:PYTHONPATH = "src"
+python scripts/export_reviewed_masks.py
 python scripts/train_baseline.py --model unet-resnet34
 python scripts/train_baseline.py --model segformer-b0
 ```
 
-Training is deliberately gated on reviewed masks. Validate the future training boundary with `python scripts/baseline_data_check.py`; it fails if any image in the train or validation split lacks a same-size `data/curated/masks/<split>/<image-stem>.png` file. Use `--allow-missing` only for an inventory check.
+By default, training uses the completed masks already available in both train and
+validation. Pass `--no-allow-partial` for a release run that requires every image
+to have a same-size mask. Ambiguous and rejected annotations are never exported
+as training masks.
 
 Annotation instructions are in [the annotation workflow](docs/annotation-workflow.md),
 the label definition is in [the annotation policy](data/annotation-policy.md), and

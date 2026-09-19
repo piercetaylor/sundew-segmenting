@@ -45,3 +45,11 @@ Mark `reject` if less than a useful plant region remains after inspection.
    accepts them.
 
 Annotation version: `v1.0`.
+
+## Growth-form metadata
+
+Each task carries a morphology prior for sampling and evaluation. It is not a
+label class. Continue to create one binary mask containing all visible sundew
+tissue, including mixed populations. The `dense_mat` value is only a likely
+presentation for colony-forming pygmy taxa and should be checked against the
+actual photograph.

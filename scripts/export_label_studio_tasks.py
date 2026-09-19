@@ -7,6 +7,7 @@ import argparse
 import json
 
 from sundew_segmentation.acquisition import read_manifest
+from sundew_segmentation.growth_forms import growth_form_for_taxon
 
 
 def parse_args() -> argparse.Namespace:
@@ -26,6 +27,7 @@ def main() -> None:
                 "image": f"/data/local-files/?d={relative_path}",
                 "photo_id": row["photo_id"],
                 "species": row["taxon_name"],
+                "growth_form": row.get("growth_form") or growth_form_for_taxon(row["taxon_name"]),
                 "split": row["split"],
                 "source_page": row["source_page"],
                 "license": row["license_code"],

@@ -3,7 +3,8 @@
 The public release is metadata-only. Downloaded photographs and future masks
 remain outside Git because each image has its own creator and license terms.
 The release records enough provenance to reacquire the same candidates and
-rebuild the curated split after checking the current source terms.
+rebuild the curated split after checking the current source terms. Morphology
+priors are included for stratified sampling and evaluation.
 
 From the repository root, first acquire and curate the data, then build the
 release directory:
@@ -20,7 +21,16 @@ python scripts/package_dataset_release.py
 `dist/sundew-segmenting-metadata-v0.1.0/release-manifest.json` lists every released file, its byte
 count, and SHA-256 digest. The default package includes the raw and curated
 provenance manifests, curation summary, Label Studio task definitions, and the
-dataset card. It intentionally contains no images or segmentation masks.
+dataset card, annotation policy, and annotation workflow. It intentionally
+contains no images, human annotations, or segmentation masks.
+
+While annotation is still in progress, export complete local masks for a
+development baseline but keep the public package metadata-only:
+
+```powershell
+.tools\label-studio-venv\Scripts\python.exe scripts/export_reviewed_masks.py
+python scripts/package_dataset_release.py --output dist/sundew-segmenting-metadata-v0.2.0 --version v0.2.0-metadata
+```
 
 Before sharing any image payload, re-check each source page and license, preserve
 the per-image attribution fields, and obtain permission where the source terms

@@ -8,8 +8,10 @@ installed.
 from __future__ import annotations
 
 from dataclasses import dataclass, asdict
-from typing import Any
+from collections import Counter
+from typing import Any, Iterable
 from pathlib import Path
+import json
 import numpy as np
 from PIL import Image
 
@@ -19,7 +21,7 @@ class BaselineConfig:
     name: str
     architecture: str
     encoder: str
-    image_size: int = 512
+    image_size: int = 768
     batch_size: int = 4
     learning_rate: float = 1e-3
     epochs: int = 30
@@ -60,6 +62,32 @@ def require_training_data(image_root: Path, mask_root: Path, splits: tuple[str, 
     if not any(result.values()):
         raise FileNotFoundError("no reviewed masks found; annotation must be completed before training")
     return result
+
+
+def add_growth_form_metadata(
+    samples: list[dict[str, Path | str]], metadata_path: Path
+) -> list[dict[str, Path | str]]:
+    """Attach growth-form labels to image/mask pairs using the curated manifest."""
+    by_name: dict[str, str] = {}
+    with metadata_path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            by_name[Path(row["curated_path"]).name] = str(row.get("growth_form") or "unknown")
+    enriched = []
+    for sample in samples:
+        item = dict(sample)
+        item["growth_form"] = by_name.get(Path(sample["image"]).name, "unknown")
+        enriched.append(item)
+    return enriched
+
+
+def inverse_frequency_weights(labels: Iterable[str]) -> list[float]:
+    """Return per-sample weights that give each represented group equal mass."""
+    values = list(labels)
+    counts = Counter(values)
+    return [1.0 / counts[value] for value in values]
 
 
 def binary_metrics(prediction: np.ndarray, target: np.ndarray, threshold: float = 0.5) -> dict[str, float]:

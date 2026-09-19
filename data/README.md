@@ -11,6 +11,7 @@ data/
 │   └── acquisition.json     # query and run summary
 ├── curated/
 │   ├── images/{train,validation,test}/
+│   ├── masks/{train,validation,test}/ # human-reviewed complete masks
 │   ├── metadata.jsonl       # provenance, grouped split, derivative details
 │   ├── curation.jsonl       # decision for all 500 reviewed candidates
 │   └── summary.json
@@ -24,3 +25,7 @@ again while correcting segmentation masks.
 
 Precise coordinates are not acquired or published. Do not add images manually
 without equivalent provenance fields in the manifest.
+
+`growth_form` in the curated manifest is a morphology prior for balanced
+sampling and evaluation. It is not ground truth for each photograph and is not
+part of the binary segmentation target.

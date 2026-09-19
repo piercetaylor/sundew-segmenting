@@ -61,12 +61,22 @@ No exact SHA-256 duplicates or identical 64-bit difference-hash groups were foun
 All 500 source rows have a creator and source page. Exact coordinates are neither
 acquired nor published.
 
+## Morphology coverage
+
+Each image has a taxon-level growth-form prior for annotation order, balanced
+training, and stratified error analysis. The 250-image core contains 169 rosette,
+45 erect or branching, 23 linear or forked, and 13 likely dense-mat examples.
+These values are sampling hints rather than segmentation classes. Dense growth is
+an image property, and young or short-stemmed plants can differ from the taxon
+prior.
+
 ## Labels
 
-The images are prepared for annotation but do not yet have reviewed ground-truth
-masks. Follow `data/annotation-policy.md`. Model-generated or SAM-assisted masks are
-proposals until a person corrects and accepts them. Double-label 10% of the core and
-report inter-annotator Dice and IoU before training the final benchmark.
+Annotation is in progress, but the public metadata release does not include
+ground-truth masks. Follow `data/annotation-policy.md`. Model-generated or
+SAM-assisted masks are proposals until a person corrects and accepts them.
+Double-label 10% of the core and report inter-annotator Dice and IoU before
+training the final benchmark.
 
 ## Limitations
 

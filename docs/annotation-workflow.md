@@ -66,6 +66,57 @@ returns a brush-mask proposal. Batch predictions appear when the task opens.
 Inspect the edges, correct missed or extra tissue, choose a quality value, and
 submit it. Hold `Alt` while placing a point to mark a negative prompt.
 
+### Fast review loop and shortcuts
+
+`M` is not the auto-selection key for this project. The interface uses smart
+point and smart rectangle prompts rather than the separate Magic Wand control.
+
+1. Enable **Auto-Annotation** at the bottom of the labeling screen.
+2. Select the smart point tool and click once inside every visible sundew plant.
+3. Hold `Alt` and click moss, grass, or substrate that was incorrectly included.
+4. For branching plants, draw a tight smart rectangle around the entire plant,
+   then add positive points on missed branches.
+5. Accept the proposal, repair the remaining boundary errors with the brush,
+   choose a quality value, and press `Ctrl+Enter` to submit.
+
+Useful defaults are `Ctrl+Z` to undo, `Ctrl+Shift+Z` to redo, `Backspace` to
+delete the selected region, `Esc` to exit the active selection, `U` to unselect,
+`Ctrl+Enter` to submit, and `Ctrl+Space` to skip. The gear icon in the labeling
+screen shows the mappings active in the installed Label Studio version.
+
+## Morphology-aware review order
+
+The `growth_form` field is a taxon-level review and sampling hint with four
+values: `rosette`, `erect_or_branching`, `linear_or_forked`, and `dense_mat`.
+It does not change the binary target: continue to include every visible sundew.
+`dense_mat` is an image-level presentation, so override that expectation by eye
+when a pygmy sundew is isolated.
+
+Update the local metadata and rank the remaining work with:
+
+```powershell
+$env:PYTHONPATH = "src"
+.tools\label-studio-venv\Scripts\python.exe scripts\update_growth_form_metadata.py
+.tools\label-studio-venv\Scripts\python.exe scripts\sync_label_studio_metadata.py
+.tools\label-studio-venv\Scripts\python.exe scripts\annotation_priority.py
+```
+
+The priority CSV goes to `data/reports/annotation-priority.csv`. Review the
+validation and test examples of branching, linear, and dense forms first, then
+return to the remaining training examples.
+
+## Export reviewed masks
+
+Only annotations marked `complete` are eligible for model training:
+
+```powershell
+.tools\label-studio-venv\Scripts\python.exe scripts\export_reviewed_masks.py
+```
+
+The exporter unions all brush regions in an annotation, validates dimensions,
+and writes binary PNGs to `data/curated/masks/<split>/`. Ambiguous and rejected
+reviews stay in Label Studio and are excluded.
+
 Label Studio documents the local-file URL form used here and recommends limiting
 the document root to the image directory:
 https://labelstud.io/guide/storage_local
