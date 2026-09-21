@@ -42,6 +42,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--columns", type=int, default=5)
     p.add_argument("--tile", type=int, default=360)
     p.add_argument("--save-crops", action="store_true")
+    p.add_argument("--no-sheets", action="store_true",
+                   help="Write crops and manifest only. Used when generating classifier inputs.")
     return p.parse_args()
 
 
@@ -102,19 +104,22 @@ def main() -> int:
         })
 
         # Tile: the crop as the classifier sees it, with a large index for review.
-        tile = Image.new("RGB", (args.tile, args.tile + 34), "white")
-        shown = crop.copy()
-        shown.thumbnail((args.tile - 8, args.tile - 8), Image.Resampling.LANCZOS)
-        tile.paste(shown, ((args.tile - shown.width) // 2, (args.tile - shown.height) // 2))
-        draw = ImageDraw.Draw(tile)
-        label = f"{index}" + ("  EMPTY PREDICTION" if empty else "")
-        try:
-            font = ImageFont.truetype("DejaVuSans-Bold.ttf", 26)
-        except OSError:
-            font = ImageFont.load_default()
-        draw.rectangle([0, args.tile, args.tile, args.tile + 34], fill="#222222")
-        draw.text((8, args.tile + 4), label, fill="#ffdd33" if empty else "#ffffff", font=font)
-        tiles.append(tile)
+        tile = None
+        if not args.no_sheets:
+            tile = Image.new("RGB", (args.tile, args.tile + 34), "white")
+            shown = crop.copy()
+            shown.thumbnail((args.tile - 8, args.tile - 8), Image.Resampling.LANCZOS)
+            tile.paste(shown, ((args.tile - shown.width) // 2, (args.tile - shown.height) // 2))
+            draw = ImageDraw.Draw(tile)
+            label = f"{index}" + ("  EMPTY PREDICTION" if empty else "")
+            try:
+                font = ImageFont.truetype("DejaVuSans-Bold.ttf", 26)
+            except OSError:
+                font = ImageFont.load_default()
+            draw.rectangle([0, args.tile, args.tile, args.tile + 34], fill="#222222")
+            draw.text((8, args.tile + 4), label, fill="#ffdd33" if empty else "#ffffff", font=font)
+        if not args.no_sheets:
+            tiles.append(tile)
         if index % 50 == 0:
             print(f"  {index}/{len(paths)}", flush=True)
 

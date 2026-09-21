@@ -98,20 +98,23 @@ Expected readings:
 
 | Result | Meaning |
 | --- | --- |
-| crop clearly ahead | the pipeline is justified; step 1's rate sets the risk |
+| **crop clearly ahead** | **what happened** — the pipeline is justified; step 1's rate sets the risk |
 | within noise | drop the crop; segmentation is not on the species critical path |
 | full frame ahead | cropping is discarding useful context |
 
-**A prior from rendering the step-1 crops.** Across the 493 review images the
-predicted box covers a median **69%** of the frame, and **107 of 493 (22%)
-cover more than 90%** — barely a crop at all. Whatever the crop contributes, it
-is not much magnification on a fifth of the data. That shifts the expectation
-toward "within noise" and makes step 2 more likely to be decisive than step 1.
+**Result: the crop wins, +0.0246 balanced accuracy, t = 5.10, 5 of 5 seeds.**
+See `reports/species-crop-comparison.md`.
 
-It also reframes the failure rate: an over-large box is *safer* for crop
-coverage (more likely to contain the plant) while being *less useful* as a crop.
-The two properties the pipeline wants are in tension, and the current model sits
-at the safe, less useful end.
+The prior recorded here before the run — that a box covering a median 69% of the
+frame could not be adding much, so the arms would land within noise — was
+wrong, and wrong in a way worth keeping. The crop advantage is real, and it is
+flat across box size: as large on the third of images where the box covers 95%
+of the frame as on the third where it covers 38%. The benefit is not
+magnification. A control arm ruled out the obvious artefact (crops were saved as
+768 px thumbnails, full frames were not), leaving cropping as the whole effect.
+
+Because the crop is justified, step 1's failure rate stays on the critical path
+rather than being made moot.
 
 ## Step 3 — hard negatives, only if step 1 says so
 
