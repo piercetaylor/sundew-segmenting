@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=01:30:00
-#SBATCH --array=0-5
+#SBATCH --array=0-9
 #SBATCH --output=logs/%x-%A_%a.out
 #SBATCH --error=logs/%x-%A_%a.out
 
@@ -13,10 +13,13 @@
 # curated ones close any of the 0.184 IoU field gap measured in
 # reports/field-probe-evaluation.md?
 #
-# Two arms, identical flags, differing only in dataset root. Paired across three
-# seeds rather than run once, because baseline-seed-sweep.md measured a
-# seed-to-seed SD of 0.0176 for SegFormer on this dataset -- a single seed per
-# arm could not distinguish anything smaller than ~0.07 IoU.
+# Two arms, identical flags, differing only in dataset root. Paired across five
+# seeds -- the same set baseline-seed-sweep.md used -- because a three-seed run
+# gave t = 3.49 against a critical 4.303 and could not clear p=0.05. The observed
+# SD of the arm difference is 0.0374, twice the 0.0176 seed SD that sweep
+# measured, so three seeds were underpowered for an effect of this size.
+#
+# Array indices 0-4 are the frozen arm, 5-9 the field arm, in seed order.
 #
 # Flags are variant 5 ("combined") of hellbender_recipe_sweep.slurm, NOT
 # hellbender_train.slurm, which is the 768 px architecture comparison.
@@ -28,11 +31,11 @@ set -euo pipefail
 
 BASE=/cluster/VAST/mendozacozatld-lab/PierceTaylor
 REPO="$BASE/sundew-segmenting"
-SEEDS=(17 101 202)
+SEEDS=(17 101 202 303 404)
 ARMS=(frozen field)
 
-ARM="${ARMS[$((SLURM_ARRAY_TASK_ID / 3))]}"
-SEED="${SEEDS[$((SLURM_ARRAY_TASK_ID % 3))]}"
+ARM="${ARMS[$((SLURM_ARRAY_TASK_ID / 5))]}"
+SEED="${SEEDS[$((SLURM_ARRAY_TASK_ID % 5))]}"
 
 case "$ARM" in
   frozen) ROOT="$BASE/sundew-data/sundew-segmenting-reviewed-v0.3.0"
