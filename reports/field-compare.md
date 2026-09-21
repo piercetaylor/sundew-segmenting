@@ -1,55 +1,71 @@
 # Step 2: do 30 field masks close the field gap?
 
-Two arms, three seeds each, identical flags, differing only in dataset root:
+Two arms, five seeds each, identical flags, differing only in dataset root:
 `frozen` is the 144 curated images, `field` is those plus the 30 field-train
 masks (174). Both use the `combined` recipe (1024 px, 80 epochs, lr 3e-4,
 bce-tversky) with `--no-balanced-growth-forms`. Scored on the 17 held-out
 `field-eval` images. The curated test split was not touched.
 
-Reproduce with `sbatch scripts/hellbender_field_compare.slurm` (6 GPU jobs,
-4-15 minutes each).
+Reproduce with `sbatch scripts/hellbender_field_compare.slurm` (10 GPU jobs,
+4-15 minutes each; indices 0-4 are `frozen`, 5-9 are `field`).
 
-Paired across three seeds rather than run once, because
-`baseline-seed-sweep.md` established that a single run cannot settle a
-comparison on this dataset.
+Paired across the same five seeds `baseline-seed-sweep.md` used, because that
+report established that a single run cannot settle a comparison on this
+dataset. An initial three-seed run is described under "The statistics" below.
 
 ## Result: the gap roughly halves
 
-| Arm | seed 17 | seed 101 | seed 202 | Mean | SD |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| `frozen` (144 images) | 0.5676 | 0.5164 | 0.5469 | 0.5436 | 0.0258 |
-| `field` (174 images) | 0.6086 | 0.6315 | 0.6166 | **0.6189** | 0.0116 |
+| Arm | 17 | 101 | 202 | 303 | 404 | Mean | SD |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `frozen` (144 images) | 0.5676 | 0.5164 | 0.5469 | 0.5540 | 0.5725 | 0.5515 | 0.0221 |
+| `field` (174 images) | 0.6086 | 0.6315 | 0.6166 | 0.6055 | 0.6022 | **0.6129** | 0.0117 |
 
-**Field wins on 3 of 3 seeds, mean paired difference +0.0753 IoU.** The arms do
-not overlap: the worst `field` run (0.6086) beats the best `frozen` run
-(0.5676).
+**Field wins on 5 of 5 seeds, mean paired difference +0.0614 IoU, 95% CI
+[+0.020, +0.103], t = 4.10 on 4 df against a critical 2.776 — significant at
+p = 0.05.** The arms do not overlap: the worst `field` run (0.6022) beats the
+best `frozen` run (0.5725).
 
 Against the project's other measured levers — architecture +0.022, the entire
 `combined` recipe +0.051 — this is the largest single improvement recorded, and
 the first one that came from annotation rather than configuration.
 
 The field gap, measured as each arm's own curated validation minus its
-`field-eval` score, narrows from 0.184 (step 1) to **0.072**. Roughly 60% closed,
-not closed.
+`field-eval` score:
+
+| | Curated validation | `field-eval` | Gap |
+| --- | ---: | ---: | ---: |
+| Original `combined` (step 1) | 0.6838 | 0.4994 | 0.1844 |
+| `frozen` arm | 0.6808 | 0.5515 | 0.1293 |
+| `field` arm | 0.6906 | 0.6129 | **0.0778** |
+
+**58% of the gap closed, not closed.**
 
 ## The statistics, honestly
 
-Two defensible pairings, and they disagree about significance:
+This was run first at three seeds, where it did **not** clear significance:
+t = 3.49 against a critical 4.303, because two degrees of freedom are
+unforgiving. The pre-run power estimate had been too optimistic — it assumed the
+seed-to-seed SD of 0.0176 from `baseline-seed-sweep.md`, whereas the observed SD
+of the *difference* is about twice that. Seeds 303 and 404 were added for both
+arms.
 
-| Pairing | n | Mean delta | t | crit (p=.05) | Verdict |
+At five seeds both defensible pairings agree:
+
+| Pairing | n | Mean delta | t | crit (p=.05) | 95% CI |
 | --- | ---: | ---: | ---: | ---: | --- |
-| By seed (image-averaged) | 3 | +0.0753 | 3.49 | 4.303 | **not significant** |
-| By image (seed-averaged) | 17 | +0.0753 | 3.17 | 2.120 | significant, 95% CI [+0.025, +0.126] |
+| By seed (image-averaged) | 5 | +0.0614 | 4.10 | 2.776 | [+0.020, +0.103] |
+| By image (seed-averaged) | 17 | +0.0614 | 2.89 | 2.120 | [+0.016, +0.106] |
 
-The seed-level test is the one this project's methodology established, and at
-n=3 it does not clear p=0.05 — two degrees of freedom demand t > 4.3. The
-pre-run power estimate was too optimistic: it assumed the seed-to-seed SD of
-0.0176 from `baseline-seed-sweep.md`, but the observed SD of the *difference*
-is 0.0374, twice that.
+Worth recording that the effect **shrank** as seeds were added, from +0.0753 at
+n=3 to +0.0614 at n=5: the two added seeds returned the two smallest deltas
+(+0.0515, +0.0297). That is ordinary regression toward the mean and is the
+reason the three-seed estimate should not have been quoted as a point value. The
+five-seed interval is wide — the effect is somewhere between +0.02 and +0.10 —
+and the honest summary is direction and order of magnitude, not a precise
+number.
 
-What carries the result is not either p-value but the separation: 3 of 3 seeds,
-13 of 17 images, and non-overlapping arm ranges. **Two more seeds per arm would
-settle it properly** and cost about 35 GPU-minutes.
+The separation is what makes it credible regardless: 5 of 5 seeds, 14 of 17
+images, and arm ranges that do not overlap.
 
 ## Part of the gain is a flag, not the data
 
@@ -59,35 +75,39 @@ identical except `--no-balanced-growth-forms`, scores 0.5436.
 
 | Change | field-eval IoU | Gain |
 | --- | ---: | ---: |
-| Original `combined` (balanced) | 0.4994 | — |
-| + turn off growth-form balancing | 0.5436 | +0.044 |
-| + add 30 field masks | 0.6189 | +0.075 |
+| Original `combined` (balanced, 1 seed) | 0.4994 | — |
+| + turn off growth-form balancing | 0.5515 | +0.052 |
+| + add 30 field masks | 0.6129 | +0.061 |
 
-Turning balancing off is worth **+0.044 on its own** — more than the whole
-architecture effect. Had the baseline not been rerun under matched flags, all
-+0.120 would have been credited to the field masks. This is why
+Turning balancing off is worth **+0.052 on its own** — more than the whole
+architecture effect, and comparable to the field masks themselves. Had the
+baseline not been rerun under matched flags, all +0.114 would have been credited
+to the field masks.
+
+(The 0.4994 reference is a single seed and so is the least certain row here; the
+other two are five-seed means.) This is why
 `field-probe-return.md` insisted on two jobs rather than comparing against a
 previous day's sweep number.
 
 ## What got fixed, and what did not
 
-Per-image IoU at threshold 0.5, averaged over three seeds, worst-first:
+Per-image IoU at threshold 0.5, averaged over five seeds, worst-first:
 
 | Image | `frozen` | `field` | Change |
 | --- | ---: | ---: | ---: |
-| `inat_592910855` (tape measure) | 0.047 | 0.032 | **−0.015** |
-| `inat_436079974` | 0.281 | 0.281 | −0.000 |
-| `inat_511350090` | 0.372 | 0.389 | +0.017 |
-| `inat_686282548` | 0.398 | 0.497 | +0.100 |
-| `inat_472599992` | 0.474 | **0.845** | **+0.371** |
-| `inat_158581358` | 0.559 | 0.760 | +0.201 |
-| `inat_632125737` | 0.570 | 0.699 | +0.129 |
-| `inat_230880856` | 0.626 | 0.758 | +0.132 |
+| `inat_592910855` (tape measure) | 0.061 | 0.030 | **−0.031** |
+| `inat_436079974` | 0.287 | 0.324 | +0.037 |
+| `inat_511350090` | 0.356 | 0.377 | +0.021 |
+| `inat_686282548` | 0.455 | 0.515 | +0.060 |
+| `inat_472599992` | 0.482 | **0.824** | **+0.342** |
+| `inat_158581358` | 0.587 | 0.765 | +0.178 |
+| `inat_230880856` | 0.639 | 0.737 | +0.098 |
+| `inat_632125737` | 0.580 | 0.671 | +0.091 |
 
-13 of 17 images improved; the four that regressed did so by less than 0.035.
+14 of 17 images improved; the three that regressed did so by 0.031 or less.
 
 **The under-segmenting mode is largely solved.** `inat_472599992`, which step 1
-recorded at precision 1.00 / recall 0.08, gains +0.371 and is now among the
+recorded at precision 1.00 / recall 0.08, gains +0.342 and is now among the
 better images in the set. The other large gains are the same mode.
 
 **The catastrophic failure is not.** `inat_592910855` — IoU 0.000 at 0.957
@@ -102,33 +122,35 @@ Median absolute relative area error over 3 seeds x 17 images:
 
 | Threshold | `frozen` | `field` | `field` IoU |
 | ---: | ---: | ---: | ---: |
-| 0.4 | 32.0% | 19.7% | 0.6181 |
-| 0.5 | 32.4% | 17.5% | **0.6189** |
-| 0.6 | 31.8% | **14.5%** | 0.6172 |
-| 0.7 | 31.1% | 15.1% | 0.6116 |
-| 0.8 | 32.8% | 17.6% | 0.5984 |
+| 0.4 | 32.9% | 21.7% | 0.6135 |
+| 0.5 | 32.4% | 18.4% | **0.6129** |
+| 0.6 | 30.9% | **16.1%** | 0.6097 |
+| 0.7 | 31.1% | 17.8% | 0.6028 |
+| 0.8 | 32.8% | 21.6% | 0.5877 |
 
-Area error roughly **halves**, from ~32% to 14.5-17.5%. At threshold 0.6 the
-field model's median area error (14.5%) is better than the 17.9% measured on
-*curated* validation in `data-sufficiency.md`.
+Area error roughly **halves**, from ~32% to 16-18%. At threshold 0.6 the field
+model's median area error (16.1%) is close to the 17.9% measured on *curated*
+validation in `data-sufficiency.md` — field images are no longer materially
+worse on the deliverable than curated ones.
 
 Note the `frozen` column is flat across thresholds while `field` has a clear
 optimum. Thresholding cannot fix a model whose errors are not calibration
 errors; it can tune one whose errors are.
 
 **Use threshold 0.6, not the 0.70 proposed from curated validation.** It costs
-0.0017 IoU against the 0.5 peak and buys 3 points of area error.
+0.003 IoU against the 0.5 peak and buys 2.3 points of area error.
 
 ### The residual bias is the residual failures
 
-Mean signed area error looks bad for the field arm (+40.8% at 0.5, against
-+35.1% frozen), which contradicts the median (+13.9%). The mean is outlier-driven:
+Mean signed area error remains high for both arms (+33.5% field, +39.5% frozen
+at threshold 0.5) and contradicts the median. The mean is outlier-driven, and
+the outliers are named:
 
 | Image | Relative area error | Status |
 | --- | ---: | --- |
-| `inat_592910855` | +275.8% | the unfixed tape measure |
-| `inat_436079974` | +213.4% | unchanged by retraining |
-| `inat_686282548` | +77.2% | improved but still weak |
+| `inat_592910855` | ~+276% | the unfixed tape measure |
+| `inat_436079974` | ~+213% | barely moved by retraining |
+| `inat_686282548` | ~+77% | improved but still weak |
 
 The three images driving the aggregate bias are the three the retrain did not
 fix. The residual area bias is not a systemic calibration property to be tuned
@@ -148,10 +170,11 @@ be run on.
 
 Suggested next steps, in order of expected return:
 
-1. **Two more seeds per arm** (~35 GPU-min) to settle significance properly.
-2. **Hard negatives.** The one failure mode the retrain did not touch is bright
+1. **Hard negatives.** The one failure mode the retrain did not touch is bright
    artificial objects, and the batch contained one training example of it. This
    is recommendation 2 of `scrape-probe-50.md`, still unaddressed and now with a
    measured cost attached.
-3. **A larger field evaluation set.** 17 images give a +/-0.10 interval on the
-   mean; that is what forced the underpowered seed comparison above.
+2. **A larger field evaluation set.** 17 images give a +/-0.10 interval on the
+   mean, which is why the effect estimate moved as much as it did between three
+   seeds and five. More evaluation images would tighten the estimate more
+   cheaply than more seeds now can.

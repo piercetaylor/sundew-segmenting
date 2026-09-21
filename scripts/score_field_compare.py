@@ -18,7 +18,7 @@ from sundew_segmentation.baseline import SEGFORMER_B0, UNET_RESNET34, binary_met
 BASE = pathlib.Path('/cluster/VAST/mendozacozatld-lab/PierceTaylor')
 IMG = BASE / 'field-probe-eval/images/field-eval'
 MSK = BASE / 'field-probe-v1/masks/field-eval'
-SEEDS = (17, 101, 202)
+SEEDS = (17, 101, 202, 303, 404)
 THRESHOLDS = (0.4, 0.5, 0.6, 0.7, 0.8)
 mean = np.asarray((0.485, 0.456, 0.406), np.float32)[:, None, None]
 std = np.asarray((0.229, 0.224, 0.225), np.float32)[:, None, None]
@@ -105,13 +105,13 @@ if all((a, s) in runs for a in ('frozen', 'field') for s in SEEDS):
         print(f"  seed {s:<4} delta {d:+.4f}")
     n = len(per_seed); m = float(np.mean(per_seed)); sd = float(np.std(per_seed, ddof=1))
     se = sd / np.sqrt(n)
-    crit = 4.303  # t .05/2, 2 df
+    crit = 2.776  # t .05/2, 4 df
     print(f"\n  paired mean delta {m:+.4f}   SD {sd:.4f}   SE {se:.4f}")
     print(f"  95% CI [{m-crit*se:+.4f}, {m+crit*se:+.4f}]   t = {m/se if se else float('nan'):.2f} on {n-1} df (crit {crit})")
     print(f"  seeds where field wins: {sum(1 for d in per_seed if d>0)}/{n}")
 
     # Per-image paired difference, averaged over seeds: which images moved?
-    print("\n  per-image change (mean over 3 seeds), worst-first by baseline:")
+    print("\n  per-image change (mean over all seeds), worst-first by baseline:")
     base_iou = {n_: np.mean([runs[('frozen', s)][n_][0.5]['iou'] for s in SEEDS]) for n_ in names}
     for n_ in sorted(names, key=lambda x: base_iou[x]):
         f = np.mean([runs[('field', s)][n_][0.5]['iou'] for s in SEEDS])
