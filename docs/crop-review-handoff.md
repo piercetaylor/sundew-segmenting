@@ -43,9 +43,21 @@ Windows line endings — `tr -d '\r' < f.sha256 > f2 && mv f2 f.sha256`. This bi
 the transfer in the other direction too.
 
 Inside: `crop-review-01.jpg` through `crop-review-25.jpg` (20 crops per sheet,
-indices 1-500 running left-to-right, top-to-bottom), plus
-`crop-review-manifest.jsonl` mapping every index to its source filename, and
-`ATTRIBUTION.md`.
+**indices 1-493** running left-to-right, top-to-bottom), plus
+`crop-review-manifest.jsonl` mapping every index to its source filename and
+predicted box, `ATTRIBUTION.md` with per-image creator and licence, and a copy
+of this file as `README.md`.
+
+493 rather than 500: the contamination check found 7 images that were exact
+duplicates (photo id, SHA-256 and observation id) of the frozen labelled set,
+which the acquisition script could not catch because it only dedupes against its
+own manifest. They are excluded and listed in
+`sundew-crop-review/excluded-contaminated.jsonl` on the cluster. 493 still
+clears the 457 needed for +/-2 points.
+
+Expect many crops to be loose — the predicted box covers a median 69% of the
+frame and more than 90% on about a fifth of them. **A loose crop still passes.**
+You are judging whether the plant is inside, not whether the box is tight.
 
 ## Doing the review
 

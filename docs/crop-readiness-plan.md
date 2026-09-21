@@ -102,6 +102,17 @@ Expected readings:
 | within noise | drop the crop; segmentation is not on the species critical path |
 | full frame ahead | cropping is discarding useful context |
 
+**A prior from rendering the step-1 crops.** Across the 493 review images the
+predicted box covers a median **69%** of the frame, and **107 of 493 (22%)
+cover more than 90%** — barely a crop at all. Whatever the crop contributes, it
+is not much magnification on a fifth of the data. That shifts the expectation
+toward "within noise" and makes step 2 more likely to be decisive than step 1.
+
+It also reframes the failure rate: an over-large box is *safer* for crop
+coverage (more likely to contain the plant) while being *less useful* as a crop.
+The two properties the pipeline wants are in tension, and the current model sits
+at the safe, less useful end.
+
 ## Step 3 — hard negatives, only if step 1 says so
 
 The one failure mode the field masks did not fix is bright artificial objects:
