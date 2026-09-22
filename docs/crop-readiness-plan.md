@@ -72,9 +72,15 @@ indexed review sheets. Review happens on the laptop; see
 | 5-15% | judgement call against classifier tolerance; step 2 likely decides it |
 | above 15% | fix hard negatives (step 3) before scraping |
 
-**Result: 11 failures in 493 = 2.23%, 95% CI [1.25%, 3.95%].** The rule fires
+**Result: 12 failures in 493 = 2.43%, 95% CI [1.40%, 4.21%].** The rule fires
 for the scrape, and the entire interval sits below the threshold so the call
 does not rest on the point estimate. See `reports/crop-review-result.md`.
+
+The review also returned 17 images the reviewer could not identify to species —
+blur, poor quality, occluding grass. Those are an input-quality ceiling on the
+classifier rather than crop failures, and are counted separately; the report
+states why, and shows the decision holds under every treatment of them but the
+one that charges them to the segmenter.
 
 ## Step 2 — find out whether the crop is needed at all
 
@@ -127,13 +133,13 @@ The one failure mode the field masks did not fix is bright artificial objects:
 47-mask batch contained essentially one such example and the split placed it in
 evaluation, so nothing taught the model about it.
 
-Step 1 returned 2.23%, so this is **not blocking** and the gate did not fire.
+Step 1 returned 2.43%, so this is **not blocking** and the gate did not fire.
 It remains worthwhile, and the review sharpened its aim: annotate roughly 50
 images containing hands, tape measures, labels, pots, boots and neighbouring
 vegetation, weighted toward **linear and filiform morphology**, where four
 independent measurements now agree the model is weakest — weakest growth form in
 `baseline-seed-sweep.md`, both unseen-species failures in
-`scrape-pipeline-readiness.md`, 3.85% against 1.40% for rosettes in
+`scrape-pipeline-readiness.md`, 5.13% against 1.40% for rosettes in
 `crop-review-result.md`, and the least represented form in the training set at
 17 of 191 pairs.
 
