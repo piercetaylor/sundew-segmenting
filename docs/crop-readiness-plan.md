@@ -126,6 +126,41 @@ magnification. A control arm ruled out the obvious artefact (crops were saved as
 Because the crop is justified, step 1's failure rate stays on the critical path
 rather than being made moot.
 
+## The scrape, now that both gates have cleared
+
+Step 1 cleared the failure rate and step 2 justified the crop, so the plan's own
+rule fires for the scrape. `scripts/hellbender_species_corpus.slurm` is it:
+
+| | |
+| --- | --- |
+| Class rule | species with >= 50 available observations — 110 classes |
+| Per-class cap | 300 |
+| Expected | ~21,600 images, ~45 GB, roughly 4 hours on `general` |
+| Observer cap | 5, so the classifier split groups by observer as the segmentation splits do |
+| Licences | CC0 / CC-BY / **CC-BY-NC** — see `docs/licence-policy.md` |
+| Excluded | the 238 photo ids the segmentation model has trained or validated on |
+
+Two things about the sizing are worth stating plainly, because the headline
+number invites the wrong reading.
+
+**The total was never the constraint; the class list was.** The whole eligible
+pool is 124,741 observations, of which *D. rotundifolia* alone is 35,453. Asking
+for 20,000 images without a floor and a cap would have bought a corpus that is a
+quarter one species with a tail of singletons. The floor and the cap are what
+make it 110 usable classes rather than a large pile.
+
+**Expect balanced accuracy far below the 0.754 measured at ten classes.** That
+is the problem getting harder, not the pipeline breaking, and it is written down
+here before the run for the same reason the other priors in this document were.
+`reports/species-crop-comparison.md` measured ten of the best-represented
+species; this adds a hundred species that are rarer, more regional, and in
+several cases genuinely difficult to separate by eye.
+
+The scrape is independent of the segmentation checkpoint, which is why it goes
+first: cropping 21,600 images is under an hour of GPU and can be redone, whereas
+the download cannot be cheaply repeated. Step 3 below therefore does not block
+it, and if it is ever done, only the crops need regenerating.
+
 ## Step 3 — hard negatives, only if step 1 says so
 
 The one failure mode the field masks did not fix is bright artificial objects:

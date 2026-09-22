@@ -3,6 +3,8 @@ from __future__ import annotations
 import unittest
 
 from sundew_segmentation.acquisition import (
+    ALLOWED_LICENSES,
+    LICENSE_URLS,
     Candidate,
     extract_candidates,
     original_photo_url,
@@ -44,6 +46,42 @@ class AcquisitionTests(unittest.TestCase):
         self.assertEqual(len(candidates), 1)
         self.assertEqual(candidates[0].photo_id, 31)
         self.assertNotIn("location", candidates[0].__dict__)
+
+    def test_noncommercial_needs_an_explicit_widening(self) -> None:
+        """The species corpus accepts CC BY-NC; the segmentation default must not.
+
+        docs/licence-policy.md turns on the two policies staying distinct, and
+        the failure mode is silent: widening only the API query would acquire
+        photographs the narrower dataset is not allowed to hold.
+        """
+        observation = {
+            "id": 11,
+            "quality_grade": "research",
+            "captive": False,
+            "taxon": {"id": 21, "name": "Drosera aberrans"},
+            "user": {"login": "observer"},
+            "photos": [
+                {
+                    "id": 40,
+                    "license_code": "cc-by-nc",
+                    "url": "https://example.test/40/square.jpg",
+                    "attribution": "Photographer, CC BY-NC",
+                    "original_dimensions": {"width": 2000, "height": 1500},
+                }
+            ],
+        }
+        self.assertEqual(extract_candidates([observation]), [])
+
+        widened = extract_candidates([observation], allowed_licenses=LICENSE_URLS)
+        self.assertEqual(len(widened), 1)
+        self.assertEqual(widened[0].license_code, "cc-by-nc")
+        self.assertEqual(widened[0].license_url, LICENSE_URLS["cc-by-nc"])
+
+    def test_sharealike_and_noderivatives_are_never_permitted(self) -> None:
+        """No caller can opt into SA or ND, because LICENSE_URLS does not carry them."""
+        for code in ("cc-by-sa", "cc-by-nc-sa", "cc-by-nd", "cc-by-nc-nd"):
+            self.assertNotIn(code, LICENSE_URLS)
+        self.assertEqual(set(ALLOWED_LICENSES), {"cc0", "cc-by"})
 
     def test_diversity_caps_species_and_observer(self) -> None:
         def candidate(photo_id: int, taxon: str, observer: str) -> Candidate:
