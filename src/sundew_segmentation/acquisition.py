@@ -139,11 +139,16 @@ def extract_candidates(
             continue
 
         # One photo per observation limits burst and individual-plant leakage.
+        # iNaturalist sends original_dimensions with null width/height for some
+        # photos, so .get(key, 0) returns None rather than the default: the key
+        # is present. The filter above keeps those deliberately -- an unknown
+        # dimension is not grounds to reject -- so they must sort as area 0
+        # instead of raising, and lose to any photo whose size is known.
         photo = max(
             eligible_photos,
             key=lambda item: (
-                (item.get("original_dimensions") or {}).get("width", 0)
-                * (item.get("original_dimensions") or {}).get("height", 0)
+                ((item.get("original_dimensions") or {}).get("width") or 0)
+                * ((item.get("original_dimensions") or {}).get("height") or 0)
             ),
         )
         photo_id = int(photo["id"])

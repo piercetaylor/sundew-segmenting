@@ -47,6 +47,62 @@ class AcquisitionTests(unittest.TestCase):
         self.assertEqual(candidates[0].photo_id, 31)
         self.assertNotIn("location", candidates[0].__dict__)
 
+    def test_null_original_dimensions_do_not_crash_the_largest_photo_pick(self) -> None:
+        """iNaturalist sends original_dimensions with null width/height.
+
+        This killed job 17880120 at species 77 of 110 after 15,514 images.
+        The key is present with a null value, so .get("width", 0) returns None
+        rather than the default and the area multiply raises TypeError. The
+        eligibility filter above keeps such photos on purpose, so the sort key
+        has to tolerate exactly what the filter admits.
+        """
+        observation = {
+            "id": 12,
+            "quality_grade": "research",
+            "captive": False,
+            "taxon": {"id": 22, "name": "Drosera murfetii"},
+            "user": {"login": "observer"},
+            "photos": [
+                {
+                    "id": 40,
+                    "license_code": "cc-by",
+                    "url": "https://example.test/40/square.jpg",
+                    "original_dimensions": {"width": None, "height": None},
+                },
+                {
+                    "id": 41,
+                    "license_code": "cc-by",
+                    "url": "https://example.test/41/square.jpg",
+                    "original_dimensions": {"width": 2000, "height": 1500},
+                },
+            ],
+        }
+        candidates = extract_candidates([observation])
+        self.assertEqual(len(candidates), 1)
+        # A known size beats an unknown one rather than raising.
+        self.assertEqual(candidates[0].photo_id, 41)
+
+    def test_null_dimensions_alone_still_yield_a_candidate(self) -> None:
+        """A dimension-less photo is the only one: it must still be picked."""
+        observation = {
+            "id": 13,
+            "quality_grade": "research",
+            "captive": False,
+            "taxon": {"id": 23, "name": "Drosera murfetii"},
+            "user": {"login": "observer"},
+            "photos": [
+                {
+                    "id": 42,
+                    "license_code": "cc-by",
+                    "url": "https://example.test/42/square.jpg",
+                    "original_dimensions": {"width": None, "height": None},
+                },
+            ],
+        }
+        candidates = extract_candidates([observation])
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0].photo_id, 42)
+
     def test_noncommercial_needs_an_explicit_widening(self) -> None:
         """The species corpus accepts CC BY-NC; the segmentation default must not.
 
