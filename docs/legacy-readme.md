@@ -4,7 +4,7 @@ This is the former repository landing page, retained as a historical record on 2
 
 This project builds a reproducible dataset and model for segmenting visible sundew tissue in RGB photographs. The initial model comparison will use U-Net with a ResNet-34 encoder and SegFormer-B0, followed by optional Detectron2 instance segmentation if overlapping rosettes require it.
 
-![Twelve CC0 sundew examples](assets/dataset-preview.jpg)
+![Twelve licensed sundew examples](../assets/dataset-preview.jpg)
 
 ## Current status
 
@@ -53,14 +53,14 @@ powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
 
 The batch command downloads the CLIPSeg semantic guide on its first run, then stores
 its unreviewed masks under `data/annotations/sam-proposals/` and displays them as
-predictions in Label Studio. See [the annotation workflow](docs/annotation-workflow.md)
+predictions in Label Studio. See [the annotation workflow](annotation-workflow.md)
 for the review process.
 
 ## Usage constraint
 
 This is a personal, noncommercial research portfolio. iNaturalist's terms prohibit using iNaturalist data for commercial AI or machine-learning training. Third-party photographs retain their individual licenses; the software license does not relicense them.
 
-See [the project plan](docs/project-plan.md) and [the source and licensing audit](docs/free-image-sources.md).
+See [the project plan](project-plan.md) and [the source and licensing audit](free-image-sources.md).
 
 ## Baseline models
 
@@ -102,9 +102,9 @@ pipeline check rather than the final benchmark: thin linear and forked forms wer
 the weakest validation slice, and the final model comparison should run at 768
 pixels on a GPU. The versioned metrics are under `reports/experiments/`.
 
-Annotation instructions are in [the annotation workflow](docs/annotation-workflow.md),
-the label definition is in [the annotation policy](data/annotation-policy.md), and
-the release-ready documentation starts with [the dataset card](reports/dataset-card.md),
-and the metadata release procedure is in [the release guide](docs/dataset-release.md).
+Annotation instructions are in [the annotation workflow](annotation-workflow.md),
+the label definition is in [the annotation policy](../data/annotation-policy.md), and
+the release-ready documentation starts with [the dataset card](../reports/dataset-card.md),
+and the metadata release procedure is in [the release guide](dataset-release.md).
 The final GPU comparison can be submitted with the
-[Hellbender training guide](docs/hellbender-training.md).
+[Hellbender training guide](hellbender-training.md).
