@@ -199,5 +199,42 @@ removes no comparison, so it cannot favour the crop.
 5. **Reporting, once**: ensemble the five seeds, per-class accuracy against
    training count, and the most confused species pairs.
 
+## Small models for an on-device student
+
+Goal, from 2026-09-24: a classifier small enough to run in a browser or on a
+phone and be shared with the carnivorous-plant community. The route is to
+fine-tune the large backbones as a teacher and distil them into a small
+student. A second model (Fable) was asked for an independent view and
+recommended DINOv2 ViT-S as the first student: same lineage as DINOv2-L,
+Apache-2.0 weights. Its estimate: 0.80-0.85 top-1 balanced accuracy is
+plausible for the teacher, a student 3-8 points below it with distillation on
+extra unlabeled photos, and 0.90 unlikely without merging species that cannot
+be told apart from a photo.
+
+**Small-backbone screen**, the same frozen protocol as above (224 px, split
+`split-110`, linear probe, crop / full / full-square), 11 backbones of 8-35M
+parameters: `dinov2-s`, `dinov2-s-reg`, `dinov3-vit-s`, `dinov3-vit-s-plus`,
+`tinyvit-21m-in22k`, `convnext-nano-in12k`, `convnext-t-in22k`,
+`mobilenetv4-conv-m-in12k`, `mobilenetv4-hybrid-m-in12k`,
+`efficientnetv2-s-in21k`, `mobileclip2-s2` (image tower only, so no
+zero-shot). Job 17943537, summary 17943538 ->
+`reports/species-backbone-screen-small/`, which lists all 20 models.
+
+Prior, written before the run: DINOv2-S or DINOv3-S leads the small models,
+MobileNetV4 and EfficientNetV2 trail, and every small model lands below
+DINOv2-B (0.675).
+
+Decision rule, primary number linear-probe balanced accuracy on the crop arm:
+
+| Best small backbone, frozen | Action |
+| --- | --- |
+| >= 0.58 (beats the fine-tuned ResNet-18 frozen) | on-device student is viable; that backbone is the student |
+| 0.50-0.58 | viable only with distillation; decide after the teacher fine-tunes |
+| < 0.50 | drop on-device for now; serve the fine-tuned teacher from a server |
+
+Before building on it: DINOv3 weights carry Meta's own licence, with conditions
+on derived models. A DINOv3 student is used only after that licence is checked
+for free public release.
+
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.
