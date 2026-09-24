@@ -8,6 +8,7 @@ __pycache__/
 dist/
 build/
 *.egg-info/
+*.code-workspace
 
 # Downloaded third-party images and generated artifacts stay out of Git.
 data/raw/

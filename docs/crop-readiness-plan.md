@@ -161,6 +161,11 @@ first: cropping 21,600 images is under an hour of GPU and can be redone, whereas
 the download cannot be cheaply repeated. Step 3 below therefore does not block
 it, and if it is ever done, only the crops need regenerating.
 
+**Result: crop 0.546, full frame 0.525, +0.021 over five seeds, 5 of 5.** The
+crop effect held at 110 classes and the absolute number fell as expected. See
+`reports/species-110-baseline.md`; the classifier work continues in
+`docs/species-classifier-plan.md`.
+
 ## Step 3 — hard negatives, only if step 1 says so
 
 The one failure mode the field masks did not fix is bright artificial objects:

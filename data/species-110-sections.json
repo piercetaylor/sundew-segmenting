@@ -1,0 +1,556 @@
+{
+  "source": "iNaturalist taxonomy API (api.inaturalist.org/v1/taxa, ancestor_ids), fetched 2026-09-23",
+  "note": "Infrageneric ranks as iNaturalist records them; used only to score near-misses (right section, wrong species). Not an independent taxonomic authority.",
+  "species": {
+    "Drosera aberrans": {
+      "taxon_id": 143292,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera admirabilis": {
+      "taxon_id": 148366,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera alba": {
+      "taxon_id": 148369,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera aliciae": {
+      "taxon_id": 52654,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera androsacea": {
+      "taxon_id": 148372,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera anglica": {
+      "taxon_id": 52655,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera aquatica": {
+      "taxon_id": 882774,
+      "subgenus": "Drosera",
+      "section": "Arachnopus"
+    },
+    "Drosera arcturi": {
+      "taxon_id": 54678,
+      "subgenus": "Drosera",
+      "section": "Arcturia"
+    },
+    "Drosera auriculata": {
+      "taxon_id": 424565,
+      "subgenus": "Ergaleium",
+      "section": "Luniferae"
+    },
+    "Drosera barbigera": {
+      "taxon_id": 895750,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera binata": {
+      "taxon_id": 54684,
+      "subgenus": "Drosera",
+      "section": "Phycopsis"
+    },
+    "Drosera brevicornis": {
+      "taxon_id": 881614,
+      "subgenus": "Drosera",
+      "section": "Lasiocephala"
+    },
+    "Drosera brevifolia": {
+      "taxon_id": 162093,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera bulbosa": {
+      "taxon_id": 551319,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera burkeana": {
+      "taxon_id": 349807,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera burmanni": {
+      "taxon_id": 191715,
+      "subgenus": "Drosera",
+      "section": "Thelocalyx"
+    },
+    "Drosera capensis": {
+      "taxon_id": 52656,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera capillaris": {
+      "taxon_id": 162094,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera cayennensis": {
+      "taxon_id": 602512,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera cistiflora": {
+      "taxon_id": 119370,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera collina": {
+      "taxon_id": 736763,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera collinsiae": {
+      "taxon_id": 584288,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera communis": {
+      "taxon_id": 549237,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera cuneifolia": {
+      "taxon_id": 543564,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera dielsiana": {
+      "taxon_id": 355500,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera dilatatopetiolaris": {
+      "taxon_id": 764664,
+      "subgenus": "Drosera",
+      "section": "Lasiocephala"
+    },
+    "Drosera drummondii": {
+      "taxon_id": 809372,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera eneabba": {
+      "taxon_id": 785309,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera eremaea": {
+      "taxon_id": 713918,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera ericgreenii": {
+      "taxon_id": 548254,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera erythrogyne": {
+      "taxon_id": 635249,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera erythrorhiza": {
+      "taxon_id": 148228,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera esterhuyseniae": {
+      "taxon_id": 584289,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera filiformis": {
+      "taxon_id": 52657,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera finlaysonii": {
+      "taxon_id": 1666345,
+      "subgenus": "Drosera",
+      "section": "Arachnopus"
+    },
+    "Drosera floridana": {
+      "taxon_id": 1698737,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera fulva": {
+      "taxon_id": 881586,
+      "subgenus": "Drosera",
+      "section": "Lasiocephala"
+    },
+    "Drosera gigantea": {
+      "taxon_id": 739940,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera glabripes": {
+      "taxon_id": 548253,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera glanduligera": {
+      "taxon_id": 143360,
+      "subgenus": "Drosera",
+      "section": "Coelophylla"
+    },
+    "Drosera gunniana": {
+      "taxon_id": 823782,
+      "subgenus": "Ergaleium",
+      "section": "Luniferae"
+    },
+    "Drosera heterophylla": {
+      "taxon_id": 635253,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera hilaris": {
+      "taxon_id": 584290,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera hirsuta": {
+      "taxon_id": 847666,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera hookeri": {
+      "taxon_id": 154709,
+      "subgenus": "Ergaleium",
+      "section": "Luniferae"
+    },
+    "Drosera huegelii": {
+      "taxon_id": 635282,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera humilis": {
+      "taxon_id": 920802,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera hyperostigma": {
+      "taxon_id": 929599,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera indica": {
+      "taxon_id": 191717,
+      "subgenus": "Drosera",
+      "section": "Arachnopus"
+    },
+    "Drosera intermedia": {
+      "taxon_id": 53038,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera latifolia": {
+      "taxon_id": 781307,
+      "subgenus": "Drosera",
+      "section": "Brasiliae"
+    },
+    "Drosera linearis": {
+      "taxon_id": 162095,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera lunata": {
+      "taxon_id": 713709,
+      "subgenus": "Ergaleium",
+      "section": "Luniferae"
+    },
+    "Drosera macrantha": {
+      "taxon_id": 143359,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera macrophylla": {
+      "taxon_id": 924850,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera madagascariensis": {
+      "taxon_id": 123533,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera magna": {
+      "taxon_id": 736764,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera menziesii": {
+      "taxon_id": 148225,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera micrantha": {
+      "taxon_id": 713940,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera miniata": {
+      "taxon_id": 781121,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera minutiflora": {
+      "taxon_id": 1271667,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera modesta": {
+      "taxon_id": 635251,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera montana": {
+      "taxon_id": 83886,
+      "subgenus": "Drosera",
+      "section": "Brasiliae"
+    },
+    "Drosera monticola": {
+      "taxon_id": 551660,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera murfetii": {
+      "taxon_id": 602892,
+      "subgenus": "Drosera",
+      "section": "Arcturia"
+    },
+    "Drosera natalensis": {
+      "taxon_id": 123546,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera neesii": {
+      "taxon_id": 795048,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera neocaledonica": {
+      "taxon_id": 510367,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera nitidula": {
+      "taxon_id": 123548,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera ordensis": {
+      "taxon_id": 483429,
+      "subgenus": "Drosera",
+      "section": "Lasiocephala"
+    },
+    "Drosera pallida": {
+      "taxon_id": 511323,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera pauciflora": {
+      "taxon_id": 584291,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera peltata": {
+      "taxon_id": 123397,
+      "subgenus": "Ergaleium",
+      "section": "Luniferae"
+    },
+    "Drosera petiolaris": {
+      "taxon_id": 704609,
+      "subgenus": "Drosera",
+      "section": "Lasiocephala"
+    },
+    "Drosera planchonii": {
+      "taxon_id": 713917,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera platypoda": {
+      "taxon_id": 635239,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera platystigma": {
+      "taxon_id": 148257,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera porrecta": {
+      "taxon_id": 560562,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera praefolia": {
+      "taxon_id": 550282,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera pulchella": {
+      "taxon_id": 547511,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera purpurascens": {
+      "taxon_id": 635337,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera pygmaea": {
+      "taxon_id": 122209,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera ramentacea": {
+      "taxon_id": 584292,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera roseana": {
+      "taxon_id": 895680,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera rosulata": {
+      "taxon_id": 568960,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera rotundifolia": {
+      "taxon_id": 52658,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera rupicola": {
+      "taxon_id": 780686,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera schmutzii": {
+      "taxon_id": 700174,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera scorpioides": {
+      "taxon_id": 895673,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera serpens": {
+      "taxon_id": 704611,
+      "subgenus": "Drosera",
+      "section": "Arachnopus"
+    },
+    "Drosera sessilifolia": {
+      "taxon_id": 566566,
+      "subgenus": "Drosera",
+      "section": "Thelocalyx"
+    },
+    "Drosera slackii": {
+      "taxon_id": 548255,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera spatulata": {
+      "taxon_id": 122208,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera spilos": {
+      "taxon_id": 791277,
+      "subgenus": "Drosera",
+      "section": "Bryastrum"
+    },
+    "Drosera squamosa": {
+      "taxon_id": 736765,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera stenopetala": {
+      "taxon_id": 401564,
+      "subgenus": "Drosera",
+      "section": "Psychophila"
+    },
+    "Drosera stolonifera": {
+      "taxon_id": 153966,
+      "subgenus": "Ergaleium",
+      "section": "Stolonifera"
+    },
+    "Drosera stricticaulis": {
+      "taxon_id": 713922,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera subhirtella": {
+      "taxon_id": 552380,
+      "subgenus": "Ergaleium",
+      "section": "Macrantha"
+    },
+    "Drosera sulphurea": {
+      "taxon_id": 895662,
+      "subgenus": "Ergaleium",
+      "section": "Ergaleium"
+    },
+    "Drosera tomentosa": {
+      "taxon_id": 829565,
+      "subgenus": "Drosera",
+      "section": "Brasiliae"
+    },
+    "Drosera tracyi": {
+      "taxon_id": 162096,
+      "subgenus": "Drosera",
+      "section": "Drosera"
+    },
+    "Drosera trinervia": {
+      "taxon_id": 543561,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera tubaestylis": {
+      "taxon_id": 547505,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera uniflora": {
+      "taxon_id": 549236,
+      "subgenus": "Drosera",
+      "section": "Psychophila"
+    },
+    "Drosera venusta": {
+      "taxon_id": 584295,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera whittakeri": {
+      "taxon_id": 148381,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    },
+    "Drosera xerophila": {
+      "taxon_id": 741896,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera zeyheri": {
+      "taxon_id": 148377,
+      "subgenus": "Drosera",
+      "section": "Ptycnostigma"
+    },
+    "Drosera zonaria": {
+      "taxon_id": 148231,
+      "subgenus": "Ergaleium",
+      "section": "Erythrorhiza"
+    }
+  }
+}

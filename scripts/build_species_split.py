@@ -28,6 +28,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--exclude", type=pathlib.Path, nargs="*", default=[],
                    help="Manifests whose photo_ids must not appear (segmentation training data).")
     p.add_argument("--val-fraction", type=float, default=0.20)
+    p.add_argument("--max-class-val-fraction", type=float, default=None,
+                   help="Hard per-class ceiling on the validation share. An observer whose "
+                        "images would push any class past it goes to train. Needed at 110 "
+                        "classes: multi-species observers (259 images) are visited first and, "
+                        "with validation empty, every one of them lowers the L1 cost, so they "
+                        "flood validation and starve thin classes of training data.")
     p.add_argument("--seed", type=int, default=20260921)
     return p.parse_args()
 
@@ -80,6 +86,10 @@ def main() -> int:
         group = by_observer[obs]
         contribution = Counter(r["label"] for r in group)
         to_val = val_have + contribution
+        if args.max_class_val_fraction is not None and any(
+                to_val[lab] > args.max_class_val_fraction * per_class[lab] for lab in contribution):
+            assign[obs] = "train"
+            continue
         # Tie-break randomly so the split is not an artefact of observer name order.
         cost_val, cost_train = cost(to_val), cost(val_have)
         if cost_val < cost_train or (cost_val == cost_train and rng.random() < 0.5):
