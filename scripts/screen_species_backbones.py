@@ -45,6 +45,20 @@ MODELS = {
     "siglip2-so400m": ("timm", "vit_so400m_patch14_siglip_378.v2_webli"),
     "bioclip": ("open_clip", "hf-hub:imageomics/bioclip"),
     "bioclip-2": ("open_clip", "hf-hub:imageomics/bioclip-2"),
+    # Small backbones, candidates for an on-device (browser / phone) student.
+    # Added 2026-09-24 after the main screen; see the small-model section of
+    # docs/species-classifier-plan.md.
+    "dinov2-s": ("timm", "vit_small_patch14_dinov2.lvd142m"),
+    "dinov2-s-reg": ("timm", "vit_small_patch14_reg4_dinov2.lvd142m"),
+    "dinov3-vit-s": ("timm", "vit_small_patch16_dinov3.lvd1689m"),
+    "dinov3-vit-s-plus": ("timm", "vit_small_plus_patch16_dinov3.lvd1689m"),
+    "tinyvit-21m-in22k": ("timm", "tiny_vit_21m_224.dist_in22k"),
+    "convnext-nano-in12k": ("timm", "convnext_nano.in12k"),
+    "convnext-t-in22k": ("timm", "convnext_tiny.fb_in22k"),
+    "mobilenetv4-conv-m-in12k": ("timm", "mobilenetv4_conv_medium.e250_r384_in12k"),
+    "mobilenetv4-hybrid-m-in12k": ("timm", "mobilenetv4_hybrid_medium.e200_r256_in12k"),
+    "efficientnetv2-s-in21k": ("timm", "tf_efficientnetv2_s.in21k"),
+    "mobileclip2-s2": ("timm", "fastvit_mci2.apple_mclip2_dfndr2b"),
 }
 ARMS = ("crop", "full", "full-square")
 LAMBDAS = (1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1.0)
@@ -73,7 +87,8 @@ def load_backbone(tag: str, device: str):
     lib, name = MODELS[tag]
     if lib == "timm":
         import timm
-        kw = {"img_size": IMAGE_SIZE} if "vit_" in name else {}
+        # Plain ViTs only; tiny_vit_ and fastvit_ also contain "vit_".
+        kw = {"img_size": IMAGE_SIZE} if name.startswith("vit_") else {}
         model = timm.create_model(name, pretrained=True, num_classes=0, **kw)
         cfg = timm.data.resolve_model_data_config(model)
         return model.eval().to(device), cfg["mean"], cfg["std"], None
