@@ -24,5 +24,5 @@ set -u
 
 python scripts/summarize_backbone_screen.py \
   --screen-dir models/species-110/screen \
-  --out-md reports/species-backbone-screen/results.md \
-  --out-json reports/species-backbone-screen/summary.json
+  --out-md "${OUT:-reports/species-backbone-screen}/results.md" \
+  --out-json "${OUT:-reports/species-backbone-screen}/summary.json"
