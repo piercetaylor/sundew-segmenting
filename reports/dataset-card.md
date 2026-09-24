@@ -24,11 +24,20 @@ page, creator, image-level license, dimensions, checksum, review decision, and s
 
 ## Splits
 
-| Split | Images |
-|---|---:|
-| Train | 184 |
-| Validation | 26 |
-| Test | 40 |
+| Split | Curated tasks | Accepted pairs (v0.3.0) |
+|---|---:|---:|
+| Train | 184 | 144 |
+| Validation | 26 | 19 |
+| Test | 40 | 28 |
+| **Total** | **250** | **191** |
+
+The left column is the curated core as selected for annotation. The right column
+is what survived review and is therefore what a model can actually train on:
+of the 250 reviewed tasks, 191 were accepted, 47 were marked ambiguous, and 12
+were rejected. The accepted subset spans 51 taxa and 139 photographers, with
+158 CC BY and 33 CC0 images, and its growth-form counts are 131 rosette, 32
+erect or branching, 17 linear or forked, and 11 dense mat. See
+`dataset-freeze-v0.3.0.md`.
 
 All photographs from one observer are assigned to one split. This reduces leakage
 from photographer-specific equipment, processing, and habitat preferences. It does
@@ -57,6 +66,12 @@ selection capped common species at 25 and photographers at 8 where possible. Thi
 yielded 250 core images, 64 reserves, and 186 rejects. Originals are retained so
 every decision is reversible.
 
+This rejection rule shapes what a model trained on the core can do. Images
+with hands, bright artificial objects, heavy blur, or distant plants were
+screened out, so the core contains almost no examples teaching that those are
+background. Models trained on it fail confidently on such images; see
+`scrape-probe-50.md`.
+
 No exact SHA-256 duplicates or identical 64-bit difference-hash groups were found.
 All 500 source rows have a creator and source page. Exact coordinates are neither
 acquired nor published.
@@ -72,7 +87,8 @@ prior.
 
 ## Labels
 
-Annotation is in progress, but the public metadata release does not include
+Annotation of the 250-task core is complete and frozen as reviewed release
+v0.3.0 (191 accepted pairs). The public metadata release does not include
 ground-truth masks. Follow `data/annotation-policy.md`. Model-generated or
 SAM-assisted masks are proposals until a person corrects and accepts them.
 Double-label 10% of the core and report inter-annotator Dice and IoU before

@@ -20,10 +20,23 @@ from PIL import Image
 
 
 INAT_API = "https://api.inaturalist.org/v1/observations"
-ALLOWED_LICENSES = {
+
+# Every licence this project is willing to touch, and where it is defined.
+# NoDerivatives is absent on purpose: masks and crops are derivative works, so
+# ND photographs could be trained on but never illustrated or shared.
+# ShareAlike is absent on purpose too, and that one is a judgement call rather
+# than a plain reading -- see docs/licence-policy.md.
+LICENSE_URLS = {
     "cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
     "cc-by": "https://creativecommons.org/licenses/by/4.0/",
+    "cc-by-nc": "https://creativecommons.org/licenses/by-nc/4.0/",
 }
+
+# The default, and the policy for the segmentation dataset: no NonCommercial.
+# The species corpus passes a wider set explicitly; nothing widens by accident.
+ALLOWED_LICENSES = {k: LICENSE_URLS[k] for k in ("cc0", "cc-by")}
+NONCOMMERCIAL_LICENSES = dict(LICENSE_URLS)
+
 USER_AGENT = "SundewSegmentation/0.1 (personal noncommercial research)"
 
 
@@ -84,8 +97,16 @@ def fetch_json(url: str, timeout: float = 45.0) -> dict[str, Any]:
         return json.load(response)
 
 
-def extract_candidates(observations: Iterable[Mapping[str, Any]]) -> list[Candidate]:
-    """Return one eligible photograph per observation without location fields."""
+def extract_candidates(
+    observations: Iterable[Mapping[str, Any]],
+    allowed_licenses: Mapping[str, str] = ALLOWED_LICENSES,
+) -> list[Candidate]:
+    """Return one eligible photograph per observation without location fields.
+
+    ``allowed_licenses`` defaults to the narrow CC0/CC-BY policy, so a caller
+    that widens the API query without widening this too gets nothing back
+    rather than silently acquiring photographs it did not mean to.
+    """
     candidates: list[Candidate] = []
     seen_photos: set[int] = set()
     for observation in observations:
@@ -103,7 +124,7 @@ def extract_candidates(observations: Iterable[Mapping[str, Any]]) -> list[Candid
             license_code = str(photo.get("license_code") or "").lower()
             photo_id = photo.get("id")
             photo_url = photo.get("url")
-            if license_code not in ALLOWED_LICENSES:
+            if license_code not in allowed_licenses:
                 continue
             if not isinstance(photo_id, int) or not isinstance(photo_url, str):
                 continue
@@ -118,11 +139,16 @@ def extract_candidates(observations: Iterable[Mapping[str, Any]]) -> list[Candid
             continue
 
         # One photo per observation limits burst and individual-plant leakage.
+        # iNaturalist sends original_dimensions with null width/height for some
+        # photos, so .get(key, 0) returns None rather than the default: the key
+        # is present. The filter above keeps those deliberately -- an unknown
+        # dimension is not grounds to reject -- so they must sort as area 0
+        # instead of raising, and lose to any photo whose size is known.
         photo = max(
             eligible_photos,
             key=lambda item: (
-                (item.get("original_dimensions") or {}).get("width", 0)
-                * (item.get("original_dimensions") or {}).get("height", 0)
+                ((item.get("original_dimensions") or {}).get("width") or 0)
+                * ((item.get("original_dimensions") or {}).get("height") or 0)
             ),
         )
         photo_id = int(photo["id"])
@@ -139,7 +165,7 @@ def extract_candidates(observations: Iterable[Mapping[str, Any]]) -> list[Candid
                 image_url=original_photo_url(str(photo["url"])),
                 source_page=f"https://www.inaturalist.org/observations/{observation_id}",
                 license_code=str(photo["license_code"]).lower(),
-                license_url=ALLOWED_LICENSES[str(photo["license_code"]).lower()],
+                license_url=allowed_licenses[str(photo["license_code"]).lower()],
                 attribution=str(photo.get("attribution") or ""),
                 creator=creator,
                 taxon_id=taxon.get("id") if isinstance(taxon.get("id"), int) else None,

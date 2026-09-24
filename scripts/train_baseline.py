@@ -42,6 +42,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--patience", type=int, default=5)
     parser.add_argument("--seed", type=int, default=17)
+    parser.add_argument("--train-fraction", type=float, default=1.0,
+                        help="train on this fraction of the train split, for data-scaling curves")
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--no-pretrained", action="store_true")
     parser.add_argument("--loss", choices=("bce-dice", "bce-tversky"), default="bce-tversky")
@@ -63,6 +65,14 @@ def main() -> None:
         }
         if not pairs["train"] or not pairs["validation"]:
             raise FileNotFoundError("reviewed masks are required in both train and validation splits")
+        if not 0.0 < args.train_fraction <= 1.0:
+            raise ValueError(f"--train-fraction must be in (0, 1]: {args.train_fraction}")
+        if args.train_fraction < 1.0:
+            # Subsample deterministically from the seed so a data-scaling curve
+            # varies the subset with the seed rather than always cutting the
+            # same images. Validation is never subsampled.
+            keep = max(1, round(len(pairs["train"]) * args.train_fraction))
+            pairs["train"] = random.Random(args.seed).sample(pairs["train"], keep)
     except (FileNotFoundError, ValueError) as error:
         raise SystemExit(f"Training data check failed: {error}") from error
 
@@ -253,6 +263,7 @@ def main() -> None:
             split: dict(sorted(Counter(str(sample["growth_form"]) for sample in samples).items()))
             for split, samples in pairs.items()
         },
+        "train_fraction": args.train_fraction,
         "train_samples": len(train_loader.dataset),
         "validation_samples": len(validation_loader.dataset),
         "elapsed_seconds": perf_counter() - started,
