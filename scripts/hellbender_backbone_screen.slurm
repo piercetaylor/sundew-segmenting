@@ -27,7 +27,15 @@ set -euo pipefail
 BASE=/cluster/VAST/mendozacozatld-lab/PierceTaylor
 CORPUS="$BASE/sundew-species-corpus"
 SPLIT="$CORPUS/split-110"
-MODELS=(resnet18-in1k convnext-b-in22k dinov2-b dinov2-l-reg dinov3-vit-b dinov3-convnext-b siglip2-so400m bioclip bioclip-2)
+# MODEL_SET=small (array 0-10) screens the on-device student candidates:
+#   jid=$(sbatch --parsable --array=0-10 --export=ALL,MODEL_SET=small scripts/hellbender_backbone_screen.slurm)
+#   sbatch --dependency=afterok:$jid --export=ALL,OUT=reports/species-backbone-screen-small scripts/hellbender_backbone_screen_summary.slurm
+case "${MODEL_SET:-main}" in
+  main)  MODELS=(resnet18-in1k convnext-b-in22k dinov2-b dinov2-l-reg dinov3-vit-b dinov3-convnext-b siglip2-so400m bioclip bioclip-2) ;;
+  small) MODELS=(dinov2-s dinov2-s-reg dinov3-vit-s dinov3-vit-s-plus tinyvit-21m-in22k convnext-nano-in12k convnext-t-in22k
+                 mobilenetv4-conv-m-in12k mobilenetv4-hybrid-m-in12k efficientnetv2-s-in21k mobileclip2-s2) ;;
+  *) echo "unknown MODEL_SET=$MODEL_SET"; exit 1 ;;
+esac
 MODEL="${MODELS[$SLURM_ARRAY_TASK_ID]}"
 
 cd "$BASE/sundew-segmenting"
