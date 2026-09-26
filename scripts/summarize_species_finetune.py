@@ -4,8 +4,12 @@ Reads <finetune-dir>/<model>/<arm>/seed-<seed>/classifier-metrics.json and
 predictions-{best,last}.npz, and writes a Markdown table plus a JSON summary:
 
 - per-seed validation balanced accuracy, best and last epoch;
-- paired differences over seeds (arm vs arm, model vs model), with a t
-  interval on 4 df, as in reports/species-110-baseline.md;
+- paired differences of the seed mean (arm vs arm, model vs model) with an
+  observer-grouped bootstrap interval: every seed is rescored on the same
+  resample of observers, then averaged. This is the primary interval, because
+  it covers both seed noise and which photos happen to be in validation;
+- the seed-paired t interval on 4 df, as in reports/species-110-baseline.md,
+  as a secondary check. It treats validation as fixed, so it is narrower;
 - the 5-seed ensemble (mean softmax) with an observer-grouped bootstrap
   interval, and paired ensemble differences on shared resamples.
 
@@ -87,11 +91,24 @@ def main() -> int:
         score[m, a, s, "best"] = balanced(y, zb["scores"].argmax(1), ones, n)
         score[m, a, s, "last"] = balanced(y, zl["scores"].argmax(1), ones, n)
 
-    summary = {"validation_images": int(len(y)), "validation_observers": int(len(uniq)),
-               "bootstrap_reps": args.reps, "anchor_resnet18": ANCHOR, "per_seed": {}, "paired": {},
-               "ensemble": {}, "ensemble_paired": {}}
+    # Seed-mean balanced accuracy on each bootstrap resample, per arm.
+    seed_boot = {}
     for m in MODELS:
         for a in ARMS:
+            for w in ("best", "last"):
+                z = 1 if w == "best" else 2
+                preds = [runs[m, a, s][z]["scores"].argmax(1) for s in SEEDS]
+                seed_boot[m, a, w] = np.mean([[balanced(y, p, wt, n) for wt in weights] for p in preds], axis=0)
+
+    summary = {"validation_images": int(len(y)), "validation_observers": int(len(uniq)),
+               "bootstrap_reps": args.reps, "anchor_resnet18": ANCHOR, "per_seed": {}, "paired": {},
+               "seed_mean": {}, "paired_bootstrap": {}, "ensemble": {}, "ensemble_paired": {}}
+    for m in MODELS:
+        for a in ARMS:
+            summary["seed_mean"][f"{m}/{a}"] = {
+                w: {"mean": float(np.mean([score[m, a, s, w] for s in SEEDS])),
+                    "ci95": [float(np.percentile(seed_boot[m, a, w], q)) for q in (2.5, 97.5)]}
+                for w in ("best", "last")}
             summary["per_seed"][f"{m}/{a}"] = {
                 "best": [score[m, a, s, "best"] for s in SEEDS],
                 "last": [score[m, a, s, "last"] for s in SEEDS],
@@ -105,6 +122,13 @@ def main() -> int:
         key = f"{m1}/{a1} - {m0}/{a0}"
         summary["paired"][key] = {w: paired_t([score[m1, a1, s, w] - score[m0, a0, s, w] for s in SEEDS])
                                   for w in ("best", "last")}
+        summary["paired_bootstrap"][key] = {}
+        for w in ("best", "last"):
+            d = seed_boot[m1, a1, w] - seed_boot[m0, a0, w]
+            summary["paired_bootstrap"][key][w] = {
+                "mean": summary["paired"][key][w]["mean"],
+                "ci95": [float(np.percentile(d, 2.5)), float(np.percentile(d, 97.5))],
+                "p_le_0": float(np.mean(d <= 0))}
 
     boot = {}
     for m in MODELS:
@@ -147,13 +171,24 @@ def main() -> int:
             lines.append(f"| `{m}` | `{a}` | " + " | ".join(f"{v:.4f}" for v in p["best"])
                          + f" | **{np.mean(p['best']):.4f}** | {np.std(p['best'], ddof=1):.4f} | {np.mean(p['last']):.4f}"
                          + f" | {', '.join(map(str, p['best_epoch']))} | {', '.join(map(str, p['epochs_run']))} |")
-    lines += ["", "## Paired over seeds", "",
-              "| Comparison | Best epoch [95% CI] | t | Wins | Last epoch [95% CI] | Wins |",
-              "| --- | --- | ---: | ---: | --- | ---: |"]
+    lines += ["", "## Seed mean with observer-bootstrap interval", "",
+              "| Model | Arm | Best epoch [95% CI] | Last epoch [95% CI] |", "| --- | --- | --- | --- |"]
+    for key, v in summary["seed_mean"].items():
+        m, a = key.split("/")
+        b, l = v["best"], v["last"]
+        lines.append(f"| `{m}` | `{a}` | {b['mean']:.4f} [{b['ci95'][0]:.3f}, {b['ci95'][1]:.3f}]"
+                     f" | {l['mean']:.4f} [{l['ci95'][0]:.3f}, {l['ci95'][1]:.3f}] |")
+    lines += ["", "## Paired differences of the seed mean", "",
+              "Primary: observer-grouped bootstrap (seed noise and validation sampling). "
+              "Secondary: seed-paired t on 4 df (seed noise only, validation held fixed).", "",
+              "| Comparison | Best epoch | Bootstrap 95% CI | P(delta <= 0) | t 95% CI | Wins | Last epoch | Bootstrap 95% CI |",
+              "| --- | ---: | --- | ---: | --- | ---: | ---: | --- |"]
     for key, v in summary["paired"].items():
         b, l = v["best"], v["last"]
-        lines.append(f"| {key} | {b['mean']:+.4f} [{b['ci95'][0]:+.3f}, {b['ci95'][1]:+.3f}] | {b['t']:.2f} | {b['wins']}/5"
-                     f" | {l['mean']:+.4f} [{l['ci95'][0]:+.3f}, {l['ci95'][1]:+.3f}] | {l['wins']}/5 |")
+        bb, bl = summary["paired_bootstrap"][key]["best"], summary["paired_bootstrap"][key]["last"]
+        lines.append(f"| {key} | {b['mean']:+.4f} | [{bb['ci95'][0]:+.3f}, {bb['ci95'][1]:+.3f}] | {bb['p_le_0']:.3f}"
+                     f" | [{b['ci95'][0]:+.3f}, {b['ci95'][1]:+.3f}] | {b['wins']}/5"
+                     f" | {l['mean']:+.4f} | [{bl['ci95'][0]:+.3f}, {bl['ci95'][1]:+.3f}] |")
     lines += ["", "## 5-seed ensemble (mean softmax, last epoch)", "",
               "| Model | Arm | Balanced acc [95% CI] | Top-5 |", "| --- | --- | --- | ---: |"]
     for key, v in summary["ensemble"].items():

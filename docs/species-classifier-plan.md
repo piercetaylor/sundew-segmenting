@@ -196,9 +196,31 @@ removes no comparison, so it cannot favour the crop.
    - **Done 2026-09-25, jobs 17943517 / 17943518** (`reports/species-finetune.md`):
      DINOv2-L `full` 0.824, `crop` 0.820; BioCLIP-2 0.802 / 0.799; anchor
      0.499 / 0.516. DINOv2-L beats BioCLIP-2 on every arm, 5/5 seeds, and is
-     the teacher. `crop` - `full` is -0.004 [-0.007, -0.000] for DINOv2-L, so
-     the crop is dropped from the species path: later stages use `full`.
-3. **Then resolution**, 224 -> 384, using the existing 768 px crops.
+     the teacher. `crop` - `full` is -0.004 [-0.012, +0.006] for DINOv2-L
+     (observer bootstrap of the seed mean), so the crop buys nothing and is
+     dropped from the species path: later stages use `full`.
+   - **Audit, 2026-09-26** (`reports/species-finetune.md`, "Audit"): split
+     verified clean; intervals switched to the observer bootstrap of the
+     seed mean; TinyViT crash, `full-square` upsampling and requeue-retrain
+     fixed in `scripts/finetune_species_backbone.py`.
+3. **Then resolution**, 224 -> 384, on the `full` arm (the crop is dropped).
+
+**Test protocol, fixed 2026-09-26 before any test image is read.** The test
+split (2,601 images, 1,095 observers) is scored once, after the teacher
+configuration is final (224 or 384 px, whichever the resolution rule picks),
+and the result is reported whatever it is.
+
+- Scored: the DINOv2-L `full` 5-seed last-epoch ensemble (mean softmax), its
+  five single seeds, and the ResNet-18 anchor on `split-110-test` (`full` and
+  `crop`, 5 seeds each). Last epoch, not best, so no choice is made on
+  validation at the checkpoint level.
+- Metrics: balanced accuracy (primary), plain accuracy, top-5, section-level
+  balanced accuracy, and ECE before and after the temperature fitted on
+  validation (T = 0.72 at 224 px; refitted on validation if the
+  configuration changes). Intervals: observer-grouped bootstrap, 2,000
+  resamples.
+- Nothing is retrained or re-tuned after the test is read. If the test number
+  falls outside the validation interval, that is reported, not corrected.
 4. **Geo prior**, in parallel, as it is independent of the image model:
    re-fetch observation coordinates and fuse a spatial prior late.
 5. **Reporting, once**: ensemble the five seeds, per-class accuracy against

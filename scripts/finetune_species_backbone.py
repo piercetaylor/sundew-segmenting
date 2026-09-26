@@ -83,7 +83,8 @@ def build(tag: str, n_classes: int, drop_path: float, image_size: int, device: s
     if lib == "timm":
         import timm
         from timm.optim import param_groups_layer_decay
-        kw = {"img_size": image_size} if "vit_" in name else {}
+        # Plain ViTs only; tiny_vit_ and fastvit_ also contain "vit_" and reject img_size.
+        kw = {"img_size": image_size} if name.startswith("vit_") else {}
         if drop_path and not name.startswith("resnet"):
             kw["drop_path_rate"] = drop_path
         backbone = timm.create_model(name, pretrained=True, num_classes=0, **kw)
@@ -194,7 +195,12 @@ def main() -> int:
     bicubic = transforms.InterpolationMode.BICUBIC
     norm = transforms.Normalize(mean, std)
     square = [transforms.Resize((s, s), interpolation=bicubic)] if args.arm == "full-square" else []
-    train_tf = transforms.Compose(square + [
+    # Training squashes to a larger square first, so the smallest random crop
+    # (scale 0.7) is still ~s px and is never upsampled. Squashing straight to s
+    # would train full-square on blurrier crops than the other arms see.
+    s_big = int(round(s / 0.7 ** 0.5))
+    train_square = [transforms.Resize((s_big, s_big), interpolation=bicubic)] if square else []
+    train_tf = transforms.Compose(train_square + [
         transforms.RandomResizedCrop(s, scale=(0.7, 1.0), interpolation=bicubic),
         transforms.RandomHorizontalFlip(),
         transforms.ColorJitter(0.2, 0.2, 0.2, 0.0),
@@ -246,6 +252,12 @@ def main() -> int:
     suffix = "-smoke" if args.limit else ""
     best, best_epoch, since, history, start_epoch = -1.0, -1, 0, [], 1
     last = args.output / f"last{suffix}.pt"
+    done = args.output / f"classifier-metrics{suffix}.json"
+    if done.exists() and not last.exists():
+        # last.pt is deleted on completion, so a requeue after the end would
+        # otherwise retrain from scratch and overwrite a finished run.
+        print(f"already finished ({done}); nothing to do")
+        return 0
     if last.exists():
         st = torch.load(last, map_location=device, weights_only=False)
         net.load_state_dict(st["model"]); opt.load_state_dict(st["opt"]); sched.load_state_dict(st["sched"])

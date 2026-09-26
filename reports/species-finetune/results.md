@@ -16,19 +16,32 @@ Validation: 3959 images, 308 observers, 110 species. Training split `split-110-t
 | `bioclip-2` | `crop` | 0.8059 | 0.7905 | 0.7967 | 0.7985 | 0.8050 | **0.7993** | 0.0063 | 0.7960 | 20, 22, 21, 19, 21 | 25, 25, 25, 25, 25 |
 | `bioclip-2` | `full-square` | 0.8007 | 0.7949 | 0.7984 | 0.7866 | 0.7957 | **0.7952** | 0.0054 | 0.7931 | 25, 18, 19, 18, 19 | 25, 25, 25, 25, 25 |
 
-## Paired over seeds
+## Seed mean with observer-bootstrap interval
 
-| Comparison | Best epoch [95% CI] | t | Wins | Last epoch [95% CI] | Wins |
-| --- | --- | ---: | ---: | --- | ---: |
-| dinov2-l-reg/crop - dinov2-l-reg/full | -0.0036 [-0.007, -0.000] | -2.86 | 1/5 | -0.0039 [-0.008, +0.001] | 1/5 |
-| dinov2-l-reg/crop - dinov2-l-reg/full-square | +0.0095 [+0.005, +0.014] | 5.47 | 5/5 | +0.0105 [+0.006, +0.015] | 5/5 |
-| dinov2-l-reg/full - dinov2-l-reg/full-square | +0.0131 [+0.010, +0.016] | 12.02 | 5/5 | +0.0144 [+0.012, +0.017] | 5/5 |
-| bioclip-2/crop - bioclip-2/full | -0.0023 [-0.009, +0.005] | -0.90 | 3/5 | -0.0045 [-0.011, +0.002] | 2/5 |
-| bioclip-2/crop - bioclip-2/full-square | +0.0041 [-0.005, +0.013] | 1.31 | 3/5 | +0.0028 [-0.004, +0.010] | 3/5 |
-| bioclip-2/full - bioclip-2/full-square | +0.0064 [-0.001, +0.014] | 2.34 | 4/5 | +0.0074 [-0.001, +0.016] | 4/5 |
-| dinov2-l-reg/full - bioclip-2/full | +0.0220 [+0.011, +0.033] | 5.55 | 5/5 | +0.0227 [+0.011, +0.034] | 5/5 |
-| dinov2-l-reg/crop - bioclip-2/crop | +0.0208 [+0.010, +0.031] | 5.57 | 5/5 | +0.0233 [+0.013, +0.033] | 5/5 |
-| dinov2-l-reg/full-square - bioclip-2/full-square | +0.0153 [+0.007, +0.024] | 5.17 | 5/5 | +0.0157 [+0.006, +0.025] | 5/5 |
+| Model | Arm | Best epoch [95% CI] | Last epoch [95% CI] |
+| --- | --- | --- | --- |
+| `dinov2-l-reg` | `full` | 0.8236 [0.803, 0.845] | 0.8232 [0.802, 0.844] |
+| `dinov2-l-reg` | `crop` | 0.8201 [0.805, 0.837] | 0.8193 [0.805, 0.836] |
+| `dinov2-l-reg` | `full-square` | 0.8106 [0.787, 0.835] | 0.8088 [0.785, 0.834] |
+| `bioclip-2` | `full` | 0.8016 [0.783, 0.822] | 0.8005 [0.782, 0.821] |
+| `bioclip-2` | `crop` | 0.7993 [0.782, 0.819] | 0.7960 [0.779, 0.815] |
+| `bioclip-2` | `full-square` | 0.7952 [0.771, 0.820] | 0.7931 [0.768, 0.818] |
+
+## Paired differences of the seed mean
+
+Primary: observer-grouped bootstrap (seed noise and validation sampling). Secondary: seed-paired t on 4 df (seed noise only, validation held fixed).
+
+| Comparison | Best epoch | Bootstrap 95% CI | P(delta <= 0) | t 95% CI | Wins | Last epoch | Bootstrap 95% CI |
+| --- | ---: | --- | ---: | --- | ---: | ---: | --- |
+| dinov2-l-reg/crop - dinov2-l-reg/full | -0.0036 | [-0.012, +0.006] | 0.752 | [-0.007, -0.000] | 1/5 | -0.0039 | [-0.013, +0.007] |
+| dinov2-l-reg/crop - dinov2-l-reg/full-square | +0.0095 | [-0.004, +0.022] | 0.096 | [+0.005, +0.014] | 5/5 | +0.0105 | [-0.002, +0.023] |
+| dinov2-l-reg/full - dinov2-l-reg/full-square | +0.0131 | [+0.002, +0.022] | 0.009 | [+0.010, +0.016] | 5/5 | +0.0144 | [+0.004, +0.022] |
+| bioclip-2/crop - bioclip-2/full | -0.0023 | [-0.011, +0.006] | 0.738 | [-0.009, +0.005] | 3/5 | -0.0045 | [-0.014, +0.004] |
+| bioclip-2/crop - bioclip-2/full-square | +0.0041 | [-0.011, +0.017] | 0.305 | [-0.005, +0.013] | 3/5 | +0.0028 | [-0.013, +0.017] |
+| bioclip-2/full - bioclip-2/full-square | +0.0064 | [-0.004, +0.016] | 0.112 | [-0.001, +0.014] | 4/5 | +0.0074 | [-0.004, +0.019] |
+| dinov2-l-reg/full - bioclip-2/full | +0.0220 | [+0.013, +0.030] | 0.000 | [+0.011, +0.033] | 5/5 | +0.0227 | [+0.014, +0.031] |
+| dinov2-l-reg/crop - bioclip-2/crop | +0.0208 | [+0.012, +0.030] | 0.000 | [+0.010, +0.031] | 5/5 | +0.0233 | [+0.015, +0.032] |
+| dinov2-l-reg/full-square - bioclip-2/full-square | +0.0153 | [+0.007, +0.025] | 0.001 | [+0.007, +0.024] | 5/5 | +0.0157 | [+0.007, +0.027] |
 
 ## 5-seed ensemble (mean softmax, last epoch)
 
