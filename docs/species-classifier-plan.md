@@ -193,6 +193,11 @@ removes no comparison, so it cannot favour the crop.
      fired, crop - full-square +0.006 [-0.009, +0.024] on BioCLIP-2):
      `sbatch --array=0-14 --export=ALL,MODEL=bioclip-2 scripts/hellbender_species_finetune.slurm`
      and the same with `MODEL=dinov2-l-reg`. 30 tasks, up to 5 h each.
+   - **Done 2026-09-25, jobs 17943517 / 17943518** (`reports/species-finetune.md`):
+     DINOv2-L `full` 0.824, `crop` 0.820; BioCLIP-2 0.802 / 0.799; anchor
+     0.499 / 0.516. DINOv2-L beats BioCLIP-2 on every arm, 5/5 seeds, and is
+     the teacher. `crop` - `full` is -0.004 [-0.007, -0.000] for DINOv2-L, so
+     the crop is dropped from the species path: later stages use `full`.
 3. **Then resolution**, 224 -> 384, using the existing 768 px crops.
 4. **Geo prior**, in parallel, as it is independent of the image model:
    re-fetch observation coordinates and fuse a spatial prior late.
@@ -235,6 +240,14 @@ Decision rule, primary number linear-probe balanced accuracy on the crop arm:
 Before building on it: DINOv3 weights carry Meta's own licence, with conditions
 on derived models. A DINOv3 student is used only after that licence is checked
 for free public release.
+
+**Result, 2026-09-25** (`reports/species-backbone-screen.md`): `dinov2-s`
+0.637 [0.613, 0.664], so the first row fires and DINOv2-S is the student.
+`tinyvit-21m-in22k` (0.620) is not separated from it and ties on `full`
+(0.614 vs 0.616). With the teacher now on `full` (above), which student to
+distil into is open and is to be decided here before any distillation run.
+The DINOv3 small models trailed (0.563, 0.543), so the licence check no longer
+blocks anything.
 
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.
