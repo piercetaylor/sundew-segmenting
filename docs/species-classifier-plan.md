@@ -111,7 +111,10 @@ Design choices that protect the comparison:
 dumps, which may include some of these validation photos (87% of validation
 images were observed in 2020 or later). That is fine for deployment, but it
 makes their screen numbers optimistic by an amount we cannot measure. Any
-research claim that rests on a BioCLIP result must say so.
+research claim that rests on a BioCLIP result must say so. Measured
+2026-09-26 for BioCLIP-2 by splitting validation at its training-data dates
+(`reports/species-finetune.md`, "BioCLIP-2 contamination"): not detected,
+bounded at about +0.017 fine-tuned and +0.061 frozen (`crop`).
 
 ### Prior, written before the run
 
@@ -270,6 +273,94 @@ for free public release.
 distil into is open and is to be decided here before any distillation run.
 The DINOv3 small models trailed (0.563, 0.543), so the licence check no longer
 blocks anything.
+
+### Student bake-off (written 2026-09-26, before any run)
+
+The frozen screen cannot separate the two students on the arm the species
+path now uses (`full`: DINOv2-S 0.616, TinyViT-21M 0.614), and a frozen
+probe says little about fine-tuning. So both are fine-tuned, without a
+teacher, and the better one becomes the student that distillation targets.
+
+| | |
+| --- | --- |
+| Models | `dinov2-s` (`vit_small_patch14_dinov2.lvd142m`, 22M), `tinyvit-21m-in22k` (`tiny_vit_21m_224.dist_in22k`, 21M) |
+| Arm, size, split | `full` only, 224 px, `split-110-test` (test rows dropped) |
+| Seeds | 17 101 202 303 404, paired across models |
+| Recipe | the teachers': AdamW lr 5e-5, 2 warmup, 25 epochs, patience 8, head lr x10, wd 0.05, label smoothing 0.05, bf16, batch 64. Both fall into the `LAYER_DECAY=0.75`, `DROP_PATH=0.1` branch of `scripts/hellbender_species_finetune.slurm` |
+| Launch | `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s scripts/hellbender_species_finetune.slurm` and `sbatch --array=0-4 --export=ALL,MODEL=tinyvit-21m-in22k scripts/hellbender_species_finetune.slurm` (indices 0-4 are `full`) |
+| Cost | 10 A100 tasks. Small models are bound by JPEG decoding, like the ResNet-18 `full` arm (45-56 min per task), so ~45-60 min each: **8-10 A100-h**, about 1 h of wall time if the tasks run together |
+| Summary | `scripts/summarize_species_finetune.py` has the teachers' models and arms hard-coded; it gets `--models` / `--arms` options before the results are read |
+
+**Layer decay differs between the two, and is accepted as is.** Checked by
+building both on CPU with `build()` from `scripts/finetune_species_backbone.py`
+(timm 1.0.29, decay 0.75), mapping each optimizer group back to parameter
+names:
+
+| | DINOv2-S | TinyViT-21M |
+| --- | --- | --- |
+| Blocks | 12 | 12 (stages of 2, 2, 6, 2) |
+| Layer-decay groups (distinct lr scales) | **13**: stem, 12 blocks | **14**: stem, 12 blocks, final norm |
+| Last block | 1.0 (shares the top id with the final norm) | 0.75 (the final norm `head.norm` takes the top id alone) |
+| Lowest scale | stem, 0.75^12 = 0.032 | stem, 0.75^13 = 0.024 |
+| Downsampling layers | none | each merged with the first block of its stage |
+
+So every TinyViT block trains at 0.75x the lr of the matching DINOv2-S block.
+This is timm's `param_groups_layer_decay` grouping, not a choice made here,
+and "the same recipe" is the design; changing it for one model would be a
+tuning step. It is recorded as a caveat on any TinyViT loss, and does not
+entitle TinyViT to a rerun.
+
+**Prior, written now.** Relative to the teacher, DINOv2-L `full` 0.824:
+
+- `dinov2-s` fine-tuned: **0.73-0.77** (5-9 points below the teacher).
+  Frozen-to-fine-tuned gains were +0.09 for DINOv2-L; a smaller model has
+  more to gain but less capacity.
+- `tinyvit-21m-in22k` fine-tuned: **0.72-0.78**. Supervised ImageNet-22k
+  features and a convolutional stem usually fine-tune well at this size; the
+  lower lr above pulls the other way.
+- The difference: within +-0.02, and more likely than not a tie by the rule
+  below. No strong view on the sign.
+
+**Primary metric**: seed-mean validation balanced accuracy, **last epoch**,
+`full` arm. Interval: observer-grouped bootstrap of the seed-mean difference
+(`dinov2-s` - `tinyvit-21m-in22k`), 2,000 resamples, all ten runs rescored on
+each resample.
+
+**Deployment tiebreaker**, defined now: **median single-image latency** of
+the int8 ONNX model. Export each model's seed-17 checkpoint to ONNX (opset
+17, 224 px, batch 1), quantise dynamically to int8 with ONNX Runtime, and
+time 200 runs after 20 warm-up runs with `onnxruntime` CPUExecutionProvider,
+one thread (a proxy for ONNX Runtime Web's single-thread WASM backend, the
+floor every browser has), on one Hellbender CPU node, both models in the same
+job. Measured by a script written for it, run by Claude; architecture alone
+decides it, so it may be run before the accuracies are read. Two
+disqualifiers apply first: the model does not export or does not run in
+ONNX Runtime; or int8 costs it more than 0.01 validation balanced accuracy
+against its own fp32 checkpoint (then its fp32 latency is used instead).
+
+**Licences**: DINOv2-S weights Apache-2.0 (Meta; timm card); TinyViT weights
+Apache-2.0 on the timm card, MIT upstream (microsoft/Cream). Both permit
+free public release, so **licence is not a tiebreaker.**
+
+| Bake-off result | Action |
+| --- | --- |
+| CI on the difference excludes 0 | the higher model is the student |
+| CI includes 0, one model's int8 median latency is >= 15% lower | the faster model is the student |
+| CI includes 0, latencies within 15% | `dinov2-s`: the rule already named it, and it shares the teacher's lineage and patch features, which feature distillation can use |
+| Better student < **0.70** (more than 12 points below the teacher) | no student ships without distillation; distillation becomes mandatory before release |
+| Better student < **0.65** | stop the on-device line; serve the fine-tuned teacher from a server, and revisit after distillation and the open-set work |
+| A model's runs fail or diverge (seed SD > 0.02) | reported as failed, not retuned; the other model is the student if it clears the floors |
+
+What this run does not decide:
+
+- **Distillation**: whether, and by how much, the teacher ensemble helps the
+  student. That is the next pre-registered run, paired against this one.
+- **Resolution**: the student stays at 224 px here; 384 px is for the
+  teacher first.
+- **Calibration of the student**: its temperature is fitted later, on
+  validation, as for the teacher.
+- **Browser behaviour on real devices**: WebGPU availability, memory and
+  real phone latency are measured on the chosen student only, after this run.
 
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.

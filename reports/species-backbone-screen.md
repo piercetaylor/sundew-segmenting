@@ -91,8 +91,13 @@ whether segmentation is still needed.
   may have hurt it more than the others. It is last among the modern models
   and nowhere near the leaders, so this does not change the decision. It
   should not be read as a verdict on SigLIP.
-- **BioCLIP numbers are optimistic by an unmeasurable amount** (possible
-  training-set overlap with iNaturalist validation photos). DINOv2-L is the
+- **BioCLIP numbers may be optimistic** (possible training-set overlap with
+  iNaturalist validation photos). Measured 2026-09-26 by comparing photos
+  observed before and after BioCLIP-2's training data was collected
+  (`species-finetune.md`, "BioCLIP-2 contamination"): no inflation detected,
+  but the frozen `crop` bound is loose, DiD +0.017 [-0.030, +0.061], so
+  inflation up to about 0.06 is not excluded and BioCLIP-2's 0.021 frozen
+  lead is not proof of a better backbone. BioCLIP (v1) was not checked. DINOv2-L is the
   uncontaminated comparison.
 - **The linear probe's L2 strength never landed on the grid edge**
   (chosen 1e-3 or 1e-2 everywhere), so the grid did not constrain any result.
