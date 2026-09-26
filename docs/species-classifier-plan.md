@@ -289,7 +289,7 @@ teacher, and the better one becomes the student that distillation targets.
 | Recipe | the teachers': AdamW lr 5e-5, 2 warmup, 25 epochs, patience 8, head lr x10, wd 0.05, label smoothing 0.05, bf16, batch 64. Both fall into the `LAYER_DECAY=0.75`, `DROP_PATH=0.1` branch of `scripts/hellbender_species_finetune.slurm` |
 | Launch | `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s scripts/hellbender_species_finetune.slurm` and `sbatch --array=0-4 --export=ALL,MODEL=tinyvit-21m-in22k scripts/hellbender_species_finetune.slurm` (indices 0-4 are `full`) |
 | Cost | 10 A100 tasks. Small models are bound by JPEG decoding, like the ResNet-18 `full` arm (45-56 min per task), so ~45-60 min each: **8-10 A100-h**, about 1 h of wall time if the tasks run together |
-| Summary | `scripts/summarize_species_finetune.py` has the teachers' models and arms hard-coded; it gets `--models` / `--arms` options before the results are read |
+| Summary | `python scripts/summarize_species_finetune.py --models dinov2-s tinyvit-21m-in22k --arms full --title "Student bake-off" --report reports/species-student-bakeoff.md --out-md reports/species-student-bakeoff/results.md --out-json reports/species-student-bakeoff/summary.json` (options added before any result exists; the difference reads `dinov2-s` - `tinyvit-21m-in22k`) |
 
 **Layer decay differs between the two, and is accepted as is.** Checked by
 building both on CPU with `build()` from `scripts/finetune_species_backbone.py`
