@@ -764,5 +764,154 @@ replaces this one, its script saves last-epoch weights and the protocol
 applies as first written. Distilled students save their last-epoch weights
 too, since seed 17 is the model that ships.
 
+### Transfer set (written 2026-09-27, before any acquisition or run)
+
+On its own training images the teacher's targets are nearly one-hot, and the
+student's fidelity is limited there (KD-25: KL 0.26 on train, 0.46 on
+validation). The transfer set gives the teacher unlabeled photos it never
+trained on (Stanton et al. 2021, arXiv:2106.05945; Beyer et al. 2022,
+arXiv:2106.05237; SimCLRv2, arXiv:2006.10029). Fable designed it (read-only
+review, 2026-09-27). Its facts were checked against `acquisition.json`, the
+split records and the KD-25c logs.
+
+**What it can and cannot do.** For the 23 thin species (under 40 training
+images), research-grade wild photos beyond the corpus caps number only
+**0-62 per species, 433 in total**, before observer exclusion: the corpus
+already took nearly everything (*D. dielsiana*, 52 of 53). The 31 species
+with 300 or more extra hold most of the 102,595 beyond-cap pool. Wild
+research-grade photos therefore cannot fix the thin species; only captive
+and needs-ID photos can add plants there.
+
+**Sources**, the 110 species only:
+
+- caps are per iNaturalist taxon, 5 photos per observer per species, as in
+  the corpus;
+- licences CC0, CC BY and CC BY-NC, per `docs/licence-policy.md`.
+
+| Source | Query | Cap per species | Role |
+| --- | --- | ---: | --- |
+| (a) wild, research grade, beyond the caps | `quality_grade=research`, `captive=false` | 300 across (a)-(c) | in-domain transfer |
+| (b) captive / cultivated | `captive=true`, any grade (iNaturalist makes captive records casual) | 100 | the app's domain; trust in the teacher is measured |
+| (c) wild, needs-ID or casual, with a species-level ID | `quality_grade=needs_id,casual`, `captive=false` | 100 | adds plants for the thin species |
+| (d) *Drosera* outside the 110; (e) other genera | `without_taxon_id` | - | **open-set evaluation only, never in the transfer set** |
+
+- **(d) and (e) are kept out of the transfer set.** One image cannot be both
+  a distillation input and an open-set test item. Class-mismatched unlabeled
+  data also degrades pseudo-label learning (Oliver et al. 2018,
+  arXiv:1804.09170).
+- **In-domain data distils best**; related data is nearly as good (Beyer et
+  al. 2022, sec. 3.8).
+- **Captive photos are extrapolation for the teacher**, which never saw
+  cultivated plants. They are included, capped, because they are what app
+  users photograph, and soft pseudo-labels cope better with out-of-domain
+  data (Noisy Student, arXiv:1911.04252).
+- **Their iNaturalist IDs are a diagnostic only.** If the teacher's top-1
+  agrees with the iNaturalist ID on under 0.6 of captive photos, that is
+  recorded as "captive targets suspect", and nothing is rerun.
+
+**Exclusions**, all fixed now:
+
+1. every validation and test observer (1,403 logins), for every taxon;
+2. every observation id in any split, so other photos of a training plant
+   stay out;
+3. sha256 duplicates, and dHash Hamming distance <= 6 (the audit's
+   threshold), against train, validation, test and within the set. This
+   needs pixels, so it runs after download and its counts are reported;
+4. the segmentation-manifest exclusions, as in the corpus;
+5. the transfer set and the open-set set are observer-disjoint from each
+   other and from all splits.
+
+No date cut-off is used, since the teacher's pretraining is not iNaturalist.
+The query date and observation-id ceiling are recorded, so the pull can be
+reproduced.
+
+**Size and weighting.** The per-taxon caps above give an expected 12-18k
+images after exclusions, skewed toward common species by availability. Each
+transfer image is weighted by the class weight expected under the teacher,
+sum_c t_ic w_c (fixed in the class-weighted KD section); training rows keep
+their label weight. If the selected KD variant is unweighted, every row has
+weight 1, and that is stated in the report.
+
+**Arm.** One arm, paired against the KD variant that the class-weighted rule
+carries to 100 epochs. If both variants run at 100 epochs, the higher one is
+used.
+
+| Arm | Tag | Data, target, weight | Steps | A100-h | Role |
+| --- | --- | --- | ---: | ---: | --- |
+| KD(w)-100c | `dinov2-s-kd[w]-e100-c576` | train only; the selected variant | 17,300 | (exists by then) | control |
+| **KD(w)-100c+T** | `dinov2-s-kd[w]-e100-t-c576` | train and T, batches drawn uniformly from the union; KL only | 17,300 | ~13 | the effect of data the teacher never trained on |
+
+- **Steps, not epochs**: 17,300 steps, the control's 100 epochs of 173, with
+  the same warmup and cosine. Compute and the lr schedule are then fixed, so
+  the contrast is data alone. Matching epochs over the union would double
+  the cost and confound data with compute. Training images get about 50
+  passes instead of 100; that is the intended trade.
+- **The transfer set enters the KD term only.** iNaturalist labels on (a)
+  are not used.
+- **Pairing:** seeds and starting weights are paired, but batches cannot be,
+  because the dataset differs.
+- **Noted, not run now:** CE-100c trained on train plus (a) with labels. The
+  300 cap was a design choice, and labelled extra photos might beat
+  distillation. It would change the control.
+- **Cost:** 93 s per KD epoch on the cache (KD-25c logs), so about 13 A100-h.
+
+**Implementation, before any download:**
+
+- **Acquisition:** `scripts/acquire_transfer_set.py`, built on
+  `extract_candidates`, which currently rejects captive and non-research
+  records. It needs these flags:
+  - `--quality-grade`, `--captive`, `--source-tag`;
+  - `--exclude-observers`, `--exclude-observations`;
+  - per-source caps, `--without-taxon-id` (for the open-set set later), and
+    dHash deduplication against the split records.
+
+  The iNaturalist API caps a query at 10,000 results, so paging uses
+  `id_above`; requests stay at <= 60 per minute and <= 10,000 per day.
+  Every row carries `license_code`, `attribution`, `creator` and
+  `source_page`, and is attributed in any release, as the corpus is.
+- **Dry run first, metadata only, no images.** For each species and source,
+  it reports candidates found and those removed by observer exclusion,
+  observation exclusion, licence and observer cap, and the planned count.
+- **Training:** `finetune_species_backbone.py` gets `--transfer-records` (rows
+  without labels, which enter the KD term only) and `--steps`.
+
+**Prior**, KD(w)-100c+T minus KD(w)-100c:
+
+| Quantity | Point | Range |
+| --- | ---: | --- |
+| overall | +0.02 | +0.005 to +0.035 |
+| species with under 40 training images | - | +0.00 to +0.015 (little new data reaches them) |
+| species with 130 or more | - | +0.01 to +0.03 |
+
+The absolute point is about 0.76, if KD(w)-100c lands near its 0.74 prior.
+
+**Decision rule**, consistent with the class-weighted KD rule:
+
+| Result | Action |
+| --- | --- |
+| +T minus KD(w)-100c: CI excludes 0, positive | the transfer set is in the student recipe; +T is carried forward |
+| gain < +0.01 | distillation is closed; the best CE arm is carried forward |
+| the teacher agrees with the iNaturalist ID on under 0.6 of captive photos | recorded as "captive targets suspect"; no rerun |
+| Carried-forward recipe, shipped model, floor | the highest last-epoch seed mean; seed 17; 0.75 and top-5 >= 0.95, unchanged |
+| A run diverges or fails | reported, not retuned |
+
+**Diagnostics:**
+
+- fidelity on validation (agreement and KL, overall and per bin);
+- teacher max-probability and agreement with the iNaturalist ID on the
+  transfer set, by source;
+- student-teacher agreement on the transfer set;
+- the share of the transfer set by source and species;
+- the four-bin accuracy table, and ECE.
+
+**Risks:**
+
+- **The transfer set cannot fix the thin species.** If +T gains only on
+  common species, that is the expected shape, not a failure of the weighting.
+- **Teacher errors on captive photos may pass to the student.** They are
+  measured, not controlled.
+- **Sequential dependence:** the arm cannot launch until the 100-epoch rule
+  has selected the KD variant.
+
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.
