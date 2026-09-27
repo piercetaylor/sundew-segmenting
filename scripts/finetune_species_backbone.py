@@ -28,7 +28,9 @@ separate script, after every configuration is fixed.
 Distillation (docs/species-classifier-plan.md, "Distillation into DINOv2-S"):
 with --teacher-checkpoints, the target is the teachers' mean softmax instead of
 the label. Loss KL(teacher || student) at --kd-tau, scaled by tau^2, with no
-label term, no class weights and no label smoothing. The teachers are frozen,
+label term and no label smoothing; --kd-class-weight optionally weights each
+image by the class weight of its label, or by the class weight expected under
+the teacher (for images without a label). The teachers are frozen,
 in eval mode, and see the same augmented batch as the student. They are built
 after the student and draw no random numbers, so a KD run starts from the same
 weights and sees the same batches as the label-trained run with its seed; the
@@ -85,6 +87,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--teacher-checkpoints", type=pathlib.Path, nargs="+", default=None,
                    help="classifier-best.pt files of the teachers; their mean softmax becomes the target.")
     p.add_argument("--kd-tau", type=float, default=1.0)
+    p.add_argument("--kd-class-weight", choices=("none", "label", "expected"), default="none",
+                   help="Weight each image's KL by the CE baseline's class weight of its true label, or by the "
+                        "class weight expected under the teacher ensemble, sum_c t_c w_c (usable without labels). "
+                        "Normalised as the weighted CE is.")
     p.add_argument("--limit", type=int, default=None,
                    help="Smoke test: a fixed random N images per split; outputs get a -smoke suffix.")
     return p.parse_args()
@@ -281,13 +287,26 @@ def main() -> int:
 
     autocast = lambda: torch.autocast(device, dtype=torch.bfloat16, enabled=device == "cuda")
     if teachers:
+        cw = torch.as_tensor(class_weights(ty, n), device=device)
+        wstats = {"n": 0, "absdiff": 0.0, "disagree": 0}
+
         def teacher_probs(x):
             with torch.no_grad(), autocast():
                 return torch.stack([torch.softmax(t(x).float() / tau, -1) for t in teachers]).mean(0)
 
         def criterion(out, y, x):
             log_p = torch.log_softmax(out / tau, -1)
-            return nn.functional.kl_div(log_p, teacher_probs(x), reduction="batchmean") * tau ** 2
+            t = teacher_probs(x)
+            kl = nn.functional.kl_div(log_p, t, reduction="none").sum(1)
+            # How far the label-free weight is from the label weight, for the later transfer set.
+            wstats["n"] += len(y)
+            wstats["absdiff"] += (cw[y] - t @ cw).abs().sum().item()
+            wstats["disagree"] += (t.argmax(1) != y).sum().item()
+            if args.kd_class_weight == "none":
+                return kl.mean() * tau ** 2
+            # Same normalisation as nn.CrossEntropyLoss(weight=...): sum(w_i l_i) / sum(w_i).
+            w = cw[y] if args.kd_class_weight == "label" else t @ cw
+            return (w * kl).sum() / w.sum() * tau ** 2
     else:
         ce = nn.CrossEntropyLoss(weight=torch.as_tensor(class_weights(ty, n), device=device),
                                  label_smoothing=args.label_smoothing)
@@ -349,6 +368,8 @@ def main() -> int:
         g.manual_seed(args.seed * 1000 + epoch); torch.manual_seed(args.seed * 1000 + epoch)
         net.train()
         tot, t0 = 0.0, time.time()
+        if teachers:
+            wstats.update(n=0, absdiff=0.0, disagree=0)
         for x, y in tl:
             x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
             with autocast():
@@ -366,6 +387,8 @@ def main() -> int:
                         "val_top5_accuracy": m["top5_accuracy"],
                         "val_section_balanced_accuracy": m["section_balanced_accuracy"],
                         **(fidelity(scores, t_val) if t_val is not None else {}),
+                        **({"train_weight_absdiff": wstats["absdiff"] / wstats["n"],
+                            "train_teacher_label_disagree": wstats["disagree"] / wstats["n"]} if teachers else {}),
                         "epoch_seconds": round(time.time() - t0, 1)})
         print(json.dumps(history[-1]), flush=True)
         if m["balanced_accuracy"] > best:
@@ -394,7 +417,7 @@ def main() -> int:
                    "label_smoothing", "patience")},
         "loss": "kd" if teachers else "ce",
         "full_dir": str(args.full_dir) if args.full_dir else None,
-        "kd": {"teacher_checkpoints": [str(c) for c in args.teacher_checkpoints], "tau": tau,
+        "kd": {"teacher_checkpoints": [str(c) for c in args.teacher_checkpoints], "tau": tau, "class_weight": args.kd_class_weight,
                "teacher_val_balanced_accuracy": teacher_val["balanced_accuracy"] if teacher_val else None,
                "teacher_val_top5_accuracy": teacher_val["top5_accuracy"] if teacher_val else None}
               if teachers else None,

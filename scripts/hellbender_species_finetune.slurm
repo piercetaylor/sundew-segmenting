@@ -35,6 +35,8 @@
 # Distillation (docs/species-classifier-plan.md, "Distillation into DINOv2-S"):
 #   KD=1        target = mean softmax of the five dinov2-l-reg full best-epoch
 #               checkpoints; output tag <model>-kd
+#   KD_WEIGHT=label|expected  class-weighted KD (with KD=1): each image's KL weighted by
+#               the class weight of its label (tag -kdw) or its expectation under the teacher (-kdwe)
 #   EPOCHS=100  longer schedule; output tag <model>[-kd]-e100; pass --time=08:00:00
 #   CACHE=1     read full frames from the short-side-576 cache (make_full_cache.py);
 #               output tag <model>[-kd][-eN]-c576
@@ -59,11 +61,16 @@ KD="${KD:-0}"
 EPOCHS="${EPOCHS:-25}"
 TAG="$MODEL"; PATIENCE=8; KD_ARGS=()
 if [ "$KD" = 1 ]; then
-  TAG="$TAG-kd"
+  case "${KD_WEIGHT:-none}" in
+    none)    TAG="$TAG-kd" ;;
+    label)   TAG="$TAG-kdw" ;;
+    expected) TAG="$TAG-kdwe" ;;
+    *) echo "KD_WEIGHT must be none, label or expected"; exit 1 ;;
+  esac
   for s in "${SEEDS[@]}"; do
     KD_ARGS+=("models/species-110/finetune/dinov2-l-reg/full/seed-$s/classifier-best.pt")
   done
-  KD_ARGS=(--teacher-checkpoints "${KD_ARGS[@]}" --kd-tau 1.0)
+  KD_ARGS=(--teacher-checkpoints "${KD_ARGS[@]}" --kd-tau 1.0 --kd-class-weight "${KD_WEIGHT:-none}")
 fi
 [ "$EPOCHS" != 25 ] && TAG="$TAG-e$EPOCHS"
 { [ "$KD" = 1 ] || [ "$EPOCHS" != 25 ]; } && PATIENCE="$EPOCHS"

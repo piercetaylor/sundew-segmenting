@@ -522,6 +522,156 @@ run.**
    design, prior and rule written here before it runs. The existing rule
    (KD-100 against CE-100; stop if both differences < +0.01) is unchanged.
 
+The cache was built 2026-09-27 (job 18014841, 2.5 min): 15,077 train and
+validation frames, 4.4 GB.
+
+### Class-weighted KD (written 2026-09-27, before any run)
+
+KD-25 lost 0.039 on the 23 species with under 40 training images and gained
+0.020 on the 42 commonest. The pre-registration named class-weighted KD as
+the follow-up for exactly that. Fable designed the arm (read-only review,
+2026-09-27), and the design is adopted as below.
+
+**Loss.** KDw is the KD loss with each image's KL weighted by the CE
+baseline's class weight of its true label, w_c = N / (C n_c), normalised as
+the weighted cross-entropy is:
+
+    loss = sum_i w_{y_i} KL_i / sum_i w_{y_i}
+
+- **It differs from CE-25 only in the target:** the teacher's mean softmax
+  instead of the smoothed one-hot. Batches, views and starting weights stay
+  paired seed for seed.
+- **In expectation it equals class-balanced resampling**, without touching
+  the seeded batches. Resampling would also repeat the 23-image species about
+  8x, which Kang et al. 2020 (arXiv:1910.09217) show hurts the learned
+  features.
+- **Rejected alternatives:**
+  - logit adjustment (Menon et al. 2021, arXiv:2007.07314): the teacher's
+    posteriors already carry the balanced prior; the failure is how much
+    gradient each species gets;
+  - BKD (Zhang et al. 2021, arXiv:2104.10510): adds a label term and a
+    second weighting;
+  - KL plus weighted CE: brings back a label term and an alpha to choose.
+- **Inverse frequency, not effective number** (Cui et al. 2019,
+  arXiv:1901.05555): at 23-195 images per species the two are within 10%,
+  and matching the baseline matters more.
+- **It is class-balanced KD, not label-free KD.** The label enters only as a
+  per-image scale, the same information CE's weighting uses.
+- **Fixed now for the later transfer set.** Unlabeled images are weighted by
+  the class weight expected under the teacher, w_i = sum_c t_ic w_c
+  (`--kd-class-weight expected`). Weighting them by 1 would bring back
+  iNaturalist's popularity skew, which is what just failed. Every KD run now
+  logs how far this weight is from the label weight on the training images,
+  and how often the teacher's top-1 disagrees with the label.
+
+**Pipeline.** All arms here run on the 576 px cache and are **launched only
+if the cache is adopted** by the equivalence rule above. If it is not, they
+run on the originals and the costs roughly double. Before any KD arm on the
+cache, the teacher ensemble must score 0.834 +- 0.002 on the cached
+validation frames. Matching CE on the cache does not show that the teachers
+respond the same way to the resampled pixels.
+
+**Arms.** Five seeds, `full`, 224 px; the recipe is otherwise the
+bake-off's.
+
+| Arm | Tag | Target, weight | Epochs | A100-h | Role |
+| --- | --- | --- | ---: | ---: | --- |
+| CE-25c | `dinov2-s-c576` | class-weighted CE, LS 0.05 | 25 | ~1 (job 18014847) | control, and the cache's equivalence check |
+| KD-25c | `dinov2-s-kd-c576` | KL, unweighted | 25 | ~3 | KD-25 on the cache: the base for the weighting contrast |
+| **KDw-25c** | `dinov2-s-kdw-c576` | KL, weighted by w_{y_i} | 25 | ~3 | **primary**: class-balanced KD against class-weighted CE |
+| CE-100c | `dinov2-s-e100-c576` | as CE-25c, patience off | 100 | ~4 | schedule control |
+| KD(w)-100c | `dinov2-s-kd[w]-e100-c576` | the selected KD variant (below) | 100 | ~11 each | the teacher at length; best available student |
+
+- **KD-25 is rerun on the cache** so that KDw - KD compares one pipeline.
+- **Sequential design, fixed now.** The three 25-epoch arms run first. Then:
+  - CE-100c always runs;
+  - the KD variant with the higher 25-epoch seed mean goes to 100 epochs;
+  - both go if the CI on their difference covers 0.
+
+  Both 25-epoch results are reported whatever is selected.
+- **Cost:** 25-epoch arms about 7 A100-h; with the 100-epoch arms, 22 (one
+  KD variant) to 33 (both).
+
+**Smoke test passed, 2026-09-27** (job 18014924,
+`scripts/hellbender_species_kdw_smoke.slurm`):
+
+- the teacher ensemble scores **0.8344** on the full cached validation,
+  against 0.8341 on the originals;
+- the KDw run has the same student init hash as every earlier seed-17 run,
+  its loss falls (5.25 -> 4.76), and it records `class_weight: label`;
+- the expected-weight mode runs;
+- on the 512 training images of the smoke subset, the teacher's top-1 never
+  disagrees with the label, and the mean |w_label - w_expected| is 0.13;
+- epochs on the cache take about 7 s for 512 images. The CE-25c tasks take
+  12 min, against 43 min on the originals.
+
+Launch, once the cache is adopted:
+`sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1,CACHE=1 scripts/hellbender_species_finetune.slurm`
+and the same with `KD_WEIGHT=label`.
+
+**Prior, written now.** The honest central case is that weighting reverses
+the reallocation and the net stays near 0.
+
+| Arm | Point | Range |
+| --- | ---: | --- |
+| CE-25c | 0.712 | 0.70-0.725 |
+| KD-25c | 0.711 | 0.70-0.72 |
+| KDw-25c | 0.72 | 0.705-0.735 |
+| CE-100c | 0.725 | 0.71-0.735 |
+| KD-100c | 0.73 | 0.715-0.75 |
+| KDw-100c | 0.74 | 0.72-0.76 |
+
+Per bin, KDw - CE:
+
+- **species with under 40 images: within +-0.015.** They recover to the CE
+  level, not above it, since weighting adds no information there;
+- **species with 130 or more: +0.005 to +0.015.** Part of KD's +0.020 was
+  gradient mass, which weighting removes;
+- **prediction share** of the commonest species back to about 0.60.
+
+A rival reading, which the prior does not exclude: at 25 epochs the student
+under-fits, and common species simply supply more views of a richer target;
+weighting cannot add views to thin species. If KDw lands at CE, that is what
+happened, and the remedy is the transfer set, capped per species.
+
+**Decision rule.**
+
+| Result | Action |
+| --- | --- |
+| KDw-25c - CE-25c: CI excludes 0, positive | class-balanced distillation is in the student recipe |
+| KDw-25c - KD-25c on the under-40 bin: CI excludes 0, positive | the weighting is the fix for thin species; KDw is the KD form from here on |
+| KDw-25c within +-0.01 of CE-25c | weighting is kept (the fair comparator for a balanced metric); the teacher is not the lever at 25 epochs |
+| KD(w)-100c - CE-100c < +0.01 | distillation on the training set is closed; the transfer set is the last distillation arm, and if it too gains < +0.01, distillation is closed and the best CE arm is carried forward |
+| Carried-forward recipe | the highest last-epoch seed mean among the cache arms; on a tie (CI covering 0), the KD variant, since it is better calibrated and free at inference |
+| Shipped model | seed 17 of the carried-forward arm; release floor 0.75 and top-5 >= 0.95, unchanged |
+| A run diverges (seed SD > 0.02) or fails | reported, not retuned |
+
+**Diagnostics, fixed now, not inputs to the rule:**
+
+- the four training-count bins, per arm and for KDw - KD and KDw - CE. Only
+  the two extreme bins carry a claim, since the per-bin intervals are not
+  corrected for four comparisons;
+- single-model ECE before and after a validation temperature, and mean
+  confidence. Expected: KDw between KD (0.030) and CE (0.079);
+- the prediction share of the commonest species, against the true 0.599;
+- fidelity: top-1 agreement, and the unweighted KL on validation, overall
+  and per bin;
+- the weight statistics above, and the training loss;
+- int8 export of seed 17 of the carried-forward arm.
+
+**Risks recorded:**
+
+- **Weights reach 4.4 on the 23-image species.** The *peltata* complex
+  (111-188 images) sits at 0.5-0.9, so it is not amplified. A mislabelled
+  thin-species image is pulled toward the teacher's view under KDw, but
+  toward the wrong label under CE.
+- **The per-batch normalisation varies the effective step with batch
+  composition.** CE has the same variation, so KDw and CE are matched. KDw
+  and KD, however, differ in effective step as well as in weighting, and
+  that contrast folds both in.
+- **Choosing which KD variant goes to 100 epochs is a validation-informed
+  step**, made legitimate by the rule fixed above.
+
 **Cost**, from the decode-bound epoch (105 s). Five ViT-L forwards per step
 roughly equal one ViT-L training step, which fit under the same bound, so a
 KD epoch is estimated at 110-180 s.
