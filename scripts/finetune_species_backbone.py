@@ -66,6 +66,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--sections", type=pathlib.Path, required=True)
     p.add_argument("--crop-dir", type=pathlib.Path, required=True)
     p.add_argument("--output", type=pathlib.Path, required=True)
+    p.add_argument("--full-dir", type=pathlib.Path, default=None,
+                   help="Read full frames from this cache (make_full_cache.py) instead of the originals; full arm only.")
     p.add_argument("--image-size", type=int, default=224)
     p.add_argument("--epochs", type=int, default=25)
     p.add_argument("--warmup-epochs", type=float, default=2.0)
@@ -184,12 +186,20 @@ def main() -> int:
         raise SystemExit(f"unexpected split values {sorted(unknown)}")
     held_out = sum(r["split"] == "test" for r in rows)
     rows = [r for r in rows if r["split"] != "test"]
+    if args.full_dir and args.arm != "full":
+        raise SystemExit("--full-dir is for the full arm only")
     for r in rows:
-        r["_path"] = str(args.crop_dir / f"inat_{r['photo_id']}.jpg") if args.arm == "crop" else r["image"]
+        if args.arm == "crop":
+            r["_path"] = str(args.crop_dir / f"inat_{r['photo_id']}.jpg")
+        elif args.full_dir:
+            r["_path"] = str(args.full_dir / f"inat_{r['photo_id']}.jpg")
+        else:
+            r["_path"] = r["image"]
     # Every arm must see the same images, so check the crops even on a full-frame
     # arm: a photo without a crop would otherwise be in one arm and not the other.
     missing = [r["photo_id"] for r in rows
-               if not (args.crop_dir / f"inat_{r['photo_id']}.jpg").exists() or not pathlib.Path(r["image"]).exists()]
+               if not (args.crop_dir / f"inat_{r['photo_id']}.jpg").exists() or not pathlib.Path(r["image"]).exists()
+               or not pathlib.Path(r["_path"]).exists()]
     if missing:
         raise SystemExit(f"{len(missing)} images missing from an arm; refusing to run an unpaired comparison")
 
@@ -383,6 +393,7 @@ def main() -> int:
                    "learning_rate", "layer_decay", "head_lr_mult", "weight_decay", "drop_path",
                    "label_smoothing", "patience")},
         "loss": "kd" if teachers else "ce",
+        "full_dir": str(args.full_dir) if args.full_dir else None,
         "kd": {"teacher_checkpoints": [str(c) for c in args.teacher_checkpoints], "tau": tau,
                "teacher_val_balanced_accuracy": teacher_val["balanced_accuracy"] if teacher_val else None,
                "teacher_val_top5_accuracy": teacher_val["top5_accuracy"] if teacher_val else None}

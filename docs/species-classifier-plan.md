@@ -479,6 +479,49 @@ memory was 9.5 GiB with teachers, against 3.3 GiB without. Seconds per epoch
 come from the first real task, since 512 images is too few to time.
 **KD-25 launched** as job 18012985 (`--array=0-4`, `KD=1`).
 
+**Result, KD-25, 2026-09-27** (`reports/species-distill.md`): 0.711 [0.688,
+0.736] against CE-25 0.712. **KD - CE -0.001 [-0.008, +0.006]**, 0 of 5
+seeds. The first rule does not fire, and the prior (0.735) missed. The
+per-class diagnostic shows why the net is zero:
+
+- species with under 40 training images: KD -0.039 [-0.066, -0.022];
+- species with 130 or more: KD +0.020 [+0.015, +0.024];
+- plain accuracy +0.009, and single-model ECE 0.030 against 0.079.
+
+The unweighted KD term shifted accuracy toward the common species, so the
+**class-weighted KD follow-up named above is triggered**.
+
+**Amendment, 2026-09-27, made after seeing KD-25 and before any further
+run.**
+
+1. **A fast full-frame cache.** Every run is bound by decoding the original
+   JPEGs (105-120 s per epoch). `scripts/make_full_cache.py` writes train and
+   validation frames once, short side 576 px:
+   - LANCZOS resize, as the crops and the `full768` control used; that
+     control changed ResNet-18 by +0.0001 (`reports/species-crop-comparison.md`);
+   - no EXIF rotation, as the loader applies none;
+   - JPEG quality 95, 4:4:4 chroma.
+
+   The test split is cached only when it is scored. CE-25 is rerun on the
+   cache (`CACHE=1`, tag `dinov2-s-c576`, 5 seeds, otherwise identical).
+   **Equivalence rule, fixed now:**
+   - the cache is adopted if the observer-bootstrap 95% CI of
+     (`dinov2-s-c576` - `dinov2-s`), last-epoch seed means, lies inside
+     **[-0.015, +0.015]**. The rerun then replaces CE-25 as the control for
+     every later arm, and those arms run on the cache;
+   - otherwise the cache is dropped and the originals stay.
+
+   A CI covering 0 is not enough on its own, because a wide interval would
+   pass. Cache build: job 18014841 (`scripts/hellbender_full_cache.slurm`).
+   CE-25 rerun: job 18014847, which starts only if the build succeeds.
+2. **The 100-epoch arms move onto the cache** if it is adopted. They are not
+   launched on the originals: CE-100 plus KD-100 would cost about 32 A100-h
+   there.
+3. **Class-weighted KD** (the follow-up above) and a **transfer set** of
+   photos the teacher never trained on are each added as arms. Each gets its
+   design, prior and rule written here before it runs. The existing rule
+   (KD-100 against CE-100; stop if both differences < +0.01) is unchanged.
+
 **Cost**, from the decode-bound epoch (105 s). Five ViT-L forwards per step
 roughly equal one ViT-L training step, which fit under the same bound, so a
 KD epoch is estimated at 110-180 s.

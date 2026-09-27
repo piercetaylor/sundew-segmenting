@@ -36,6 +36,8 @@
 #   KD=1        target = mean softmax of the five dinov2-l-reg full best-epoch
 #               checkpoints; output tag <model>-kd
 #   EPOCHS=100  longer schedule; output tag <model>[-kd]-e100; pass --time=08:00:00
+#   CACHE=1     read full frames from the short-side-576 cache (make_full_cache.py);
+#               output tag <model>[-kd][-eN]-c576
 # Any run with KD=1 or EPOCHS other than 25 has patience off (= epochs), so the
 # last epoch is always the end of the schedule.
 #   sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1 scripts/hellbender_species_finetune.slurm
@@ -65,6 +67,10 @@ if [ "$KD" = 1 ]; then
 fi
 [ "$EPOCHS" != 25 ] && TAG="$TAG-e$EPOCHS"
 { [ "$KD" = 1 ] || [ "$EPOCHS" != 25 ]; } && PATIENCE="$EPOCHS"
+CACHE_ARGS=()
+if [ "${CACHE:-0}" = 1 ]; then
+  TAG="$TAG-c576"; CACHE_ARGS=(--full-dir "$CORPUS/full-s576")
+fi
 
 case "$MODEL" in
   dinov2-l-reg|siglip2-so400m|bioclip-2) LAYER_DECAY=0.85; DROP_PATH=0.2 ;;
@@ -97,6 +103,6 @@ python scripts/finetune_species_backbone.py \
   --image-size 224 --epochs "$EPOCHS" --warmup-epochs 2 --batch-size 64 \
   --learning-rate 5e-5 --layer-decay "$LAYER_DECAY" --head-lr-mult 10 \
   --weight-decay 0.05 --drop-path "$DROP_PATH" --patience "$PATIENCE" --workers 7 \
-  "${KD_ARGS[@]}"
+  "${KD_ARGS[@]}" "${CACHE_ARGS[@]}"
 
 echo "=== done: model=$MODEL arm=$ARM seed=$SEED | finished $(date -Is) ==="
