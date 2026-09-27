@@ -614,6 +614,26 @@ bake-off's.
 
 **Launched 2026-09-27:** KD-25c job 18015109, KDw-25c job 18015110.
 
+**Result, 25-epoch arms, 2026-09-27** (`reports/species-distill.md`,
+second part):
+
+| Arm | Last-epoch seed mean |
+| --- | ---: |
+| CE-25c | 0.710 |
+| KD-25c | 0.712 |
+| KDw-25c | 0.713 |
+
+- **KDw-25c - CE-25c: +0.003 [+0.001, +0.007]**, 5/5 seeds, so the first
+  row fires, narrowly. Class-balanced distillation is in the student recipe,
+  though the gain is too small to matter on its own.
+- **KDw - KD on species with under 40 images: +0.041 [+0.021, +0.072]**, so
+  the weighting fixes the thin species. It also gives back the +0.026
+  common-species gain that unweighted KD took.
+- KDw has the lowest ECE of the three: 0.020, against 0.032 and 0.077.
+- KDw - KD overall is +0.001 [-0.004, +0.009], which covers 0, so **both** KD
+  variants go to 100 epochs, as the selection row says: KD-100c job
+  18016920, KDw-100c job 18016921, alongside CE-100c (job 18016204).
+
 Launch, once the cache is adopted:
 `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1,CACHE=1 scripts/hellbender_species_finetune.slurm`
 and the same with `KD_WEIGHT=label`.
