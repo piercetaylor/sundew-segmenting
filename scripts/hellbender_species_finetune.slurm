@@ -31,6 +31,14 @@
 # Walltime: the ResNet-18 full arm took 45-56 min, bound by decoding ~2048 px
 # JPEGs; a ViT-L forward/backward adds roughly as much again. 5h is margin.
 # On preemption (gpu_requeue) the task is requeued and resumes from last.pt.
+#
+# Distillation (docs/species-classifier-plan.md, "Distillation into DINOv2-S"):
+#   KD=1        target = mean softmax of the five dinov2-l-reg full best-epoch
+#               checkpoints; output tag <model>-kd
+#   EPOCHS=100  longer schedule; output tag <model>[-kd]-e100; pass --time=08:00:00
+# Any run with KD=1 or EPOCHS other than 25 has patience off (= epochs), so the
+# last epoch is always the end of the schedule.
+#   sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1 scripts/hellbender_species_finetune.slurm
 
 set -euo pipefail
 
@@ -44,6 +52,19 @@ ARMS=(full crop full-square)
 
 ARM="${ARMS[$((SLURM_ARRAY_TASK_ID / 5))]}"
 SEED="${SEEDS[$((SLURM_ARRAY_TASK_ID % 5))]}"
+
+KD="${KD:-0}"
+EPOCHS="${EPOCHS:-25}"
+TAG="$MODEL"; PATIENCE=8; KD_ARGS=()
+if [ "$KD" = 1 ]; then
+  TAG="$TAG-kd"
+  for s in "${SEEDS[@]}"; do
+    KD_ARGS+=("models/species-110/finetune/dinov2-l-reg/full/seed-$s/classifier-best.pt")
+  done
+  KD_ARGS=(--teacher-checkpoints "${KD_ARGS[@]}" --kd-tau 1.0)
+fi
+[ "$EPOCHS" != 25 ] && TAG="$TAG-e$EPOCHS"
+{ [ "$KD" = 1 ] || [ "$EPOCHS" != 25 ]; } && PATIENCE="$EPOCHS"
 
 case "$MODEL" in
   dinov2-l-reg|siglip2-so400m|bioclip-2) LAYER_DECAY=0.85; DROP_PATH=0.2 ;;
@@ -63,7 +84,7 @@ export TORCH_HOME="$BASE/sundew-cache/torch"
 export HF_HOME="$BASE/sundew-cache/huggingface"
 export HF_HUB_OFFLINE=1
 
-echo "=== node $(hostname) | model=$MODEL arm=$ARM seed=$SEED | restart ${SLURM_RESTART_COUNT:-0} | started $(date -Is) ==="
+echo "=== node $(hostname) | model=$MODEL tag=$TAG kd=$KD epochs=$EPOCHS patience=$PATIENCE arm=$ARM seed=$SEED | restart ${SLURM_RESTART_COUNT:-0} | started $(date -Is) ==="
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
 
 python scripts/finetune_species_backbone.py \
@@ -72,9 +93,10 @@ python scripts/finetune_species_backbone.py \
   --labels "$SPLIT/labels.json" \
   --sections data/species-110-sections.json \
   --crop-dir "$CORPUS/crops/crops" \
-  --output "models/species-110/finetune/$MODEL/$ARM/seed-$SEED" \
-  --image-size 224 --epochs 25 --warmup-epochs 2 --batch-size 64 \
+  --output "models/species-110/finetune/$TAG/$ARM/seed-$SEED" \
+  --image-size 224 --epochs "$EPOCHS" --warmup-epochs 2 --batch-size 64 \
   --learning-rate 5e-5 --layer-decay "$LAYER_DECAY" --head-lr-mult 10 \
-  --weight-decay 0.05 --drop-path "$DROP_PATH" --patience 8 --workers 7
+  --weight-decay 0.05 --drop-path "$DROP_PATH" --patience "$PATIENCE" --workers 7 \
+  "${KD_ARGS[@]}"
 
 echo "=== done: model=$MODEL arm=$ARM seed=$SEED | finished $(date -Is) ==="

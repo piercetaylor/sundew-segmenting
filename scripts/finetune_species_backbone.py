@@ -25,6 +25,15 @@ Model selection is on validation, as before. Rows whose split is "test" are
 dropped before anything is read: the held-out test split is scored once, by a
 separate script, after every configuration is fixed.
 
+Distillation (docs/species-classifier-plan.md, "Distillation into DINOv2-S"):
+with --teacher-checkpoints, the target is the teachers' mean softmax instead of
+the label. Loss KL(teacher || student) at --kd-tau, scaled by tau^2, with no
+label term, no class weights and no label smoothing. The teachers are frozen,
+in eval mode, and see the same augmented batch as the student. They are built
+after the student and draw no random numbers, so a KD run starts from the same
+weights and sees the same batches as the label-trained run with its seed; the
+"student init sha256" line lets a smoke test confirm it.
+
 Preemption: the full state is written to last.pt after every epoch and picked up
 on restart. Data order and augmentation are seeded per epoch, so a resumed run
 sees the same batches it would have seen.
@@ -32,6 +41,7 @@ sees the same batches it would have seen.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import pathlib
@@ -70,6 +80,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--patience", type=int, default=8)
     p.add_argument("--seed", type=int, default=17)
     p.add_argument("--workers", type=int, default=7)
+    p.add_argument("--teacher-checkpoints", type=pathlib.Path, nargs="+", default=None,
+                   help="classifier-best.pt files of the teachers; their mean softmax becomes the target.")
+    p.add_argument("--kd-tau", type=float, default=1.0)
     p.add_argument("--limit", type=int, default=None,
                    help="Smoke test: a fixed random N images per split; outputs get a -smoke suffix.")
     return p.parse_args()
@@ -191,6 +204,25 @@ def main() -> int:
           f"test_held_out={held_out}  classes={n}  device={device}", flush=True)
 
     net, mean, std, param_groups = build(args.model, n, args.drop_path, args.image_size, device)
+    sha = hashlib.sha256()
+    for k, v in sorted(net.state_dict().items()):
+        sha.update(k.encode()); sha.update(v.detach().float().cpu().numpy().tobytes())
+    init_sha = sha.hexdigest()
+    print(f"student init sha256 {init_sha}", flush=True)
+
+    # Teachers come after the student, so building them cannot shift the student's initial weights.
+    teachers = []
+    for path in args.teacher_checkpoints or []:
+        st = torch.load(path, map_location="cpu", weights_only=False)
+        if st["labels"] != labels or st["image_size"] != args.image_size:
+            raise SystemExit(f"{path}: labels or image size differ from this run")
+        t, t_mean, t_std, _ = build(st["model"], n, 0.0, args.image_size, device)
+        if tuple(t_mean) != tuple(mean) or tuple(t_std) != tuple(std):
+            raise SystemExit(f"{path}: normalisation differs from the student's; one view cannot serve both")
+        t.load_state_dict(st["model_state"]); t.eval().requires_grad_(False)
+        teachers.append(t)
+        del st
+    tau = args.kd_tau
     s = args.image_size
     bicubic = transforms.InterpolationMode.BICUBIC
     norm = transforms.Normalize(mean, std)
@@ -237,9 +269,21 @@ def main() -> int:
         return 0.5 * (1 + math.cos(math.pi * (step - warmup) / max(1, total - warmup)))
     sched = torch.optim.lr_scheduler.LambdaLR(opt, lr_factor)
 
-    criterion = nn.CrossEntropyLoss(weight=torch.as_tensor(class_weights(ty, n), device=device),
-                                    label_smoothing=args.label_smoothing)
     autocast = lambda: torch.autocast(device, dtype=torch.bfloat16, enabled=device == "cuda")
+    if teachers:
+        def teacher_probs(x):
+            with torch.no_grad(), autocast():
+                return torch.stack([torch.softmax(t(x).float() / tau, -1) for t in teachers]).mean(0)
+
+        def criterion(out, y, x):
+            log_p = torch.log_softmax(out / tau, -1)
+            return nn.functional.kl_div(log_p, teacher_probs(x), reduction="batchmean") * tau ** 2
+    else:
+        ce = nn.CrossEntropyLoss(weight=torch.as_tensor(class_weights(ty, n), device=device),
+                                 label_smoothing=args.label_smoothing)
+
+        def criterion(out, y, x):
+            return ce(out, y)
 
     def evaluate():
         net.eval()
@@ -250,6 +294,18 @@ def main() -> int:
         return np.concatenate(out)
 
     suffix = "-smoke" if args.limit else ""
+    t_val, teacher_val = None, None
+    if teachers:
+        # Teacher ensemble on validation, once: a check that the checkpoints loaded
+        # as trained, and the reference for the per-epoch fidelity diagnostics.
+        out = []
+        for x, _ in vl:
+            out.append(teacher_probs(x.to(device, non_blocking=True)).cpu().numpy())
+        t_val = np.concatenate(out)
+        teacher_val = metrics(vy, np.log(np.clip(t_val, 1e-12, None)), n, section_of)
+        print(f"teacher ensemble on validation: balanced accuracy {teacher_val['balanced_accuracy']:.4f}", flush=True)
+        np.savez_compressed(args.output / f"teacher-val{suffix}.npz", val_photo_id=np.array([r["photo_id"] for r in val]),
+                            val_label=vy, probs=t_val.astype(np.float32))
     best, best_epoch, since, history, start_epoch = -1.0, -1, 0, [], 1
     last = args.output / f"last{suffix}.pt"
     done = args.output / f"classifier-metrics{suffix}.json"
@@ -265,6 +321,14 @@ def main() -> int:
         start_epoch = st["epoch"] + 1
         print(f"resumed after epoch {st['epoch']} (best {best:.4f} at {best_epoch})", flush=True)
 
+    def fidelity(scores, t):
+        """Top-1 agreement with the teacher ensemble and mean KL(teacher || student) on validation."""
+        z = scores / tau
+        log_p = z - z.max(1, keepdims=True)
+        log_p = log_p - np.log(np.exp(log_p).sum(1, keepdims=True))
+        kl = np.sum(t * (np.log(np.clip(t, 1e-12, None)) - log_p), axis=1).mean()
+        return {"val_teacher_agreement": float(np.mean(scores.argmax(1) == t.argmax(1))), "val_teacher_kl": float(kl)}
+
     ids = np.array([r["photo_id"] for r in val])
     observers = np.array([r["observer_login"] for r in val])
     started = time.time()
@@ -278,7 +342,7 @@ def main() -> int:
         for x, y in tl:
             x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
             with autocast():
-                loss = criterion(net(x).float(), y)
+                loss = criterion(net(x).float(), y, x)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(net.parameters(), 1.0)
@@ -291,6 +355,7 @@ def main() -> int:
                         "val_balanced_accuracy": m["balanced_accuracy"], "val_accuracy": m["accuracy"],
                         "val_top5_accuracy": m["top5_accuracy"],
                         "val_section_balanced_accuracy": m["section_balanced_accuracy"],
+                        **(fidelity(scores, t_val) if t_val is not None else {}),
                         "epoch_seconds": round(time.time() - t0, 1)})
         print(json.dumps(history[-1]), flush=True)
         if m["balanced_accuracy"] > best:
@@ -317,11 +382,22 @@ def main() -> int:
         "recipe": {k: getattr(args, k) for k in ("image_size", "epochs", "warmup_epochs", "batch_size",
                    "learning_rate", "layer_decay", "head_lr_mult", "weight_decay", "drop_path",
                    "label_smoothing", "patience")},
+        "loss": "kd" if teachers else "ce",
+        "kd": {"teacher_checkpoints": [str(c) for c in args.teacher_checkpoints], "tau": tau,
+               "teacher_val_balanced_accuracy": teacher_val["balanced_accuracy"] if teacher_val else None,
+               "teacher_val_top5_accuracy": teacher_val["top5_accuracy"] if teacher_val else None}
+              if teachers else None,
+        "student_init_sha256": init_sha,
         "epochs_run": len(history), "best_balanced_accuracy": best, "best_epoch": best_epoch,
         "peak_gpu_gib": round(torch.cuda.max_memory_allocated() / 2**30, 1) if device == "cuda" else None,
         "last": history[-1], "elapsed_seconds_this_attempt": round(time.time() - started, 1),
         "history": history,
     }, indent=2) + "\n", encoding="utf-8")
+    # The last-epoch weights are kept: the test protocol scores the last epoch, and a
+    # shipped student is a last-epoch checkpoint.
+    torch.save({"model_state": net.state_dict(), "model": args.model, "labels": labels, "arm": args.arm,
+                "seed": args.seed, "image_size": s, "epoch": history[-1]["epoch"]},
+               args.output / f"classifier-last{suffix}.pt")
     last.unlink(missing_ok=True)
     peak = f", peak GPU memory {torch.cuda.max_memory_allocated() / 2**30:.1f} GiB" if device == "cuda" else ""
     print(f"\nbest balanced accuracy {best:.4f} at epoch {best_epoch}{peak}")

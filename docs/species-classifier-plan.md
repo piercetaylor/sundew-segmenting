@@ -362,5 +362,205 @@ What this run does not decide:
 - **Browser behaviour on real devices**: WebGPU availability, memory and
   real phone latency are measured on the chosen student only, after this run.
 
+**Result, 2026-09-27** (`reports/species-student-bakeoff.md`, jobs 17987233 /
+17987234): `dinov2-s` 0.712 [0.691, 0.736], `tinyvit-21m-in22k` 0.622
+[0.602, 0.651], last-epoch seed means; difference +0.090 [+0.075, +0.102].
+The first row fires: **DINOv2-S is the student**. It clears the 0.70 floor
+by 0.012, so distillation is not mandatory by the rule. The latency
+tiebreaker was not needed and not run. TinyViT under-fitted under the shared
+recipe (train loss 1.44 vs 0.94 at epoch 25; +0.008 over its frozen probe),
+as the accepted layer-decay handicap would predict; per the rule it is not
+retuned. The prior missed: both students landed below their ranges, and the
+expected tie was a 0.09 gap.
+
+### Distillation into DINOv2-S (written 2026-09-27, before any run)
+
+The student trained on labels alone reaches 0.712, 0.11 below the teacher.
+This run asks whether the teacher closes that gap, and by how much. The
+attribution is kept clean: the arms differ only in the training target, and
+separately in schedule length. Fable reviewed the design read-only on
+2026-09-27 and checked it against the literature; its recommendations are
+adopted except where stated.
+
+| | |
+| --- | --- |
+| Teacher | `dinov2-l-reg` `full`, the five seeds' `classifier-best.pt` (epochs 24, 18, 24, 24, 18), mean softmax, eval mode, bf16, no gradient. Validation 0.834 as an ensemble (0.835 from the last-epoch predictions; last-epoch weights were not kept) |
+| Student | `dinov2-s` (`vit_small_patch14_dinov2.lvd142m`), `full` arm, 224 px, `split-110-test` (test rows dropped) |
+| Seeds | 17 101 202 303 404, paired with the bake-off's `dinov2-s` runs |
+| Recipe | the bake-off's, unchanged: AdamW lr 5e-5, 2 warmup epochs, cosine, layer decay 0.75, drop-path 0.1, head lr x10, wd 0.05, bf16, batch 64, the same augmentation and the same image pipeline (original JPEGs) |
+| KD target | KL(teacher ‖ student) against the ensemble's mean softmax, tau = 1, no hard-label term (alpha = 0), no label smoothing, no class weights on the KD term. Loss in fp32 |
+| Views | online and consistent: the same augmented batch goes to the five teachers and the student |
+| Patience | off (= epochs) in every new arm, so "last epoch" always means the end of the schedule. No bake-off run stopped early, so the reused control is unaffected |
+
+Arms. `CE` is the bake-off loss: class-weighted cross-entropy with label smoothing 0.05.
+
+| Arm | Output tag | Target | Epochs | Status | Role |
+| --- | --- | --- | ---: | --- | --- |
+| CE-25 | `dinov2-s` | CE | 25 | **exists**, 0.712 | paired control for KD-25 |
+| KD-25 | `dinov2-s-kd` | KD | 25 | new | **primary**: the effect of the teacher at a matched schedule |
+| CE-100 | `dinov2-s-e100` | CE | 100 | new | matched-length control for KD-100 |
+| KD-100 | `dinov2-s-kd-e100` | KD | 100 | new | the effect of the teacher when training runs longer; also the best available student |
+
+**The pairing is tight.** Data order, augmentation and drop-path are seeded
+per epoch (`seed * 1000 + epoch`), and teachers in eval mode draw no random
+numbers. So a KD-25 seed sees the same batches and views as its CE-25 seed.
+The teachers are built after the student, so the student's initial weights,
+head included, are the same too. The smoke test checks this.
+
+**Choices, and why:**
+
+- **Pure KL, tau 1**, as in Beyer et al. 2022 (arXiv:2106.05237), who used no
+  label term. A label term would pull the student toward iNaturalist labels
+  the teacher doubts (the *peltata* / *auriculata* / *lunata* complex). It
+  would also need its own class weighting, a second knob.
+- **The under-confident teacher is not sharpened.** T = 0.72 was fitted on
+  validation, so putting it into the training target would let validation
+  shape training. Sharpening does not change the target's argmax. A
+  better-calibrated target may help (Menon et al. 2021, arXiv:2005.10419), so
+  it is a candidate for a later, separate run.
+- **The KD term is not class-weighted.** The teacher was trained with class
+  weights, so its posteriors already carry the balanced prior, and the student
+  inherits it by matching them. Weighting again would count the prior twice.
+  The imbalance is also mild, 23-195 training images per species. This is
+  checked by a diagnostic, below.
+- **Label smoothing in the teacher** (0.05) can make a teacher distil worse
+  (Müller et al. 2019, arXiv:1906.02629; disputed by Shen et al. 2021,
+  arXiv:2104.00676). It is mild here: the teacher's training loss, 0.72,
+  stays well above the 0.43 floor. It is recorded, and the teacher is not
+  retrained.
+- **No mixup or CutMix.** Adding either to the KD arms alone would confound
+  the target with the augmentation, and a CE + mixup control would then be
+  needed. Function matching with mixup is deferred.
+- **Logits only.** Patch-token distillation (ViTKD, arXiv:2209.02432) needs a
+  1024 -> 384 projector, a way to handle the teacher's 4 registers, and a
+  loss weight: three untuned choices. DINOv2-S is also already a
+  feature-distilled child of DINOv2-g.
+- **The 224 px teacher, now.** The recipe questions (loss, schedule) do not
+  depend on teacher resolution. If the 384 px teacher wins its own rule, the
+  final student is distilled once more from it, with the recipe that wins
+  here and no further changes.
+- **No extra photos.** The teacher saw every training image, so its targets
+  there are sharper than on unseen photos. Unlabeled transfer data would
+  likely help (Beyer et al. 2022; Stanton et al. 2021, arXiv:2106.05945), but
+  that would change the data and the teacher at once. It gets its own run
+  (below).
+- **The original JPEG pipeline is kept**, although it bounds each epoch by
+  decoding (about 105 s). A faster loader (`Image.draft`, or a 768 px cache)
+  would change the downsampling path, so CE-25 could no longer be reused as
+  the control and would have to be rerun.
+
+**Recorded leak.** The teacher checkpoints were picked on validation (best
+epoch). On each seed, best and last differ by at most 0.0012, and the two
+ensembles by 0.0006, so the leak is negligible but real.
+
+**Implementation, written and smoke-tested before launch.**
+`scripts/finetune_species_backbone.py` gets `--teacher-checkpoints` (the
+five paths) and `--kd-tau` (default 1.0). With teachers given, the loss is
+the KD target above, and `classifier-metrics.json` records the teacher
+paths, tau and the loss. `scripts/hellbender_species_finetune.slurm` gets
+`KD=1` and `EPOCHS=` switches, which set the output tag and patience. The
+walltime is 8 h for the 100-epoch arms, which resume from `last.pt` after
+preemption. The smoke test (`--limit`) must show four things:
+
+- the step-0 student weights equal the CE-25 seed's;
+- the teacher ensemble, rebuilt from the checkpoints, scores 0.834 +- 0.002
+  on validation;
+- the KD loss falls;
+- the measured seconds per epoch.
+
+**Smoke test passed, 2026-09-27** (job 18012907,
+`scripts/hellbender_species_distill_smoke.slurm`, 512 images per split). The
+student init hash was identical with and without teachers. On those 512
+images the rebuilt teacher ensemble agreed with the saved best-epoch
+predictions on every top-1 prediction, with a maximum probability difference
+of 0.0000. The KD loss fell from 4.88 to 4.27, last-epoch weights were
+written, and a KD run killed after epoch 1 resumed at epoch 2. Peak GPU
+memory was 9.5 GiB with teachers, against 3.3 GiB without. Seconds per epoch
+come from the first real task, since 512 images is too few to time.
+**KD-25 launched** as job 18012985 (`--array=0-4`, `KD=1`).
+
+**Cost**, from the decode-bound epoch (105 s). Five ViT-L forwards per step
+roughly equal one ViT-L training step, which fit under the same bound, so a
+KD epoch is estimated at 110-180 s.
+
+| Arm | A100-h |
+| --- | ---: |
+| KD-25 | 4-6 |
+| CE-100 | ~15 |
+| KD-100 | 15-25 |
+| **Total** | **34-46** |
+
+This is more than the 15 A100-h pencilled in earlier; the matched-length
+control is what costs. KD-25 answers the primary question alone for 4-6.
+
+**Primary metric**: seed-mean validation balanced accuracy at the **last
+epoch**, `full`. Intervals: observer-grouped bootstrap of the seed-mean
+difference, 2,000 resamples, all runs rescored on each resample (as in the
+bake-off). Summary:
+`python scripts/summarize_species_finetune.py --models dinov2-s-kd dinov2-s --arms full ...`
+and the same for `dinov2-s-kd-e100 dinov2-s-e100`.
+
+**Prior, written now.** Last time both students landed below their ranges,
+so the ranges are wide.
+
+| Arm | Point | Range |
+| --- | ---: | --- |
+| CE-25 | 0.712 | (measured) |
+| KD-25 | 0.735 | 0.72-0.75 |
+| CE-100 | 0.725 | 0.71-0.735 |
+| KD-100 | 0.76 | 0.74-0.78 |
+
+- KD - CE is larger at 100 epochs than at 25 (the teacher is "patient"; Beyer
+  et al.).
+- A single student stays 5-9 points below the teacher's seed mean (0.824).
+  Fable's estimate agrees, with points 0.74 and 0.765 for the KD arms.
+
+**Decision rule.**
+
+| Result | Action |
+| --- | --- |
+| KD-25 - CE-25: CI excludes 0, positive | the teacher helps at a matched schedule: distillation is in the student recipe |
+| KD-100 - CE-100: CI excludes 0, positive | the teacher helps at the long schedule too |
+| Both differences < +0.01 (point estimates) | the teacher is not the lever; the next student run is the transfer set, not a recipe change |
+| Carried-forward recipe | the arm with the highest last-epoch seed mean among KD-25, CE-100 and KD-100; but if CE-100 is highest and the CI on its lead over the best KD arm includes 0, the KD arm is carried forward (the teacher is already paid for, and costs nothing at inference) |
+| Shipped model | **seed 17** of the carried-forward arm, fixed now, not the best seed. Only one model ships, so the seed mean is the number that describes it; the 5-seed student ensemble is reported but not shipped |
+| Release floor | the carried-forward seed mean >= **0.75** and top-5 >= 0.95. Below that, nothing ships until the transfer-set run |
+| A run diverges (seed SD > 0.02) or fails | reported as failed, not retuned |
+
+**Diagnostics, not inputs to the rule**:
+
+- teacher-student top-1 agreement and mean KL on validation (fidelity; Stanton
+  et al. 2021);
+- section-level balanced accuracy and top-5;
+- per-class accuracy against training count for the teacher, CE and KD. If
+  KD loses to CE on species with under 40 training images, a class-weighted
+  KD term is the follow-up;
+- the student's ECE before and after a temperature fitted on validation;
+- int8 ONNX export of seed 17 of the carried-forward arm, including the
+  accuracy change from int8, since KD changes the logit scale.
+
+**Not decided here, each for its own pre-registration:**
+
+- a transfer set of unlabeled photos: beyond the 300 cap, "needs ID",
+  cultivated (closer to what app users photograph), other *Drosera*. Every
+  validation and test observer is excluded, and photos are dHash-deduplicated
+  against both splits;
+- mixup / function matching, with a CE + mixup control;
+- a sharpened target;
+- patch-token distillation, if the gap to the teacher stays above 0.05;
+- re-distilling from the 384 px teacher, if it wins its rule. That fine-tune
+  must save its last-epoch weights (see the test-protocol amendment).
+
+**Amendment to the test protocol, 2026-09-27, before any test image is
+read.** The protocol above scores the teacher's "last-epoch ensemble", but
+`finetune_species_backbone.py` deletes `last.pt` on completion, so only
+best-epoch weights exist. The test is therefore scored on the **best-epoch
+ensemble**. Its validation optimism is bounded by best - last: at most 0.0012
+per seed, and 0.834 against 0.835 for the ensemble. Retraining at 224 px to
+recover last-epoch weights is not worth ~25 A100-h. If the 384 px teacher
+replaces this one, its script saves last-epoch weights and the protocol
+applies as first written. Distilled students save their last-epoch weights
+too, since seed 17 is the model that ships.
+
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.

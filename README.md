@@ -14,7 +14,8 @@ A reproducible pipeline that segments visible sundew (*Drosera*) tissue in RGB p
 - Cropping helps a ResNet-18 classifier: balanced accuracy 0.546 on crops vs 0.525 on full frames at 110 species (+0.021, 5 of 5 seeds; +0.025 at 10 species). On the test-carved split the anchor is 0.516 vs 0.499.
 - Frozen-backbone screen with a linear probe: BioCLIP-2 0.750, DINOv2-L 0.729; seven of nine frozen backbones beat the fine-tuned ResNet-18.
 - Fine-tuned teachers (5 seeds, `split-110-test`, validation): DINOv2-L 0.824 on full frames and 0.820 on crops, BioCLIP-2 0.802 / 0.799, against a ResNet-18 anchor of 0.499 / 0.516 on the same split. DINOv2-L wins on every arm, 5 of 5 seeds, and after fine-tuning the crop no longer beats the full frame. The held-out test split is not yet scored (`reports/species-finetune.md`).
-- Small-backbone screen for an on-device student (11 backbones, 8-35M parameters): frozen DINOv2-S reaches 0.637 [0.613, 0.664] on crops, above the 0.58 bar set in advance, so DINOv2-S is the student; TinyViT-21M (0.620) is not separated from it and ties or leads without the crop.
+- Small-backbone screen for an on-device student.  (11 backbones, 8-35M parameters): frozen DINOv2-S reaches 0.637 [0.613, 0.664] on crops, above the 0.58 bar set in advance; on full frames it tied TinyViT-21M, so both were fine-tuned.
+- Student bake-off (full frames, 5 seeds): fine-tuned DINOv2-S 0.712 against TinyViT-21M 0.622, +0.090 [+0.075, +0.102], so DINOv2-S is the student, 0.11 below the DINOv2-L teacher. Distillation is next.
 - Downloaded images stay outside Git; manifests, splits and attribution are reproducible.
 
 ## Build the dataset
@@ -77,7 +78,7 @@ sbatch --dependency=afterok:$jid scripts/hellbender_backbone_screen_summary.slur
 sbatch --array=0-14 --export=ALL,MODEL=bioclip-2 scripts/hellbender_species_finetune.slurm
 ```
 
-Results are in `reports/crop-review-result.md`, `reports/species-110-baseline.md`, `reports/species-backbone-screen.md` and `reports/species-finetune.md`; the plan and decision rules are in [the species classifier plan](docs/species-classifier-plan.md).
+Results are in `reports/crop-review-result.md`, `reports/species-110-baseline.md`, `reports/species-backbone-screen.md`, `reports/species-finetune.md` and `reports/species-student-bakeoff.md`; the plan and decision rules are in [the species classifier plan](docs/species-classifier-plan.md).
 
 ## Usage constraint
 
