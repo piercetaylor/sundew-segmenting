@@ -525,6 +525,13 @@ run.**
 The cache was built 2026-09-27 (job 18014841, 2.5 min): 15,077 train and
 validation frames, 4.4 GB.
 
+**Equivalence result, 2026-09-27: the cache is adopted.** CE-25 on the cache
+(`dinov2-s-c576`, job 18014847) scores 0.710 [0.689, 0.733] at the last
+epoch, against 0.712 on the originals. The difference is **-0.002 [-0.006,
++0.001]**, inside [-0.015, +0.015]. Tasks took 12-15 min instead of 43-47.
+`dinov2-s-c576` is the CE control for every later arm. Table:
+`reports/species-distill/cache-equivalence.md`.
+
 ### Class-weighted KD (written 2026-09-27, before any run)
 
 KD-25 lost 0.039 on the 23 species with under 40 training images and gained
@@ -604,6 +611,8 @@ bake-off's.
   disagrees with the label, and the mean |w_label - w_expected| is 0.13;
 - epochs on the cache take about 7 s for 512 images. The CE-25c tasks take
   12 min, against 43 min on the originals.
+
+**Launched 2026-09-27:** KD-25c job 18015109, KDw-25c job 18015110.
 
 Launch, once the cache is adopted:
 `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1,CACHE=1 scripts/hellbender_species_finetune.slurm`
