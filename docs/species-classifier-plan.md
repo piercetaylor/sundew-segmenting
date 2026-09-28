@@ -634,6 +634,28 @@ second part):
   variants go to 100 epochs, as the selection row says: KD-100c job
   18016920, KDw-100c job 18016921, alongside CE-100c (job 18016204).
 
+**Result, 100-epoch arms, 2026-09-28** (`reports/species-distill.md`,
+third part):
+
+| Arm | Last-epoch seed mean |
+| --- | ---: |
+| CE-100c | 0.719 |
+| KD-100c | 0.731 |
+| KDw-100c | 0.735 |
+
+- **KDw-100c - CE-100c: +0.016 [+0.011, +0.021]**, and KD-100c - CE-100c
+  +0.012 [+0.005, +0.019], both 5/5 seeds. The "< +0.01" row does not fire,
+  so distillation on the training set stays open. KDw gains in all four
+  training-count bins, and on species with under 40 images +0.024
+  [+0.005, +0.043].
+- **Carried forward: KDw-100c** (the highest seed mean; KDw - KD +0.004
+  [-0.001, +0.009]). It is also the KD variant for the transfer set.
+- **Release floor not met**: seed mean 0.735 and top-5 0.942, against 0.75
+  and 0.95. Nothing ships until the transfer-set run.
+- At 100 epochs every arm is under-confident: single-model ECE 0.16 for CE
+  and 0.08-0.09 for KD. After a validation temperature this falls to
+  0.026-0.036.
+
 Launch, once the cache is adopted:
 `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1,CACHE=1 scripts/hellbender_species_finetune.slurm`
 and the same with `KD_WEIGHT=label`.
@@ -854,7 +876,8 @@ weight 1, and that is stated in the report.
 
 **Arm.** One arm, paired against the KD variant that the class-weighted rule
 carries to 100 epochs. If both variants run at 100 epochs, the higher one is
-used.
+used. **Selected 2026-09-28: KDw** (0.735 vs KD 0.731). The arm is
+`dinov2-s-kdw-e100-t-c576`, and transfer rows carry the expected weight.
 
 | Arm | Tag | Data, target, weight | Steps | A100-h | Role |
 | --- | --- | --- | ---: | ---: | --- |

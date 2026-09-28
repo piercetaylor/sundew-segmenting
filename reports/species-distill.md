@@ -237,3 +237,114 @@ by the rule there, the higher of the two.
 - **Fidelity:** KDw agrees with the teacher slightly less than KD does (0.789
   vs 0.801), and its unweighted KL is higher (0.558 vs 0.459). It matches the
   teacher less on the common species it no longer favours.
+
+# CE, KD and KDw at 100 epochs, on the cache
+
+Pre-registered in `docs/species-classifier-plan.md`, "Class-weighted KD"
+(decision rule) and "Distillation" (carried-forward recipe, release floor).
+Three arms, five paired seeds each, 100 epochs, patience off:
+
+- CE-100c (`dinov2-s-e100-c576`, job 18016204), 50-56 min per task;
+- KD-100c (`dinov2-s-kd-e100-c576`, job 18016920), 2 h 38-44 min;
+- KDw-100c (`dinov2-s-kdw-e100-c576`, job 18016921), 2 h 38-42 min.
+
+No task was preempted or failed. Generated tables:
+`species-distill/e100-results.md`; diagnostics:
+`species-distill/e100-diagnostics.json`.
+
+Reproduce with
+`sbatch --array=0-4 --time=08:00:00 --export=ALL,MODEL=dinov2-s,EPOCHS=100,CACHE=1 scripts/hellbender_species_finetune.slurm`,
+the same with `KD=1` and with `KD=1,KD_WEIGHT=label`, then
+`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-e100-c576 dinov2-s-kd-e100-c576 dinov2-s-e100-c576 --arms full --title "Distillation, 100 epochs, cache" --report reports/species-distill.md --out-md reports/species-distill/e100-results.md --out-json reports/species-distill/e100-summary.json`
+and
+`python scripts/diagnose_species_distill.py dinov2-s-kdw-e100-c576 dinov2-s-kd-e100-c576 dinov2-s-e100-c576 dinov2-s-kdw-c576 dinov2-s-c576 > reports/species-distill/e100-diagnostics.json`.
+The diagnostics script reproduces every 25-epoch diagnostic in the section
+above to the third decimal place.
+
+## Answer
+
+Validation balanced accuracy, seed mean at the last epoch, observer
+bootstrap. Teacher (5-seed DINOv2-L ensemble): 0.834.
+
+| Arm | Last epoch [95% CI] | Plain accuracy | Top-5 | Single-model ECE (after temperature) | Share of predictions to 130+ species (true 0.599) | Teacher agreement |
+| --- | --- | ---: | ---: | --- | ---: | ---: |
+| CE-100c | 0.719 [0.697, 0.744] | 0.758 | 0.924 | 0.160 (0.036) | 0.612 | 0.802 |
+| KD-100c | 0.731 [0.707, 0.759] | 0.775 | 0.946 | 0.082 (0.026) | 0.627 | 0.822 |
+| KDw-100c | **0.735** [0.713, 0.760] | 0.773 | 0.942 | 0.089 (0.027) | 0.616 | 0.820 |
+
+| Paired difference, last epoch | Delta [95% CI] | Seeds won |
+| --- | --- | ---: |
+| **KDw-100c - CE-100c** | **+0.016 [+0.011, +0.021]** | 5/5 |
+| **KD-100c - CE-100c** | **+0.012 [+0.005, +0.019]** | 5/5 |
+| KDw-100c - KD-100c | +0.004 [-0.001, +0.009] | 5/5 |
+
+The 5-seed ensembles are closer: KDw 0.751, KD 0.749, CE 0.744; KDw - CE
++0.007 [-0.001, +0.017].
+
+By training count, per-species accuracy averaged over seeds. Intervals are
+the observer bootstrap of the paired difference, 1,000 resamples:
+
+| Training images | Species | CE-100c | KD-100c | KDw-100c | KDw - CE | KDw - KD | KD - CE |
+| --- | ---: | ---: | ---: | ---: | --- | --- | --- |
+| under 40 | 23 | 0.610 | 0.613 | 0.634 | **+0.024 [+0.005, +0.043]** | +0.021 [-0.000, +0.040] | +0.003 [-0.014, +0.028] |
+| 40-79 | 28 | 0.669 | 0.667 | 0.679 | +0.010 [+0.001, +0.021] | +0.013 [+0.002, +0.025] | -0.003 [-0.015, +0.010] |
+| 80-129 | 17 | 0.759 | 0.779 | 0.777 | +0.018 [+0.009, +0.028] | -0.002 [-0.009, +0.006] | +0.019 [+0.009, +0.031] |
+| 130 and over | 42 | 0.795 | 0.819 | 0.810 | **+0.015 [+0.011, +0.019]** | -0.008 [-0.013, -0.003] | +0.023 [+0.019, +0.028] |
+
+- **At length, the teacher adds accuracy instead of only moving it.** At 25
+  epochs KDw beat CE by +0.003, all of it on thin species. At 100 it wins by
+  +0.016, and in every bin.
+- **The long schedule alone costs the thin species.** From CE-25c to
+  CE-100c, species with under 40 images drop 0.021 [-0.042, -0.001] while
+  those with 130+ gain 0.026. Longer CE training over-fits the thin
+  species. KDw holds them at 0.634 (25 epochs: 0.643, -0.009
+  [-0.028, +0.009]).
+- **Unweighted KD no longer hurts thin species against CE** (+0.003), but
+  only because CE-100c fell to its level. Weighting still helps them over KD:
+  +0.021, with the interval touching 0.
+- **Schedule gain, CE-25c to KDw-100c: +0.025** (0.710 to 0.735). About a
+  third is the schedule (CE-25c to CE-100c +0.009); the rest is the teacher.
+  The gap to the teacher is now 0.099, down from 0.121.
+
+## Decision, applied as written
+
+| Rule | Fires? |
+| --- | --- |
+| KD(w)-100c - CE-100c < +0.01: distillation on the training set is closed | **no**: KDw +0.016 [+0.011, +0.021], KD +0.012 [+0.005, +0.019]. Both point estimates exceed +0.01, and so does the whole KDw interval |
+| KD-100 - CE-100: CI excludes 0, positive: the teacher helps at the long schedule too | **yes**, for both variants, 5/5 seeds |
+| Carried-forward recipe: the highest last-epoch seed mean among the cache arms | **KDw-100c**, 0.735. Its lead over KD-100c covers 0, but either reading gives KDw: it has the higher mean, and the 25-epoch rule made KDw the KD form |
+| KD variant for the transfer set: the higher of the two at 100 epochs | **KDw**. The transfer-set arm is `dinov2-s-kdw-e100-t-c576`, with expected weights on transfer rows |
+| Release floor: carried-forward seed mean >= 0.75 and top-5 >= 0.95 | **not met**: 0.735 and 0.942. Nothing ships until the transfer-set run. Seed 17 alone is 0.732, top-5 0.943 |
+| A run diverges or fails | no: seed SD 0.004-0.006 |
+
+## Against the prior
+
+| Prior | Outcome |
+| --- | --- |
+| CE-100c 0.725 (0.71-0.735) | held low: 0.719 |
+| KD-100c 0.73 (0.715-0.75) | held: 0.731 |
+| KDw-100c 0.74 (0.72-0.76) | held low: 0.735 |
+| Transfer set: absolute point about 0.76 "if KD(w)-100c lands near 0.74" | the base is 0.005 lower, so the corresponding point is about 0.755 |
+
+## Other diagnostics
+
+- **Calibration is worse at 100 epochs, and in the other direction.** All
+  three arms are under-confident: mean confidence is 0.60-0.69 against a
+  plain accuracy of 0.76-0.77. The fitted temperatures are 0.72-0.81, so
+  predictions need sharpening. The single-model ECE is 0.160 for CE and
+  0.082-0.089 for KD, against 0.020-0.077 at 25 epochs. After one
+  temperature all three fall to 0.026-0.036. Shipping needs that temperature.
+  The 25-epoch point that KDw is the best calibrated no longer holds; KD and
+  KDw are equal here.
+- **Every arm leans toward the common species at 100 epochs**, CE included:
+  a share of 0.612-0.627 against the true 0.599 (0.597-0.612 at 25 epochs).
+  Weighting moderates this but no longer holds the share at the true value.
+- **Fidelity rises with length.** Agreement with the teacher is 0.820-0.822
+  for KD and KDw (0.789-0.801 at 25 epochs), and KL on validation falls
+  from 0.46-0.56 to 0.30-0.31. By bin, the KDw KL is 0.41 on thin species
+  and 0.27 on common ones.
+- **Most runs were still near their best at 100 epochs.** KD best epochs are
+  71-99 and KDw 82-92; CE peaks earlier (61-89). The last-epoch mean is
+  within 0.003 of the best-epoch mean for KDw and within 0.005 for CE.
+- **Not yet run:** int8 export of seed 17 of the carried-forward arm. Because
+  the release floor is not met, it moves to the transfer-set run's winner.
