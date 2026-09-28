@@ -1,0 +1,2953 @@
+{
+  "excluded": {
+    "photo_ids": 17916,
+    "split_observations": 17678,
+    "validation_test_observers": 1403
+  },
+  "fill_order": [
+    "b",
+    "c",
+    "a"
+  ],
+  "licenses": [
+    "cc0",
+    "cc-by",
+    "cc-by-nc"
+  ],
+  "max_per_observer": 5,
+  "per_species": 300,
+  "planned": 12179,
+  "pull": {
+    "id_below": 404031620,
+    "queried_at": "2026-09-27T23:03:44.222598+00:00"
+  },
+  "seed": 20260927,
+  "source_cap": 100,
+  "sources": {
+    "a": {
+      "captive": "false",
+      "quality_grade": "research"
+    },
+    "b": {
+      "captive": "true",
+      "quality_grade": "research,needs_id,casual"
+    },
+    "c": {
+      "captive": "false",
+      "quality_grade": "needs_id,casual"
+    }
+  },
+  "species": {
+    "Drosera aberrans": {
+      "a": {
+        "cap": 2979,
+        "eligible": 3178,
+        "excluded_photo": 7,
+        "no_eligible_photo": 12,
+        "observations": 5042,
+        "observer_cap": 1,
+        "planned": 198,
+        "split_observation": 188,
+        "val_test_observer": 1657
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "cap": 59,
+        "eligible": 160,
+        "no_eligible_photo": 1,
+        "observations": 508,
+        "observer_cap": 1,
+        "planned": 100,
+        "val_test_observer": 347
+      },
+      "planned": 300,
+      "taxon_id": 143292
+    },
+    "Drosera admirabilis": {
+      "a": {
+        "eligible": 36,
+        "no_eligible_photo": 5,
+        "observations": 255,
+        "observer_cap": 8,
+        "planned": 28,
+        "split_observation": 92,
+        "val_test_observer": 122
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 2,
+        "val_test_observer": 1
+      },
+      "c": {
+        "eligible": 43,
+        "no_eligible_photo": 5,
+        "observations": 95,
+        "planned": 43,
+        "val_test_observer": 47
+      },
+      "planned": 73,
+      "taxon_id": 148366
+    },
+    "Drosera alba": {
+      "a": {
+        "eligible": 4,
+        "no_eligible_photo": 2,
+        "observations": 76,
+        "planned": 4,
+        "split_observation": 31,
+        "val_test_observer": 39
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 11,
+        "planned": 5,
+        "val_test_observer": 6
+      },
+      "planned": 10,
+      "taxon_id": 148369
+    },
+    "Drosera aliciae": {
+      "a": {
+        "cap": 181,
+        "eligible": 369,
+        "no_eligible_photo": 9,
+        "observations": 841,
+        "observer_cap": 13,
+        "planned": 175,
+        "split_observation": 170,
+        "val_test_observer": 293
+      },
+      "b": {
+        "eligible": 25,
+        "no_eligible_photo": 2,
+        "observations": 28,
+        "planned": 25,
+        "val_test_observer": 1
+      },
+      "c": {
+        "cap": 69,
+        "eligible": 169,
+        "no_eligible_photo": 5,
+        "observations": 270,
+        "planned": 100,
+        "val_test_observer": 96
+      },
+      "planned": 300,
+      "taxon_id": 52654
+    },
+    "Drosera androsacea": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 80,
+        "planned": 2,
+        "split_observation": 38,
+        "val_test_observer": 40
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 11,
+        "no_eligible_photo": 1,
+        "observations": 20,
+        "planned": 11,
+        "val_test_observer": 8
+      },
+      "planned": 13,
+      "taxon_id": 148372
+    },
+    "Drosera anglica": {
+      "a": {
+        "cap": 3294,
+        "eligible": 3483,
+        "excluded_photo": 7,
+        "no_eligible_photo": 37,
+        "observations": 4781,
+        "planned": 189,
+        "split_observation": 187,
+        "val_test_observer": 1067
+      },
+      "b": {
+        "eligible": 11,
+        "no_eligible_photo": 0,
+        "observations": 11,
+        "planned": 11
+      },
+      "c": {
+        "cap": 86,
+        "eligible": 186,
+        "no_eligible_photo": 3,
+        "observations": 215,
+        "planned": 100,
+        "val_test_observer": 26
+      },
+      "planned": 300,
+      "taxon_id": 52655
+    },
+    "Drosera aquatica": {
+      "a": {
+        "eligible": 40,
+        "no_eligible_photo": 0,
+        "observations": 111,
+        "observer_cap": 34,
+        "planned": 6,
+        "split_observation": 35,
+        "val_test_observer": 36
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 8,
+        "no_eligible_photo": 0,
+        "observations": 8,
+        "planned": 8
+      },
+      "planned": 14,
+      "taxon_id": 882774
+    },
+    "Drosera arcturi": {
+      "a": {
+        "cap": 298,
+        "eligible": 572,
+        "excluded_photo": 4,
+        "no_eligible_photo": 15,
+        "observations": 1147,
+        "observer_cap": 1,
+        "planned": 273,
+        "split_observation": 167,
+        "val_test_observer": 389
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 27,
+        "no_eligible_photo": 0,
+        "observations": 38,
+        "planned": 27,
+        "val_test_observer": 11
+      },
+      "planned": 300,
+      "taxon_id": 54678
+    },
+    "Drosera auriculata": {
+      "a": {
+        "cap": 3727,
+        "eligible": 3925,
+        "excluded_photo": 8,
+        "no_eligible_photo": 20,
+        "observations": 5530,
+        "observer_cap": 3,
+        "planned": 195,
+        "split_observation": 188,
+        "val_test_observer": 1389
+      },
+      "b": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 5
+      },
+      "c": {
+        "cap": 1093,
+        "eligible": 1193,
+        "no_eligible_photo": 8,
+        "observations": 1508,
+        "planned": 100,
+        "val_test_observer": 307
+      },
+      "planned": 300,
+      "taxon_id": 424565
+    },
+    "Drosera barbigera": {
+      "a": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 74,
+        "planned": 7,
+        "split_observation": 39,
+        "val_test_observer": 28
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "planned": 7,
+      "taxon_id": 895750
+    },
+    "Drosera binata": {
+      "a": {
+        "cap": 839,
+        "eligible": 1013,
+        "no_eligible_photo": 11,
+        "observations": 1598,
+        "planned": 174,
+        "split_observation": 174,
+        "val_test_observer": 400
+      },
+      "b": {
+        "cap": 23,
+        "eligible": 123,
+        "no_eligible_photo": 0,
+        "observations": 126,
+        "planned": 100,
+        "val_test_observer": 3
+      },
+      "c": {
+        "eligible": 26,
+        "no_eligible_photo": 0,
+        "observations": 26,
+        "planned": 26
+      },
+      "planned": 300,
+      "taxon_id": 54684
+    },
+    "Drosera brevicornis": {
+      "a": {
+        "eligible": 14,
+        "no_eligible_photo": 0,
+        "observations": 69,
+        "observer_cap": 9,
+        "planned": 5,
+        "split_observation": 29,
+        "val_test_observer": 26
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 2,
+        "val_test_observer": 3
+      },
+      "planned": 7,
+      "taxon_id": 881614
+    },
+    "Drosera brevifolia": {
+      "a": {
+        "cap": 1966,
+        "eligible": 2167,
+        "excluded_photo": 7,
+        "no_eligible_photo": 18,
+        "observations": 3057,
+        "planned": 201,
+        "split_observation": 187,
+        "val_test_observer": 678
+      },
+      "b": {
+        "eligible": 13,
+        "no_eligible_photo": 0,
+        "observations": 13,
+        "planned": 13
+      },
+      "c": {
+        "eligible": 86,
+        "no_eligible_photo": 1,
+        "observations": 95,
+        "planned": 86,
+        "val_test_observer": 8
+      },
+      "planned": 300,
+      "taxon_id": 162093
+    },
+    "Drosera bulbosa": {
+      "a": {
+        "eligible": 117,
+        "excluded_photo": 1,
+        "no_eligible_photo": 2,
+        "observations": 472,
+        "observer_cap": 30,
+        "planned": 87,
+        "split_observation": 154,
+        "val_test_observer": 198
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 26,
+        "no_eligible_photo": 0,
+        "observations": 37,
+        "planned": 26,
+        "val_test_observer": 11
+      },
+      "planned": 113,
+      "taxon_id": 551319
+    },
+    "Drosera burkeana": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 3,
+        "observations": 79,
+        "planned": 2,
+        "split_observation": 41,
+        "val_test_observer": 33
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 4,
+        "val_test_observer": 1
+      },
+      "planned": 6,
+      "taxon_id": 349807
+    },
+    "Drosera burmanni": {
+      "a": {
+        "cap": 804,
+        "eligible": 986,
+        "excluded_photo": 1,
+        "no_eligible_photo": 19,
+        "observations": 1682,
+        "observer_cap": 11,
+        "planned": 171,
+        "split_observation": 181,
+        "val_test_observer": 495
+      },
+      "b": {
+        "eligible": 29,
+        "no_eligible_photo": 1,
+        "observations": 34,
+        "planned": 29,
+        "val_test_observer": 4
+      },
+      "c": {
+        "cap": 62,
+        "eligible": 164,
+        "no_eligible_photo": 0,
+        "observations": 179,
+        "observer_cap": 2,
+        "planned": 100,
+        "val_test_observer": 15
+      },
+      "planned": 300,
+      "taxon_id": 191715
+    },
+    "Drosera capensis": {
+      "a": {
+        "cap": 289,
+        "eligible": 455,
+        "excluded_photo": 4,
+        "no_eligible_photo": 5,
+        "observations": 967,
+        "observer_cap": 2,
+        "planned": 164,
+        "split_observation": 171,
+        "val_test_observer": 332
+      },
+      "b": {
+        "cap": 248,
+        "eligible": 350,
+        "no_eligible_photo": 6,
+        "observations": 364,
+        "observer_cap": 2,
+        "planned": 100,
+        "val_test_observer": 8
+      },
+      "c": {
+        "eligible": 36,
+        "no_eligible_photo": 0,
+        "observations": 52,
+        "planned": 36,
+        "val_test_observer": 16
+      },
+      "planned": 300,
+      "taxon_id": 52656
+    },
+    "Drosera capillaris": {
+      "a": {
+        "cap": 5713,
+        "eligible": 5887,
+        "excluded_photo": 13,
+        "no_eligible_photo": 56,
+        "observations": 8257,
+        "planned": 174,
+        "split_observation": 191,
+        "val_test_observer": 2110
+      },
+      "b": {
+        "eligible": 26,
+        "no_eligible_photo": 0,
+        "observations": 26,
+        "planned": 26
+      },
+      "c": {
+        "cap": 192,
+        "eligible": 292,
+        "no_eligible_photo": 2,
+        "observations": 326,
+        "planned": 100,
+        "val_test_observer": 32
+      },
+      "planned": 300,
+      "taxon_id": 162094
+    },
+    "Drosera cayennensis": {
+      "a": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 93,
+        "planned": 7,
+        "split_observation": 44,
+        "val_test_observer": 42
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 11,
+        "no_eligible_photo": 0,
+        "observations": 11,
+        "planned": 11
+      },
+      "planned": 18,
+      "taxon_id": 602512
+    },
+    "Drosera cistiflora": {
+      "a": {
+        "cap": 971,
+        "eligible": 1176,
+        "excluded_photo": 3,
+        "no_eligible_photo": 25,
+        "observations": 2070,
+        "observer_cap": 6,
+        "planned": 199,
+        "split_observation": 177,
+        "val_test_observer": 689
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "cap": 319,
+        "eligible": 427,
+        "no_eligible_photo": 15,
+        "observations": 661,
+        "observer_cap": 8,
+        "planned": 100,
+        "val_test_observer": 219
+      },
+      "planned": 300,
+      "taxon_id": 119370
+    },
+    "Drosera collina": {
+      "a": {
+        "cap": 112,
+        "eligible": 552,
+        "excluded_photo": 2,
+        "no_eligible_photo": 0,
+        "observations": 1220,
+        "observer_cap": 188,
+        "planned": 252,
+        "split_observation": 161,
+        "val_test_observer": 505
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 47,
+        "no_eligible_photo": 0,
+        "observations": 86,
+        "planned": 47,
+        "val_test_observer": 39
+      },
+      "planned": 300,
+      "taxon_id": 736763
+    },
+    "Drosera collinsiae": {
+      "a": {
+        "eligible": 12,
+        "no_eligible_photo": 2,
+        "observations": 60,
+        "observer_cap": 4,
+        "planned": 8,
+        "split_observation": 30,
+        "val_test_observer": 16
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 12,
+        "planned": 5,
+        "val_test_observer": 7
+      },
+      "planned": 13,
+      "taxon_id": 584288
+    },
+    "Drosera communis": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 1,
+        "observations": 91,
+        "planned": 2,
+        "split_observation": 54,
+        "val_test_observer": 34
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 13,
+        "no_eligible_photo": 0,
+        "observations": 20,
+        "planned": 13,
+        "val_test_observer": 7
+      },
+      "planned": 15,
+      "taxon_id": 549237
+    },
+    "Drosera cuneifolia": {
+      "a": {
+        "eligible": 48,
+        "no_eligible_photo": 0,
+        "observations": 286,
+        "observer_cap": 5,
+        "planned": 43,
+        "split_observation": 123,
+        "val_test_observer": 115
+      },
+      "b": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "c": {
+        "eligible": 42,
+        "no_eligible_photo": 0,
+        "observations": 69,
+        "planned": 42,
+        "val_test_observer": 27
+      },
+      "planned": 88,
+      "taxon_id": 543564
+    },
+    "Drosera dielsiana": {
+      "a": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 53,
+        "planned": 1,
+        "split_observation": 32,
+        "val_test_observer": 20
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 8,
+        "no_eligible_photo": 1,
+        "observations": 18,
+        "planned": 8,
+        "val_test_observer": 9
+      },
+      "planned": 9,
+      "taxon_id": 355500
+    },
+    "Drosera dilatatopetiolaris": {
+      "a": {
+        "eligible": 129,
+        "no_eligible_photo": 1,
+        "observations": 289,
+        "observer_cap": 111,
+        "planned": 18,
+        "split_observation": 71,
+        "val_test_observer": 88
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 35,
+        "no_eligible_photo": 0,
+        "observations": 39,
+        "observer_cap": 5,
+        "planned": 30,
+        "val_test_observer": 4
+      },
+      "planned": 49,
+      "taxon_id": 764664
+    },
+    "Drosera drummondii": {
+      "a": {
+        "eligible": 209,
+        "no_eligible_photo": 1,
+        "observations": 651,
+        "observer_cap": 35,
+        "planned": 174,
+        "split_observation": 162,
+        "val_test_observer": 279
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 62,
+        "no_eligible_photo": 0,
+        "observations": 104,
+        "planned": 62,
+        "val_test_observer": 42
+      },
+      "planned": 236,
+      "taxon_id": 809372
+    },
+    "Drosera eneabba": {
+      "a": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 82,
+        "planned": 1,
+        "split_observation": 50,
+        "val_test_observer": 31
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 7,
+        "no_eligible_photo": 1,
+        "observations": 10,
+        "planned": 7,
+        "val_test_observer": 2
+      },
+      "planned": 8,
+      "taxon_id": 785309
+    },
+    "Drosera eremaea": {
+      "a": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 120,
+        "planned": 7,
+        "split_observation": 60,
+        "val_test_observer": 53
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 26,
+        "no_eligible_photo": 0,
+        "observations": 32,
+        "planned": 26,
+        "split_observation": 1,
+        "val_test_observer": 5
+      },
+      "planned": 33,
+      "taxon_id": 713918
+    },
+    "Drosera ericgreenii": {
+      "a": {
+        "eligible": 3,
+        "excluded_photo": 1,
+        "no_eligible_photo": 1,
+        "observations": 62,
+        "planned": 3,
+        "split_observation": 28,
+        "val_test_observer": 29
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 1,
+        "val_test_observer": 2
+      },
+      "planned": 4,
+      "taxon_id": 548254
+    },
+    "Drosera erythrogyne": {
+      "a": {
+        "eligible": 12,
+        "no_eligible_photo": 1,
+        "observations": 185,
+        "planned": 12,
+        "split_observation": 109,
+        "val_test_observer": 63
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 16,
+        "no_eligible_photo": 0,
+        "observations": 20,
+        "planned": 16,
+        "val_test_observer": 4
+      },
+      "planned": 28,
+      "taxon_id": 635249
+    },
+    "Drosera erythrorhiza": {
+      "a": {
+        "cap": 21,
+        "eligible": 320,
+        "no_eligible_photo": 1,
+        "observations": 846,
+        "observer_cap": 37,
+        "planned": 262,
+        "split_observation": 164,
+        "val_test_observer": 361
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 38,
+        "no_eligible_photo": 0,
+        "observations": 55,
+        "planned": 38,
+        "val_test_observer": 17
+      },
+      "planned": 300,
+      "taxon_id": 148228
+    },
+    "Drosera esterhuyseniae": {
+      "a": {
+        "eligible": 37,
+        "excluded_photo": 1,
+        "no_eligible_photo": 7,
+        "observations": 283,
+        "observer_cap": 6,
+        "planned": 31,
+        "split_observation": 95,
+        "val_test_observer": 143
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 26,
+        "no_eligible_photo": 2,
+        "observations": 64,
+        "planned": 26,
+        "val_test_observer": 36
+      },
+      "planned": 58,
+      "taxon_id": 584289
+    },
+    "Drosera filiformis": {
+      "a": {
+        "cap": 138,
+        "eligible": 354,
+        "excluded_photo": 1,
+        "no_eligible_photo": 8,
+        "observations": 831,
+        "observer_cap": 6,
+        "planned": 210,
+        "split_observation": 167,
+        "val_test_observer": 301
+      },
+      "b": {
+        "eligible": 59,
+        "no_eligible_photo": 0,
+        "observations": 60,
+        "planned": 59,
+        "val_test_observer": 1
+      },
+      "c": {
+        "eligible": 31,
+        "no_eligible_photo": 0,
+        "observations": 34,
+        "planned": 31,
+        "val_test_observer": 3
+      },
+      "planned": 300,
+      "taxon_id": 52657
+    },
+    "Drosera finlaysonii": {
+      "a": {
+        "eligible": 58,
+        "no_eligible_photo": 0,
+        "observations": 346,
+        "observer_cap": 2,
+        "planned": 56,
+        "split_observation": 132,
+        "val_test_observer": 156
+      },
+      "b": {
+        "eligible": 12,
+        "no_eligible_photo": 0,
+        "observations": 16,
+        "planned": 12,
+        "val_test_observer": 4
+      },
+      "c": {
+        "eligible": 17,
+        "no_eligible_photo": 0,
+        "observations": 19,
+        "planned": 17,
+        "val_test_observer": 2
+      },
+      "planned": 85,
+      "taxon_id": 1666345
+    },
+    "Drosera floridana": {
+      "a": {
+        "eligible": 38,
+        "no_eligible_photo": 0,
+        "observations": 114,
+        "observer_cap": 33,
+        "planned": 5,
+        "split_observation": 35,
+        "val_test_observer": 41
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "planned": 5,
+      "taxon_id": 1698737
+    },
+    "Drosera fulva": {
+      "a": {
+        "eligible": 14,
+        "no_eligible_photo": 0,
+        "observations": 60,
+        "observer_cap": 13,
+        "planned": 1,
+        "split_observation": 26,
+        "val_test_observer": 20
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 9,
+        "planned": 7,
+        "val_test_observer": 2
+      },
+      "planned": 10,
+      "taxon_id": 881586
+    },
+    "Drosera gigantea": {
+      "a": {
+        "eligible": 32,
+        "no_eligible_photo": 0,
+        "observations": 256,
+        "planned": 32,
+        "split_observation": 97,
+        "val_test_observer": 127
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 4,
+        "planned": 4
+      },
+      "planned": 36,
+      "taxon_id": 739940
+    },
+    "Drosera glabripes": {
+      "a": {
+        "eligible": 191,
+        "excluded_photo": 2,
+        "no_eligible_photo": 6,
+        "observations": 627,
+        "observer_cap": 31,
+        "planned": 160,
+        "split_observation": 141,
+        "val_test_observer": 287
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 54,
+        "no_eligible_photo": 5,
+        "observations": 105,
+        "planned": 54,
+        "val_test_observer": 46
+      },
+      "planned": 215,
+      "taxon_id": 548253
+    },
+    "Drosera glanduligera": {
+      "a": {
+        "cap": 924,
+        "eligible": 1192,
+        "excluded_photo": 5,
+        "no_eligible_photo": 2,
+        "observations": 2413,
+        "observer_cap": 8,
+        "planned": 260,
+        "split_observation": 168,
+        "val_test_observer": 1046
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 44,
+        "no_eligible_photo": 1,
+        "observations": 62,
+        "observer_cap": 4,
+        "planned": 40,
+        "val_test_observer": 17
+      },
+      "planned": 300,
+      "taxon_id": 143360
+    },
+    "Drosera gunniana": {
+      "a": {
+        "cap": 395,
+        "eligible": 600,
+        "no_eligible_photo": 5,
+        "observations": 1200,
+        "observer_cap": 5,
+        "planned": 200,
+        "split_observation": 174,
+        "val_test_observer": 421
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "cap": 218,
+        "eligible": 318,
+        "no_eligible_photo": 2,
+        "observations": 444,
+        "planned": 100,
+        "val_test_observer": 124
+      },
+      "planned": 300,
+      "taxon_id": 823782
+    },
+    "Drosera heterophylla": {
+      "a": {
+        "eligible": 16,
+        "no_eligible_photo": 0,
+        "observations": 153,
+        "observer_cap": 7,
+        "planned": 9,
+        "split_observation": 72,
+        "val_test_observer": 65
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 2,
+        "val_test_observer": 3
+      },
+      "planned": 11,
+      "taxon_id": 635253
+    },
+    "Drosera hilaris": {
+      "a": {
+        "cap": 10,
+        "eligible": 280,
+        "excluded_photo": 1,
+        "no_eligible_photo": 6,
+        "observations": 721,
+        "observer_cap": 56,
+        "planned": 214,
+        "split_observation": 169,
+        "val_test_observer": 265
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 95,
+        "no_eligible_photo": 5,
+        "observations": 150,
+        "observer_cap": 9,
+        "planned": 86,
+        "val_test_observer": 50
+      },
+      "planned": 300,
+      "taxon_id": 584290
+    },
+    "Drosera hirsuta": {
+      "a": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 129,
+        "planned": 4,
+        "split_observation": 64,
+        "val_test_observer": 61
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 18,
+        "no_eligible_photo": 0,
+        "observations": 26,
+        "planned": 18,
+        "val_test_observer": 8
+      },
+      "planned": 22,
+      "taxon_id": 847666
+    },
+    "Drosera hookeri": {
+      "a": {
+        "cap": 148,
+        "eligible": 348,
+        "no_eligible_photo": 3,
+        "observations": 836,
+        "observer_cap": 1,
+        "planned": 199,
+        "split_observation": 168,
+        "val_test_observer": 317
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "cap": 228,
+        "eligible": 328,
+        "no_eligible_photo": 0,
+        "observations": 420,
+        "planned": 100,
+        "val_test_observer": 92
+      },
+      "planned": 300,
+      "taxon_id": 154709
+    },
+    "Drosera huegelii": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 1,
+        "observations": 88,
+        "planned": 2,
+        "split_observation": 40,
+        "val_test_observer": 45
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 6,
+        "no_eligible_photo": 0,
+        "observations": 10,
+        "planned": 6,
+        "val_test_observer": 4
+      },
+      "planned": 8,
+      "taxon_id": 635282
+    },
+    "Drosera humilis": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 77,
+        "planned": 0,
+        "split_observation": 41,
+        "val_test_observer": 36
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 11,
+        "planned": 7,
+        "val_test_observer": 4
+      },
+      "planned": 7,
+      "taxon_id": 920802
+    },
+    "Drosera hyperostigma": {
+      "a": {
+        "eligible": 52,
+        "excluded_photo": 1,
+        "no_eligible_photo": 1,
+        "observations": 242,
+        "observer_cap": 19,
+        "planned": 33,
+        "split_observation": 100,
+        "val_test_observer": 88
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 14,
+        "no_eligible_photo": 0,
+        "observations": 23,
+        "planned": 14,
+        "val_test_observer": 9
+      },
+      "planned": 47,
+      "taxon_id": 929599
+    },
+    "Drosera indica": {
+      "a": {
+        "eligible": 75,
+        "no_eligible_photo": 9,
+        "observations": 375,
+        "observer_cap": 12,
+        "planned": 63,
+        "split_observation": 147,
+        "val_test_observer": 144
+      },
+      "b": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "c": {
+        "eligible": 49,
+        "no_eligible_photo": 1,
+        "observations": 67,
+        "planned": 49,
+        "val_test_observer": 17
+      },
+      "planned": 115,
+      "taxon_id": 191717
+    },
+    "Drosera intermedia": {
+      "a": {
+        "cap": 7523,
+        "eligible": 7684,
+        "excluded_photo": 13,
+        "no_eligible_photo": 71,
+        "observations": 10123,
+        "planned": 161,
+        "split_observation": 185,
+        "val_test_observer": 2170
+      },
+      "b": {
+        "eligible": 39,
+        "no_eligible_photo": 0,
+        "observations": 39,
+        "planned": 39
+      },
+      "c": {
+        "cap": 483,
+        "eligible": 584,
+        "no_eligible_photo": 2,
+        "observations": 672,
+        "observer_cap": 1,
+        "planned": 100,
+        "val_test_observer": 86
+      },
+      "planned": 300,
+      "taxon_id": 53038
+    },
+    "Drosera latifolia": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 1,
+        "observations": 74,
+        "planned": 0,
+        "split_observation": 46,
+        "val_test_observer": 27
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 13,
+        "no_eligible_photo": 0,
+        "observations": 15,
+        "planned": 13,
+        "val_test_observer": 2
+      },
+      "planned": 13,
+      "taxon_id": 781307
+    },
+    "Drosera linearis": {
+      "a": {
+        "eligible": 252,
+        "no_eligible_photo": 4,
+        "observations": 826,
+        "observer_cap": 3,
+        "planned": 249,
+        "split_observation": 158,
+        "val_test_observer": 412
+      },
+      "b": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "c": {
+        "eligible": 6,
+        "no_eligible_photo": 1,
+        "observations": 7,
+        "planned": 6
+      },
+      "planned": 258,
+      "taxon_id": 162095
+    },
+    "Drosera lunata": {
+      "a": {
+        "eligible": 225,
+        "no_eligible_photo": 2,
+        "observations": 544,
+        "observer_cap": 72,
+        "planned": 153,
+        "split_observation": 148,
+        "val_test_observer": 169
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "cap": 69,
+        "eligible": 179,
+        "no_eligible_photo": 1,
+        "observations": 235,
+        "observer_cap": 10,
+        "planned": 100,
+        "val_test_observer": 55
+      },
+      "planned": 253,
+      "taxon_id": 713709
+    },
+    "Drosera macrantha": {
+      "a": {
+        "cap": 118,
+        "eligible": 376,
+        "no_eligible_photo": 4,
+        "observations": 1051,
+        "observer_cap": 34,
+        "planned": 224,
+        "split_observation": 170,
+        "val_test_observer": 501
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 76,
+        "no_eligible_photo": 0,
+        "observations": 142,
+        "planned": 76,
+        "val_test_observer": 66
+      },
+      "planned": 300,
+      "taxon_id": 143359
+    },
+    "Drosera macrophylla": {
+      "a": {
+        "eligible": 4,
+        "no_eligible_photo": 1,
+        "observations": 69,
+        "observer_cap": 2,
+        "planned": 2,
+        "split_observation": 40,
+        "val_test_observer": 24
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 9,
+        "no_eligible_photo": 0,
+        "observations": 13,
+        "planned": 9,
+        "val_test_observer": 4
+      },
+      "planned": 11,
+      "taxon_id": 924850
+    },
+    "Drosera madagascariensis": {
+      "a": {
+        "eligible": 9,
+        "excluded_photo": 1,
+        "no_eligible_photo": 4,
+        "observations": 215,
+        "planned": 9,
+        "split_observation": 122,
+        "val_test_observer": 79
+      },
+      "b": {
+        "eligible": 6,
+        "no_eligible_photo": 0,
+        "observations": 7,
+        "planned": 6,
+        "val_test_observer": 1
+      },
+      "c": {
+        "eligible": 16,
+        "no_eligible_photo": 1,
+        "observations": 22,
+        "planned": 16,
+        "val_test_observer": 5
+      },
+      "planned": 31,
+      "taxon_id": 123533
+    },
+    "Drosera magna": {
+      "a": {
+        "eligible": 24,
+        "no_eligible_photo": 2,
+        "observations": 240,
+        "planned": 24,
+        "split_observation": 114,
+        "val_test_observer": 100
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 19,
+        "no_eligible_photo": 1,
+        "observations": 24,
+        "planned": 19,
+        "val_test_observer": 4
+      },
+      "planned": 43,
+      "taxon_id": 736764
+    },
+    "Drosera menziesii": {
+      "a": {
+        "eligible": 8,
+        "no_eligible_photo": 0,
+        "observations": 194,
+        "observer_cap": 2,
+        "planned": 6,
+        "split_observation": 108,
+        "val_test_observer": 78
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "eligible": 17,
+        "no_eligible_photo": 0,
+        "observations": 30,
+        "planned": 17,
+        "val_test_observer": 13
+      },
+      "planned": 25,
+      "taxon_id": 148225
+    },
+    "Drosera micrantha": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 170,
+        "planned": 0,
+        "split_observation": 70,
+        "val_test_observer": 100
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 15,
+        "no_eligible_photo": 1,
+        "observations": 24,
+        "planned": 15,
+        "val_test_observer": 8
+      },
+      "planned": 16,
+      "taxon_id": 713940
+    },
+    "Drosera miniata": {
+      "a": {
+        "eligible": 12,
+        "no_eligible_photo": 0,
+        "observations": 109,
+        "planned": 12,
+        "split_observation": 56,
+        "val_test_observer": 41
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 3,
+        "no_eligible_photo": 1,
+        "observations": 12,
+        "planned": 3,
+        "val_test_observer": 8
+      },
+      "planned": 15,
+      "taxon_id": 781121
+    },
+    "Drosera minutiflora": {
+      "a": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 68,
+        "observer_cap": 1,
+        "planned": 4,
+        "split_observation": 28,
+        "val_test_observer": 35
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 6,
+        "no_eligible_photo": 0,
+        "observations": 12,
+        "planned": 6,
+        "val_test_observer": 6
+      },
+      "planned": 10,
+      "taxon_id": 1271667
+    },
+    "Drosera modesta": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 1,
+        "observations": 136,
+        "planned": 2,
+        "split_observation": 58,
+        "val_test_observer": 75
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 14,
+        "planned": 7,
+        "val_test_observer": 7
+      },
+      "planned": 9,
+      "taxon_id": 635251
+    },
+    "Drosera montana": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 60,
+        "planned": 0,
+        "split_observation": 39,
+        "val_test_observer": 21
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 13,
+        "no_eligible_photo": 0,
+        "observations": 14,
+        "planned": 13,
+        "val_test_observer": 1
+      },
+      "planned": 13,
+      "taxon_id": 83886
+    },
+    "Drosera monticola": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 1,
+        "observations": 62,
+        "planned": 0,
+        "split_observation": 23,
+        "val_test_observer": 38
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 1,
+        "val_test_observer": 2
+      },
+      "planned": 1,
+      "taxon_id": 551660
+    },
+    "Drosera murfetii": {
+      "a": {
+        "eligible": 0,
+        "excluded_photo": 1,
+        "no_eligible_photo": 1,
+        "observations": 110,
+        "planned": 0,
+        "split_observation": 64,
+        "val_test_observer": 44
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 24,
+        "no_eligible_photo": 0,
+        "observations": 34,
+        "planned": 24,
+        "val_test_observer": 10
+      },
+      "planned": 24,
+      "taxon_id": 602892
+    },
+    "Drosera natalensis": {
+      "a": {
+        "eligible": 61,
+        "excluded_photo": 1,
+        "no_eligible_photo": 4,
+        "observations": 329,
+        "observer_cap": 5,
+        "planned": 56,
+        "split_observation": 140,
+        "val_test_observer": 123
+      },
+      "b": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "c": {
+        "eligible": 57,
+        "no_eligible_photo": 0,
+        "observations": 92,
+        "planned": 57,
+        "val_test_observer": 35
+      },
+      "planned": 116,
+      "taxon_id": 123546
+    },
+    "Drosera neesii": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 65,
+        "planned": 0,
+        "split_observation": 35,
+        "val_test_observer": 30
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 12,
+        "no_eligible_photo": 0,
+        "observations": 20,
+        "planned": 12,
+        "val_test_observer": 8
+      },
+      "planned": 12,
+      "taxon_id": 795048
+    },
+    "Drosera neocaledonica": {
+      "a": {
+        "eligible": 6,
+        "no_eligible_photo": 1,
+        "observations": 164,
+        "planned": 6,
+        "split_observation": 81,
+        "val_test_observer": 76
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "planned": 8,
+      "taxon_id": 510367
+    },
+    "Drosera nitidula": {
+      "a": {
+        "eligible": 1,
+        "no_eligible_photo": 1,
+        "observations": 75,
+        "planned": 1,
+        "split_observation": 27,
+        "val_test_observer": 46
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 4,
+        "planned": 4
+      },
+      "planned": 7,
+      "taxon_id": 123548
+    },
+    "Drosera ordensis": {
+      "a": {
+        "eligible": 20,
+        "no_eligible_photo": 0,
+        "observations": 82,
+        "observer_cap": 15,
+        "planned": 5,
+        "split_observation": 27,
+        "val_test_observer": 35
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "planned": 7,
+      "taxon_id": 483429
+    },
+    "Drosera pallida": {
+      "a": {
+        "cap": 85,
+        "eligible": 389,
+        "no_eligible_photo": 1,
+        "observations": 949,
+        "observer_cap": 67,
+        "planned": 237,
+        "split_observation": 165,
+        "val_test_observer": 394
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 63,
+        "no_eligible_photo": 0,
+        "observations": 102,
+        "planned": 63,
+        "val_test_observer": 39
+      },
+      "planned": 300,
+      "taxon_id": 511323
+    },
+    "Drosera pauciflora": {
+      "a": {
+        "eligible": 40,
+        "excluded_photo": 1,
+        "no_eligible_photo": 5,
+        "observations": 241,
+        "observer_cap": 7,
+        "planned": 33,
+        "split_observation": 111,
+        "val_test_observer": 84
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 53,
+        "no_eligible_photo": 7,
+        "observations": 94,
+        "planned": 53,
+        "val_test_observer": 34
+      },
+      "planned": 87,
+      "taxon_id": 584291
+    },
+    "Drosera peltata": {
+      "a": {
+        "eligible": 5,
+        "no_eligible_photo": 3,
+        "observations": 189,
+        "planned": 5,
+        "split_observation": 111,
+        "val_test_observer": 70
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "cap": 150,
+        "eligible": 250,
+        "no_eligible_photo": 1,
+        "observations": 330,
+        "planned": 100,
+        "val_test_observer": 79
+      },
+      "planned": 107,
+      "taxon_id": 123397
+    },
+    "Drosera petiolaris": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 4,
+        "observations": 57,
+        "planned": 0,
+        "split_observation": 34,
+        "val_test_observer": 19
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 11,
+        "no_eligible_photo": 0,
+        "observations": 14,
+        "planned": 11,
+        "val_test_observer": 3
+      },
+      "planned": 11,
+      "taxon_id": 704609
+    },
+    "Drosera planchonii": {
+      "a": {
+        "cap": 946,
+        "eligible": 1190,
+        "no_eligible_photo": 10,
+        "observations": 2591,
+        "observer_cap": 20,
+        "planned": 224,
+        "split_observation": 173,
+        "val_test_observer": 1218
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 78,
+        "no_eligible_photo": 2,
+        "observations": 153,
+        "observer_cap": 2,
+        "planned": 76,
+        "val_test_observer": 73
+      },
+      "planned": 300,
+      "taxon_id": 713917
+    },
+    "Drosera platypoda": {
+      "a": {
+        "eligible": 9,
+        "no_eligible_photo": 0,
+        "observations": 139,
+        "observer_cap": 1,
+        "planned": 8,
+        "split_observation": 68,
+        "val_test_observer": 62
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 7,
+        "planned": 5,
+        "val_test_observer": 2
+      },
+      "planned": 14,
+      "taxon_id": 635239
+    },
+    "Drosera platystigma": {
+      "a": {
+        "eligible": 28,
+        "no_eligible_photo": 0,
+        "observations": 155,
+        "observer_cap": 23,
+        "planned": 5,
+        "split_observation": 67,
+        "val_test_observer": 60
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 9,
+        "no_eligible_photo": 0,
+        "observations": 15,
+        "planned": 9,
+        "val_test_observer": 6
+      },
+      "planned": 14,
+      "taxon_id": 148257
+    },
+    "Drosera porrecta": {
+      "a": {
+        "eligible": 210,
+        "excluded_photo": 1,
+        "no_eligible_photo": 2,
+        "observations": 566,
+        "observer_cap": 20,
+        "planned": 190,
+        "split_observation": 158,
+        "val_test_observer": 195
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 33,
+        "no_eligible_photo": 0,
+        "observations": 42,
+        "planned": 33,
+        "val_test_observer": 9
+      },
+      "planned": 223,
+      "taxon_id": 560562
+    },
+    "Drosera praefolia": {
+      "a": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 127,
+        "planned": 4,
+        "split_observation": 38,
+        "val_test_observer": 85
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 4,
+        "planned": 4
+      },
+      "planned": 8,
+      "taxon_id": 550282
+    },
+    "Drosera pulchella": {
+      "a": {
+        "eligible": 95,
+        "excluded_photo": 1,
+        "no_eligible_photo": 1,
+        "observations": 433,
+        "observer_cap": 30,
+        "planned": 65,
+        "split_observation": 105,
+        "val_test_observer": 231
+      },
+      "b": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 4,
+        "val_test_observer": 1
+      },
+      "c": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 5
+      },
+      "planned": 74,
+      "taxon_id": 547511
+    },
+    "Drosera purpurascens": {
+      "a": {
+        "eligible": 56,
+        "excluded_photo": 1,
+        "no_eligible_photo": 3,
+        "observations": 309,
+        "observer_cap": 9,
+        "planned": 47,
+        "split_observation": 109,
+        "val_test_observer": 140
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 13,
+        "no_eligible_photo": 0,
+        "observations": 26,
+        "planned": 13,
+        "val_test_observer": 13
+      },
+      "planned": 60,
+      "taxon_id": 635337
+    },
+    "Drosera pygmaea": {
+      "a": {
+        "cap": 284,
+        "eligible": 570,
+        "excluded_photo": 3,
+        "no_eligible_photo": 7,
+        "observations": 1186,
+        "observer_cap": 9,
+        "planned": 277,
+        "split_observation": 157,
+        "val_test_observer": 449
+      },
+      "b": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 5,
+        "planned": 5
+      },
+      "c": {
+        "eligible": 19,
+        "no_eligible_photo": 0,
+        "observations": 21,
+        "observer_cap": 1,
+        "planned": 18,
+        "val_test_observer": 2
+      },
+      "planned": 300,
+      "taxon_id": 122209
+    },
+    "Drosera ramentacea": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 2,
+        "observations": 80,
+        "planned": 0,
+        "split_observation": 46,
+        "val_test_observer": 32
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 4,
+        "no_eligible_photo": 2,
+        "observations": 9,
+        "planned": 4,
+        "val_test_observer": 3
+      },
+      "planned": 5,
+      "taxon_id": 584292
+    },
+    "Drosera roseana": {
+      "a": {
+        "eligible": 22,
+        "no_eligible_photo": 0,
+        "observations": 128,
+        "observer_cap": 15,
+        "planned": 7,
+        "split_observation": 39,
+        "val_test_observer": 67
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 12,
+        "planned": 5,
+        "val_test_observer": 7
+      },
+      "planned": 13,
+      "taxon_id": 895680
+    },
+    "Drosera rosulata": {
+      "a": {
+        "eligible": 170,
+        "excluded_photo": 1,
+        "no_eligible_photo": 0,
+        "observations": 558,
+        "observer_cap": 39,
+        "planned": 131,
+        "split_observation": 160,
+        "val_test_observer": 227
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 21,
+        "no_eligible_photo": 0,
+        "observations": 35,
+        "planned": 21,
+        "val_test_observer": 14
+      },
+      "planned": 152,
+      "taxon_id": 568960
+    },
+    "Drosera rotundifolia": {
+      "a": {
+        "cap": 30204,
+        "eligible": 30336,
+        "excluded_photo": 21,
+        "no_eligible_photo": 203,
+        "observations": 35678,
+        "planned": 132,
+        "split_observation": 195,
+        "val_test_observer": 4923
+      },
+      "b": {
+        "eligible": 68,
+        "no_eligible_photo": 1,
+        "observations": 71,
+        "planned": 68,
+        "val_test_observer": 2
+      },
+      "c": {
+        "cap": 1147,
+        "eligible": 1247,
+        "no_eligible_photo": 7,
+        "observations": 1340,
+        "planned": 100,
+        "val_test_observer": 86
+      },
+      "planned": 300,
+      "taxon_id": 52658
+    },
+    "Drosera rupicola": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 65,
+        "planned": 0,
+        "split_observation": 31,
+        "val_test_observer": 34
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "planned": 3,
+      "taxon_id": 780686
+    },
+    "Drosera schmutzii": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 51,
+        "planned": 2,
+        "split_observation": 31,
+        "val_test_observer": 18
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 11,
+        "no_eligible_photo": 0,
+        "observations": 12,
+        "planned": 11,
+        "val_test_observer": 1
+      },
+      "planned": 13,
+      "taxon_id": 700174
+    },
+    "Drosera scorpioides": {
+      "a": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 134,
+        "observer_cap": 1,
+        "planned": 6,
+        "split_observation": 54,
+        "val_test_observer": 73
+      },
+      "b": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 4,
+        "planned": 4
+      },
+      "c": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 8,
+        "planned": 4,
+        "val_test_observer": 4
+      },
+      "planned": 14,
+      "taxon_id": 895673
+    },
+    "Drosera serpens": {
+      "a": {
+        "eligible": 28,
+        "no_eligible_photo": 3,
+        "observations": 203,
+        "observer_cap": 23,
+        "planned": 5,
+        "split_observation": 67,
+        "val_test_observer": 105
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 34,
+        "no_eligible_photo": 1,
+        "observations": 37,
+        "observer_cap": 9,
+        "planned": 25,
+        "val_test_observer": 2
+      },
+      "planned": 31,
+      "taxon_id": 704611
+    },
+    "Drosera sessilifolia": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 3,
+        "observations": 105,
+        "planned": 0,
+        "split_observation": 61,
+        "val_test_observer": 41
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "planned": 3,
+      "taxon_id": 566566
+    },
+    "Drosera slackii": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 80,
+        "planned": 2,
+        "split_observation": 39,
+        "val_test_observer": 39
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 11,
+        "planned": 2,
+        "val_test_observer": 9
+      },
+      "planned": 5,
+      "taxon_id": 548255
+    },
+    "Drosera spatulata": {
+      "a": {
+        "cap": 5111,
+        "eligible": 5222,
+        "excluded_photo": 16,
+        "no_eligible_photo": 37,
+        "observations": 6921,
+        "planned": 111,
+        "split_observation": 191,
+        "val_test_observer": 1455
+      },
+      "b": {
+        "eligible": 101,
+        "no_eligible_photo": 2,
+        "observations": 141,
+        "observer_cap": 12,
+        "planned": 89,
+        "val_test_observer": 38
+      },
+      "c": {
+        "cap": 153,
+        "eligible": 254,
+        "no_eligible_photo": 1,
+        "observations": 288,
+        "observer_cap": 1,
+        "planned": 100,
+        "val_test_observer": 33
+      },
+      "planned": 300,
+      "taxon_id": 122208
+    },
+    "Drosera spilos": {
+      "a": {
+        "eligible": 8,
+        "excluded_photo": 1,
+        "no_eligible_photo": 2,
+        "observations": 165,
+        "observer_cap": 5,
+        "planned": 3,
+        "split_observation": 77,
+        "val_test_observer": 77
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 28,
+        "no_eligible_photo": 0,
+        "observations": 50,
+        "observer_cap": 5,
+        "planned": 23,
+        "val_test_observer": 22
+      },
+      "planned": 26,
+      "taxon_id": 791277
+    },
+    "Drosera squamosa": {
+      "a": {
+        "eligible": 18,
+        "no_eligible_photo": 1,
+        "observations": 168,
+        "observer_cap": 10,
+        "planned": 8,
+        "split_observation": 89,
+        "val_test_observer": 60
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 6,
+        "no_eligible_photo": 1,
+        "observations": 13,
+        "planned": 6,
+        "val_test_observer": 6
+      },
+      "planned": 14,
+      "taxon_id": 736765
+    },
+    "Drosera stenopetala": {
+      "a": {
+        "eligible": 77,
+        "excluded_photo": 1,
+        "no_eligible_photo": 0,
+        "observations": 351,
+        "planned": 77,
+        "split_observation": 141,
+        "val_test_observer": 132
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 8,
+        "no_eligible_photo": 0,
+        "observations": 10,
+        "planned": 8,
+        "val_test_observer": 2
+      },
+      "planned": 85,
+      "taxon_id": 401564
+    },
+    "Drosera stolonifera": {
+      "a": {
+        "eligible": 151,
+        "excluded_photo": 1,
+        "no_eligible_photo": 0,
+        "observations": 528,
+        "observer_cap": 16,
+        "planned": 135,
+        "split_observation": 161,
+        "val_test_observer": 215
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 55,
+        "no_eligible_photo": 0,
+        "observations": 71,
+        "observer_cap": 5,
+        "planned": 50,
+        "val_test_observer": 16
+      },
+      "planned": 185,
+      "taxon_id": 153966
+    },
+    "Drosera stricticaulis": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 90,
+        "planned": 2,
+        "split_observation": 43,
+        "val_test_observer": 45
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 7,
+        "no_eligible_photo": 0,
+        "observations": 12,
+        "planned": 7,
+        "val_test_observer": 5
+      },
+      "planned": 9,
+      "taxon_id": 713922
+    },
+    "Drosera subhirtella": {
+      "a": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 110,
+        "planned": 1,
+        "split_observation": 57,
+        "val_test_observer": 52
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 5,
+        "no_eligible_photo": 0,
+        "observations": 7,
+        "planned": 5,
+        "val_test_observer": 2
+      },
+      "planned": 6,
+      "taxon_id": 552380
+    },
+    "Drosera sulphurea": {
+      "a": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 56,
+        "planned": 2,
+        "split_observation": 29,
+        "val_test_observer": 25
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 6,
+        "planned": 3,
+        "val_test_observer": 3
+      },
+      "planned": 5,
+      "taxon_id": 895662
+    },
+    "Drosera tomentosa": {
+      "a": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 150,
+        "planned": 0,
+        "split_observation": 95,
+        "val_test_observer": 55
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 29,
+        "no_eligible_photo": 0,
+        "observations": 30,
+        "planned": 29,
+        "val_test_observer": 1
+      },
+      "planned": 30,
+      "taxon_id": 829565
+    },
+    "Drosera tracyi": {
+      "a": {
+        "cap": 311,
+        "eligible": 586,
+        "excluded_photo": 1,
+        "no_eligible_photo": 6,
+        "observations": 1165,
+        "observer_cap": 4,
+        "planned": 271,
+        "split_observation": 167,
+        "val_test_observer": 405
+      },
+      "b": {
+        "eligible": 19,
+        "no_eligible_photo": 0,
+        "observations": 19,
+        "planned": 19
+      },
+      "c": {
+        "eligible": 10,
+        "no_eligible_photo": 0,
+        "observations": 11,
+        "planned": 10,
+        "val_test_observer": 1
+      },
+      "planned": 300,
+      "taxon_id": 162096
+    },
+    "Drosera trinervia": {
+      "a": {
+        "cap": 800,
+        "eligible": 1025,
+        "excluded_photo": 4,
+        "no_eligible_photo": 24,
+        "observations": 1841,
+        "observer_cap": 26,
+        "planned": 199,
+        "split_observation": 174,
+        "val_test_observer": 614
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 1,
+        "val_test_observer": 1
+      },
+      "c": {
+        "cap": 338,
+        "eligible": 438,
+        "no_eligible_photo": 17,
+        "observations": 693,
+        "planned": 100,
+        "val_test_observer": 238
+      },
+      "planned": 300,
+      "taxon_id": 543561
+    },
+    "Drosera tubaestylis": {
+      "a": {
+        "eligible": 24,
+        "no_eligible_photo": 0,
+        "observations": 162,
+        "observer_cap": 11,
+        "planned": 13,
+        "split_observation": 62,
+        "val_test_observer": 76
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 9,
+        "planned": 2,
+        "val_test_observer": 7
+      },
+      "planned": 15,
+      "taxon_id": 547505
+    },
+    "Drosera uniflora": {
+      "a": {
+        "eligible": 16,
+        "no_eligible_photo": 0,
+        "observations": 223,
+        "planned": 16,
+        "split_observation": 123,
+        "val_test_observer": 84
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 8,
+        "no_eligible_photo": 0,
+        "observations": 9,
+        "planned": 8,
+        "val_test_observer": 1
+      },
+      "planned": 24,
+      "taxon_id": 549236
+    },
+    "Drosera venusta": {
+      "a": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 53,
+        "planned": 1,
+        "split_observation": 34,
+        "val_test_observer": 18
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 14,
+        "no_eligible_photo": 0,
+        "observations": 20,
+        "planned": 14,
+        "val_test_observer": 6
+      },
+      "planned": 15,
+      "taxon_id": 584295
+    },
+    "Drosera whittakeri": {
+      "a": {
+        "cap": 767,
+        "eligible": 1043,
+        "excluded_photo": 4,
+        "no_eligible_photo": 31,
+        "observations": 2200,
+        "observer_cap": 79,
+        "planned": 197,
+        "split_observation": 180,
+        "val_test_observer": 942
+      },
+      "b": {
+        "eligible": 3,
+        "no_eligible_photo": 0,
+        "observations": 3,
+        "planned": 3
+      },
+      "c": {
+        "cap": 188,
+        "eligible": 298,
+        "no_eligible_photo": 1,
+        "observations": 396,
+        "observer_cap": 10,
+        "planned": 100,
+        "val_test_observer": 97
+      },
+      "planned": 300,
+      "taxon_id": 148381
+    },
+    "Drosera xerophila": {
+      "a": {
+        "eligible": 128,
+        "excluded_photo": 3,
+        "no_eligible_photo": 3,
+        "observations": 463,
+        "observer_cap": 28,
+        "planned": 100,
+        "split_observation": 158,
+        "val_test_observer": 171
+      },
+      "b": {
+        "eligible": 1,
+        "no_eligible_photo": 0,
+        "observations": 1,
+        "planned": 1
+      },
+      "c": {
+        "eligible": 37,
+        "no_eligible_photo": 2,
+        "observations": 109,
+        "planned": 37,
+        "val_test_observer": 70
+      },
+      "planned": 138,
+      "taxon_id": 741896
+    },
+    "Drosera zeyheri": {
+      "a": {
+        "eligible": 86,
+        "excluded_photo": 1,
+        "no_eligible_photo": 5,
+        "observations": 362,
+        "observer_cap": 39,
+        "planned": 47,
+        "split_observation": 139,
+        "val_test_observer": 131
+      },
+      "b": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "c": {
+        "cap": 13,
+        "eligible": 171,
+        "no_eligible_photo": 10,
+        "observations": 233,
+        "observer_cap": 58,
+        "planned": 100,
+        "val_test_observer": 52
+      },
+      "planned": 149,
+      "taxon_id": 148377
+    },
+    "Drosera zonaria": {
+      "a": {
+        "eligible": 4,
+        "no_eligible_photo": 0,
+        "observations": 151,
+        "planned": 4,
+        "split_observation": 74,
+        "val_test_observer": 73
+      },
+      "b": {
+        "eligible": 0,
+        "no_eligible_photo": 0,
+        "observations": 0,
+        "planned": 0
+      },
+      "c": {
+        "eligible": 2,
+        "no_eligible_photo": 0,
+        "observations": 2,
+        "planned": 2
+      },
+      "planned": 6,
+      "taxon_id": 148231
+    }
+  }
+}

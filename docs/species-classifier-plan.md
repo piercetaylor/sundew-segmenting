@@ -895,6 +895,35 @@ used.
 - **Training:** `finetune_species_backbone.py` gets `--transfer-records` (rows
   without labels, which enter the KD term only) and `--steps`.
 
+**Dry run, 2026-09-27** (`scripts/acquire_transfer_set.py`, metadata only,
+no images). The observation-id ceiling is 404031620. Plan:
+`reports/species-distill/transfer-plan.md`.
+
+**12,179 images planned**, at the bottom of the expected 12-18k:
+
+| Source | Planned |
+| --- | ---: |
+| (a) wild, research grade | 8,004 |
+| (b) captive | 662 |
+| (c) needs-ID or casual | 3,513 |
+
+The validation and test observer exclusion removed 35,708 candidate photos.
+By training count:
+
+| Training images | Species | Planned | Per species |
+| --- | ---: | ---: | --- |
+| under 40 | 23 | **202** | 1-15 |
+| 40-79 | 28 | 421 | 3-49 |
+| 80-129 | 17 | 833 | 8-107 |
+| 130 and over | 42 | **10,723** | 85-300 |
+
+This confirms the risk recorded above. 88% of the transfer set is common
+species, and each thin species gets 1-15 new photos, mostly needs-ID. Captive
+photos are scarce: 662 in all, 8 of them for thin species. Expected
+weighting scales common-species rows down by their class weight, so the
+KD term's gradient mass stays balanced. The thin-bin prior (+0.00 to +0.015)
+stands. Nothing is downloaded until approved.
+
 **Prior**, KD(w)-100c+T minus KD(w)-100c:
 
 | Quantity | Point | Range |
