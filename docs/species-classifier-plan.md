@@ -967,6 +967,18 @@ The absolute point is about 0.76, if KD(w)-100c lands near its 0.74 prior.
 | Carried-forward recipe, shipped model, floor | the highest last-epoch seed mean; seed 17; 0.75 and top-5 >= 0.95, unchanged |
 | A run diverges or fails | reported, not retuned |
 
+**Amendment, 2026-09-28, after the 100-epoch result and before any +T run.**
+The "gain < +0.01" row was written when distillation might already have
+failed at 100 epochs. It did not: KDw-100c beat CE-100c by +0.016
+[+0.011, +0.021]. Read literally, the row would now replace KDw-100c (0.735)
+with CE-100c (0.719), against the carried-forward row below it. It now reads:
+
+| Result | Action |
+| --- | --- |
+| gain < +0.01 | the transfer set is dropped and no further distillation arm is planned; the carried-forward recipe is the highest last-epoch seed mean, as below (KDw-100c unless +T is higher) |
+
+The other rows, the prior and the floor are unchanged.
+
 **Diagnostics:**
 
 - fidelity on validation (agreement and KL, overall and per bin);
