@@ -1,5 +1,25 @@
 # Improving the 110-species classifier
 
+> **What this file is.** The dated decision record for the species
+> classifier. Each experiment's design, prior and decision rule were written
+> here *before* it ran and were not edited afterwards; later changes are dated
+> amendments, and results are appended below the rules they apply. It is kept
+> in the order it was written. For a short summary of the pipeline, the shipped
+> recipe and its numbers, read [species-classifier.md](species-classifier.md);
+> the evidence is in [reports/](reports/).
+>
+> | Section | Written |
+> | --- | --- |
+> | [Where things stand](#where-things-stand) and [independent review](#independent-review) | 2026-09-23 |
+> | [Frozen-backbone screen](#the-experiment-a-frozen-backbone-screen) | 2026-09-23 |
+> | [After the screen](#after-the-screen): test split, fine-tuning the teachers, test protocol | 2026-09-23; test protocol 2026-09-26 |
+> | [Small models for an on-device student](#small-models-for-an-on-device-student) | from 2026-09-24 |
+> | [Student bake-off](#student-bake-off-written-2026-09-26-before-any-run) | 2026-09-26 |
+> | [Distillation into DINOv2-S](#distillation-into-dinov2-s-written-2026-09-27-before-any-run) | 2026-09-27 |
+> | [Class-weighted KD](#class-weighted-kd-written-2026-09-27-before-any-run) | 2026-09-27 |
+> | [Transfer set](#transfer-set-written-2026-09-27-before-any-acquisition-or-run) | 2026-09-27, amended 2026-09-28 |
+> | [Test protocol for the shipped student](#test-protocol-for-the-shipped-student-written-2026-09-29-before-the-t-run-and-before-any-test-image-is-read) | 2026-09-29 |
+
 Written 2026-09-23, after `docs/reports/species-110-baseline.md` put the fine-tuned
 ResNet-18 at **0.546** validation balanced accuracy on crops (0.525 on full
 frames). This document records where the project stands, what an independent

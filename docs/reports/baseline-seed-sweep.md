@@ -1,14 +1,18 @@
 # U-Net vs SegFormer: five-seed comparison
 
-Both baselines were trained five times each on the frozen reviewed dataset
-(v0.3.0; 144 train / 19 validation) on Hellbender A100s, varying only the seed.
-The test split (28 images) was not touched.
+**In short.** SegFormer-B0 beats U-Net / ResNet34 on 5 of 5 seeds, mean
+validation IoU 0.632 vs 0.610 (paired difference +0.0215, significant at
+p = 0.05). The gap is smaller than either model's own seed spread, so it only
+shows when runs are paired by seed. SegFormer-B0 is the architecture used from
+here on.
+
+Both models were trained five times on the frozen v0.3.0 dataset (144 train,
+19 validation) on Hellbender A100s, varying only the seed. The 28-image test
+split was not touched. A single run could not settle this: the first pair
+differed by 0.018 IoU, less than the seed spread of either model.
 
 Reproduce with `sbatch scripts/hellbender_seed_sweep.slurm` (2 models x 5 seeds,
 seeds 17/101/202/303/404, ~15 minutes of GPU time in total).
-
-A single run could not settle this comparison: the first pair differed by 0.018
-IoU, which is smaller than the seed-to-seed spread of either model.
 
 ## Best validation IoU per seed
 
@@ -27,48 +31,43 @@ IoU, which is smaller than the seed-to-seed spread of either model.
 
 ## Result
 
-SegFormer-B0 wins on **5 of 5 seeds**. Paired difference +0.0215 (SD 0.0124),
-95% CI [+0.0061, +0.0368], paired t = 3.88 on 4 df against a critical value of
-2.78 — significant at p = 0.05.
+Paired difference +0.0215 (SD 0.0124), 95% CI [+0.0061, +0.0368], paired
+t = 3.88 on 4 df against a critical value of 2.78.
 
-The effect is real but small, and it is smaller than each model's own seed
-spread (SD ~0.018). That is precisely why the pairing matters: seed noise moves
-both models together, so the per-seed difference is far more stable than either
-column read alone. Any future comparison on this dataset should be run paired
-across seeds rather than as a single run.
+The effect is real but smaller than each model's seed spread (SD ~0.018). Seed
+noise moves both models together, so the per-seed difference is much more
+stable than either column alone. Any future comparison on this dataset should
+be paired across seeds.
 
 Secondary metrics (mean over seeds) agree: SegFormer leads on dice (0.7743 vs
-0.7580) and precision (0.7530 vs 0.7246), with recall essentially tied (0.8003
-vs 0.7958). SegFormer also converges in fewer epochs (14.2 vs 16.6).
+0.7580) and precision (0.7530 vs 0.7246), recall is about tied (0.8003 vs
+0.7958), and SegFormer converges in fewer epochs (14.2 vs 16.6).
 
 ## Per growth form
 
-Mean validation IoU +/- SD over the five seeds.
+Mean validation IoU ± SD over the five seeds.
 
 | Growth form | n | U-Net / ResNet34 | SegFormer-B0 | Winner |
 | --- | ---: | ---: | ---: | --- |
-| dense_mat | 1 | 0.7076 +/- 0.0814 | 0.7545 +/- 0.0453 | SegFormer (overlapping) |
-| erect_or_branching | 4 | 0.6023 +/- 0.0460 | 0.6970 +/- 0.0347 | **SegFormer** |
-| linear_or_forked | 4 | 0.5454 +/- 0.0395 | 0.5277 +/- 0.0573 | U-Net (overlapping) |
-| rosette | 10 | 0.6365 +/- 0.0245 | 0.6458 +/- 0.0232 | SegFormer (overlapping) |
+| dense_mat | 1 | 0.7076 ± 0.0814 | 0.7545 ± 0.0453 | SegFormer (overlapping) |
+| erect_or_branching | 4 | 0.6023 ± 0.0460 | 0.6970 ± 0.0347 | **SegFormer** |
+| linear_or_forked | 4 | 0.5454 ± 0.0395 | 0.5277 ± 0.0573 | U-Net (overlapping) |
+| rosette | 10 | 0.6365 ± 0.0245 | 0.6458 ± 0.0232 | SegFormer (overlapping) |
 
-`erect_or_branching` is the only growth form where the two models separate
-cleanly, and it carries most of SegFormer's overall margin (+0.095).
+`erect_or_branching` is the only form where the models separate cleanly, and it
+carries most of SegFormer's margin (+0.095).
 
-`linear_or_forked` is the weakest class for both models and the one category
-where U-Net leads, though the seed spreads overlap and it is only four images.
-Thin filiform leaves are a plausible weak point for a patch-based encoder, but
-this sweep does not establish that — it would need more annotated
-`linear_or_forked` examples to test.
+`linear_or_forked` is the weakest form for both, and the only one where U-Net
+leads, though the spreads overlap and it is four images. Thin filiform leaves
+may be hard for a patch-based encoder, but this sweep does not show that.
 
 ## Caveats
 
-- **19 validation images.** Every per-growth-form row rests on 1-10 images;
-  `dense_mat` is a single image and should be read as an anecdote, not a
-  measurement. The aggregate is dominated by the 10 rosettes.
+- **19 validation images.** Each growth-form row rests on 1-10 images;
+  `dense_mat` is a single image, an anecdote rather than a measurement. The
+  headline is dominated by the 10 rosettes.
 - **The training split is skewed** (104 of 144 rosette, 8 dense_mat). The
-  inverse-frequency sampler compensates during training, but validation is
-  unweighted, so the headline IoU is largely a rosette score.
-- **Five seeds is a small sample** for a t-test. The interval is wide relative
-  to the effect, and the conclusion is "SegFormer is ahead", not a trustworthy
-  estimate of by how much.
+  inverse-frequency sampler balances training, but validation is unweighted,
+  so the headline IoU is mostly a rosette score.
+- **Five seeds is a small sample** for a t-test. The conclusion is "SegFormer
+  is ahead", not a reliable estimate of by how much.

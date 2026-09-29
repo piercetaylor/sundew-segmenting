@@ -1,10 +1,15 @@
 # Sundew mask annotation policy
 
+**In short.** One binary mask per image, covering every visible pixel of living
+sundew tissue, flowers and stalks included. Nothing inferred, nothing that is
+not sundew. Mark unclear images `ambiguous` and unusable ones `reject`; only
+masks a person has checked and accepted are training labels. Annotation
+version `v1.0`.
+
 ## Target
 
-Create one binary semantic mask for **visible, living sundew plant tissue**. The
-mask answers: “Which visible pixels belong to a sundew plant?” It does not separate
-individual plants or identify species.
+The mask answers one question: “Which visible pixels belong to a sundew
+plant?” It does not separate individual plants or identify species.
 
 ## Include
 
@@ -44,12 +49,9 @@ Mark `reject` if less than a useful plant region remains after inspection.
 5. Keep model-generated proposals labeled as proposals until a person corrects and
    accepts them.
 
-Annotation version: `v1.0`.
-
 ## Growth-form metadata
 
 Each task carries a morphology prior for sampling and evaluation. It is not a
-label class. Continue to create one binary mask containing all visible sundew
-tissue, including mixed populations. The `dense_mat` value is only a likely
-presentation for colony-forming pygmy taxa and should be checked against the
-actual photograph.
+label class: still make one binary mask with all visible sundew tissue,
+including mixed populations. `dense_mat` only means a colony-forming pygmy
+taxon is likely; check it against the actual photo.

@@ -1,6 +1,6 @@
 # Sundew Segmentation
 
-This project finds the sundew (*Drosera*) in a photo, crops to it, and identifies the species. It is built on licensed iNaturalist photographs. Training runs on the Hellbender SLURM cluster, and every comparison uses five paired seeds with its decision rule written down before the run.
+This project finds the sundew (*Drosera*) in a photo and names the species (one of 110) with a 22 MB int8 model that takes about 120 ms per photo on one CPU thread. It is built on licensed iNaturalist photographs and trained on the Hellbender SLURM cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
 
 ![Twelve licensed sundew examples](assets/dataset-preview.jpg)
 
@@ -27,11 +27,11 @@ The large DINOv2-L model is the most accurate, but it's too big to run on a phon
 
 **Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. Browser preprocessing and int8 behaviour in WebAssembly are not yet measured.
 
-The reports behind each number are in `docs/reports/`: [distillation](docs/reports/species-distill.md), [export](docs/reports/species-release.md) and [held-out test](docs/reports/species-test.md). The reasoning and pre-registered rules are in [the species classifier plan](docs/species-classifier-plan.md).
+How the classifier works and why it is built this way is in [the species classifier design](docs/species-classifier.md); the pre-registered rules are in [the plan](docs/species-classifier-plan.md). Every number above comes from a report in [`docs/reports/`](docs/reports/), for example [distillation](docs/reports/species-distill.md), [export](docs/reports/species-release.md) and [the held-out test](docs/reports/species-test.md).
 
 ## Running it
 
-Python 3.10+. Downloaded images and model weights stay out of Git, but the manifests, splits and attribution records are enough to rebuild them. The cluster environment is in `environment.yml`, and [Hellbender training](docs/hellbender-training.md) covers setup. `python -m unittest discover -s tests` runs the repository checks.
+Python 3.10+. Downloaded images and model weights stay out of Git, but the manifests, splits and attribution records are enough to rebuild them. The cluster environment is in `environment.yml`, and [Hellbender training](docs/hellbender-training.md) lists every job that reproduces the results. `pip install -e ".[species]"` installs the species stack locally, and `python -m unittest discover -s tests` runs the repository checks.
 
 **Build the dataset.** The downloader records creator, licence, source and checksum for every photo:
 
@@ -78,9 +78,28 @@ python scripts/summarize_species_finetune.py --help
 
 **Export and score.** `hellbender_species_export.slurm` writes the fp32 and int8 ONNX models and a `release.json` (preprocessing, temperature, checksums) to `models/species-110/release/`. `hellbender_species_test.slurm` scores the held-out test split; it refuses to run a second time.
 
+```bash
+sbatch scripts/hellbender_species_export.slurm
+sbatch --export=ALL,SPLIT=val scripts/hellbender_species_test.slurm    # validation only
+```
+
+## Repository layout
+
+```text
+src/            the sundew_segmentation package: acquisition, curation, segmentation baselines
+scripts/        command-line steps and the Hellbender SLURM jobs
+docs/           design, plan, cluster, annotation, release and licence guides
+docs/reports/   one report per experiment, with its numbers and decision
+data/           annotation policy and small tracked metadata (images are not in Git)
+annotation/     the Label Studio labelling config
+assets/         the README preview image and its attribution record
+tests/          unit tests, run in CI
+deprecated/     retired docs, reports and scripts, kept for the record
+```
+
 ## Use and citation
 
-This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and the software licence doesn't change that. Cite this repository with the commit used, and attribute each source image according to its licence.
+This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and nothing else in this repository changes those terms. Cite this repository with the commit used (see [`CITATION.cff`](CITATION.cff)), and attribute each source image according to its licence.
 
 **Computing acknowledgement.** Training ran on Hellbender. As [the Hellbender wiki](https://itrss-wiki.rnet.missouri.edu/pub/hpc/hellbender) asks, any publication using this work should include:
 
@@ -88,4 +107,4 @@ This is a personal, noncommercial research project. [iNaturalist's terms](https:
 
 The wiki also asks authors to email muitrss@missouri.edu and share a copy of the publication.
 
-More detail: [project plan](deprecated/docs/project-plan.md), [release guide](docs/dataset-release.md), [archived README](deprecated/docs/legacy-readme.md).
+More detail: [species classifier design](docs/species-classifier.md), [all reports](docs/reports/), [dataset release guide](docs/dataset-release.md).

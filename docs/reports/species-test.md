@@ -1,22 +1,27 @@
 # Held-out test: read once
 
+**In short.** The shipped model (int8, seed 17) scores **0.775** balanced
+accuracy on the held-out test split, top-5 0.962; the teacher ensemble scores
+0.842. Distillation holds: +0.043 over plain fine-tuning (CE-100c), 5 of 5
+seeds. Species with under 40 training photos remain the weak spot (0.652).
+
 The test split (2,601 images, 1,095 observers, 110 species) was scored once,
-by job 18082949 on 2026-09-29, under the protocol in
-`docs/species-classifier-plan.md`: the 2026-09-26 test protocol, its
+by job 18082949 on 2026-09-29, under the protocol in the
+[plan](../species-classifier-plan.md): the 2026-09-26 test protocol, its
 2026-09-27 amendment, the shipped-student protocol of 2026-09-29 and the
 scoring details recorded before the run. The same job first recomputed
 validation, and every reproduction check passed (the shipped int8 model
 within 1e-3, all stored predictions bit for bit). Generated tables:
-`species-test/test-results.md` and `.json`. Test logits are in
-`models/species-110/test-scoring/` (not in Git).
+[test-results.md](species-test/test-results.md) and `.json`. Test logits are
+in `models/species-110/test-scoring/` (not in Git).
 
 Reproduce: `sbatch --export=ALL,SPLIT=test scripts/hellbender_species_test.slurm`.
-It refuses to run while `species-test/test-results.json` exists.
+It refuses to run while `docs/reports/species-test/test-results.json` exists.
 
-## Answer
+## Result
 
 Balanced accuracy, observer-grouped bootstrap, 2,000 resamples. Students at
-the last epoch, the teacher and the anchor at the best epoch.
+the last epoch; the teacher and the anchor at the best epoch.
 
 | Item | Validation | Test [95% CI] | Top-5 (test) | ECE after T (test) |
 | --- | ---: | --- | ---: | ---: |
@@ -28,19 +33,18 @@ the last epoch, the teacher and the anchor at the best epoch.
 | ResNet-18 anchor, full, seed mean | 0.498 | 0.522 [0.503, 0.540] | 0.828 | 0.054 |
 | ResNet-18 anchor, crop, seed mean | 0.516 | 0.548 [0.529, 0.567] | 0.834 | 0.046 |
 
-- **The shipped model scores 0.775 on test, top-5 0.962.** Both are above
-  the release floor (0.75, 0.95). The floor is judged on validation, where
-  it was met; the test is reported and is not a gate.
-- **Distillation holds on test.** KDw-100c+T minus CE-100c: +0.043
-  [+0.033, +0.053], 5/5 seeds (validation +0.049). It is positive in every
-  bin: under 40 +0.063, 40-79 +0.021, 80-129 +0.030, 130 and over +0.052.
+- **Above the release floor** (0.75, top-5 0.95). The floor was judged on
+  validation, where it was met; the test is reported, not a gate.
+- **Distillation holds.** KDw-100c+T minus CE-100c: +0.043 [+0.033, +0.053],
+  5/5 seeds (validation +0.049). Positive in every bin: under 40 +0.063, 40-79
+  +0.021, 80-129 +0.030, 130 and over +0.052.
 - **Test is slightly easier than validation for every model**, by +0.008
-  (teacher ensemble) to +0.032 (anchor, crop). No student, teacher or
-  ensemble falls outside its validation interval. The anchor seed means do
-  (above), as do four single anchor seeds and one CE-100c seed. A shift that
-  lifts every model points to the split, not to over-fitting on validation:
-  the test split was carved from train by observer and has 1,095 observers
-  against validation's 308.
+  (teacher) to +0.032 (anchor, crop). No student, teacher or ensemble falls
+  outside its validation interval; the anchor seed means do, as do four
+  single anchor seeds and one CE-100c seed. A shift that lifts every model
+  points to the split, not to over-fitting on validation: the test split was
+  carved from training by observer and has 1,095 observers against
+  validation's 308.
 - **The gap to the teacher is about the same**: 0.059 for the student seed
   mean on test, 0.066 on validation.
 
@@ -55,12 +59,12 @@ Per-species accuracy by training count, test:
 | 80-129 | 17 | 0.839 [0.800, 0.872] | 0.879 |
 | 130 and over | 42 | 0.837 [0.819, 0.855] | 0.873 |
 
-The thin species remain the weak spot: 0.652, 0.125 below the teacher,
-against a gap of 0.036 on the commonest species. Seed 17 in PyTorch scores
-0.683 on this bin (seed mean 0.677), so int8 costs the thin species 0.031 on
-test. Overall it costs 0.008 on test (0.775 against 0.784 for seed 17 in
-PyTorch), against nothing on validation, where the 0.01 rule was applied. These are 23 species with few test
-photos each, and the interval is wide.
+The thin species are 0.125 below the teacher, against 0.036 on the commonest.
+Seed 17 in PyTorch scores 0.683 on this bin (seed mean 0.677), so int8 costs
+the thin species 0.031 on test. Overall int8 costs 0.008 on test (0.775
+against 0.784 for seed 17 in PyTorch), against nothing on validation, where
+the 0.01 rule was applied. These 23 species have few test photos each, and
+the interval is wide.
 
 ## Calibration
 
@@ -70,14 +74,13 @@ both splits, and one temperature fitted on validation carries to test.
 
 ## Caveats
 
-- **The shipped int8 numbers are CPU-specific.** Dynamic int8 kernels
-  differ between CPU families: the model was scored on Intel (AVX512-VNNI),
-  exported on AMD. On validation the two agree on 0.991 of top-1
-  predictions. A browser's WASM backend is a third implementation, not
-  measured.
-- **Preprocessing in the browser is not measured**: training read a 576 px
-  LANCZOS cache and ignored EXIF orientation (`species-release.md`).
-- **Open set is not tested.** Every test photo is one of the 110 species.
-  The model will name one of them for any photo, including other Drosera
-  and other genera.
+- **The shipped int8 numbers are CPU-specific.** Dynamic int8 kernels differ
+  between CPU families: the model was scored on Intel (AVX512-VNNI), exported
+  on AMD. On validation the two agree on 0.991 of top-1 predictions. A
+  browser's WebAssembly backend is a third implementation, not measured.
+- **Browser preprocessing is not measured**: training read a 576 px LANCZOS
+  cache and ignored EXIF orientation ([species-release.md](species-release.md)).
+- **Open set is not tested.** Every test photo is one of the 110 species. The
+  model names one of them for any photo, including other Drosera and other
+  genera.
 - Per-bin intervals are not corrected for four comparisons.

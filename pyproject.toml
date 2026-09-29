@@ -4,13 +4,28 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sundew-segmentation"
-version = "0.1.0"
-description = "Licensed sundew image acquisition and segmentation research pipeline"
+version = "1.0.0"
+description = "Sundew (Drosera) segmentation and 110-species identification, trained on licensed iNaturalist photographs"
+readme = "README.md"
 requires-python = ">=3.10"
+authors = [{ name = "Pierce Taylor" }]
 dependencies = ["Pillow>=10", "numpy>=1.24"]
 
+[project.urls]
+Repository = "https://github.com/piercetaylor/sundew-segmenting"
+
 [project.optional-dependencies]
+# Segmentation baselines (U-Net, SegFormer-B0).
 baseline = ["segmentation-models-pytorch>=0.4.0", "torch>=2.0", "torchvision>=0.15"]
+# Species classifier: backbone screen, fine-tuning and distillation, ONNX export and scoring.
+species = [
+    "torch>=2.0",
+    "torchvision>=0.15",
+    "timm>=1.0",
+    "open_clip_torch>=3.0",
+    "onnx>=1.16",
+    "onnxruntime>=1.18",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}

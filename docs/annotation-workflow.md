@@ -1,30 +1,25 @@
 # Annotation workflow
 
-The prepared Label Studio project uses SAM-aware point and box prompts, a brush mask,
-and a required quality flag.
-The task list points at the normalized files under `data/curated` and carries the
-split, species, source, creator, and license metadata into the labeling interface.
+**In short.** Masks are drawn in a local Label Studio project. Each task opens
+with a MobileSAM proposal guided by a CLIPSeg text prompt; the annotator
+corrects it, sets a quality flag, and submits. Only masks marked `complete` are
+exported for training, and they are audited before a dataset version is
+frozen. What counts as sundew is set by
+[`data/annotation-policy.md`](../data/annotation-policy.md).
 
-## Prepare tasks
+The task list points at the normalised files under `data/curated` and carries
+split, species, source, creator and licence into the labelling interface.
+
+## Set up
+
+Export the tasks:
 
 ```powershell
 $env:PYTHONPATH = "src"
 python scripts/export_label_studio_tasks.py
 ```
 
-## Configure Label Studio
-
-1. Install and start Label Studio locally.
-2. Set `LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true`.
-3. Set `LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT` to the absolute `data/curated`
-   directory before starting Label Studio.
-4. Create a project and paste `annotation/label-config.xml` into its labeling setup.
-5. Import `data/annotations/label-studio-tasks.json` as tasks. Do not sync the image
-   directory as a second set of tasks.
-6. Follow `data/annotation-policy.md` and export a versioned snapshot after each
-   labeling session.
-
-For the local project environment prepared by this repository, run:
+Install and start the stack prepared by this repository:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/install_annotation_stack.ps1 -Python "C:\path\to\python.exe"
@@ -34,92 +29,86 @@ powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
 .tools\label-studio-venv\Scripts\python.exe scripts/smoke_test_annotation_stack.py
 ```
 
-## Prefill every task
+To configure Label Studio by hand instead:
 
-Generate one provisional mask for each task with a CLIPSeg text prompt guiding
-MobileSAM toward sundew tissue:
+1. Set `LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true`.
+2. Set `LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT` to the absolute `data/curated`
+   directory before starting Label Studio.
+3. Create a project and paste `annotation/label-config.xml` into its labelling
+   setup.
+4. Import `data/annotations/label-studio-tasks.json` as tasks. Do not also sync
+   the image directory, which would create a second set of tasks.
+
+Label Studio documents the local-file URL form used here and recommends
+limiting the document root to the image directory:
+https://labelstud.io/guide/storage_local
+
+## Prefill every task
 
 ```powershell
 .tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload --skip-reviewed
 ```
 
-The first run downloads `CIDAS/clipseg-rd64-refined` into `.tools/huggingface`.
-Generated PNGs go to `data/annotations/sam-proposals/`, and Label Studio receives
-the same masks as model predictions. Neither location is used by the baseline
-training scripts. Use `--replace` to replace earlier predictions from this
-generator while preserving human annotations. A JSON quality report and a small
-overlay audit are written under `data/reports/sam-preannotations/`.
+This writes one provisional mask per task. The first run downloads
+`CIDAS/clipseg-rd64-refined` into `.tools/huggingface`. PNGs go to
+`data/annotations/sam-proposals/` and are uploaded to Label Studio as model
+predictions; training never reads either. `--replace` replaces earlier
+predictions from this generator and keeps human annotations. A quality report
+and an overlay audit go to `data/reports/sam-preannotations/`.
 
-The generator can retain as many as five spatially distinct, high-confidence SAM
-regions and merge them into one binary mask, so separated sundew plants are still
-foreground. It uses the task's species metadata in the CLIPSeg prompt and negative
-prompts for pitcher plants, moss, grass, and substrate. Compare a revised proposal
-method with completed human reviews before replacing predictions:
+The generator keeps up to five separate high-confidence SAM regions and merges
+them, so separated plants are still foreground. The CLIPSeg prompt uses the
+task's species, with negative prompts for pitcher plants, moss, grass and
+substrate. Before switching to a revised proposal method, compare it against
+completed human reviews:
 
 ```powershell
 .tools\label-studio-venv\Scripts\python.exe scripts/evaluate_sam_preannotations.py
 ```
 
-Open `http://127.0.0.1:8080/projects/1/data` after both services are ready. Select
-the smart point or smart rectangle tool and place a prompt on a rosette. MobileSAM
-returns a brush-mask proposal. Batch predictions appear when the task opens.
-Inspect the edges, correct missed or extra tissue, choose a quality value, and
-submit it. Hold `Alt` while placing a point to mark a negative prompt.
+Every proposal must be inspected and corrected before it becomes a training
+label (https://labelstud.io/guide/ml_tutorials/segment_anything_model).
 
-### Fast review loop and shortcuts
+## Review loop
 
-`M` is not the auto-selection key for this project. The interface uses smart
-point and smart rectangle prompts rather than the separate Magic Wand control.
+Open `http://127.0.0.1:8080/projects/1/data` once both services are running.
+The project uses smart point and smart rectangle prompts, not the Magic Wand,
+so `M` does nothing here.
 
-1. Enable **Auto-Annotation** at the bottom of the labeling screen.
-2. Select the smart point tool and click once inside every visible sundew plant.
-3. Hold `Alt` and click moss, grass, or substrate that was incorrectly included.
-4. For branching plants, draw a tight smart rectangle around the entire plant,
+1. Enable **Auto-Annotation** at the bottom of the labelling screen.
+2. With the smart point tool, click once inside every visible sundew.
+3. Hold `Alt` and click moss, grass or substrate that was wrongly included.
+4. For branching plants, draw a tight smart rectangle around the whole plant,
    then add positive points on missed branches.
-5. Accept the proposal, repair the remaining boundary errors with the brush,
-   choose a quality value, and press `Ctrl+Enter` to submit.
+5. Accept the proposal, fix remaining edges with the brush, choose a quality
+   value, and press `Ctrl+Enter` to submit.
 
-Useful defaults are `Ctrl+Z` to undo, `Ctrl+Shift+Z` to redo, `Backspace` to
-delete the selected region, `Esc` to exit the active selection, `U` to unselect,
-`Ctrl+Enter` to submit, and `Ctrl+Space` to skip. The gear icon in the labeling
-screen shows the mappings active in the installed Label Studio version.
+Other shortcuts: `Ctrl+Z` undo, `Ctrl+Shift+Z` redo, `Backspace` delete the
+selected region, `Esc` leave the active selection, `U` unselect, `Ctrl+Space`
+skip. The gear icon shows the mappings for the installed version.
 
-## Morphology-aware review order
+Export a versioned snapshot after each labelling session.
 
-The `growth_form` field is a taxon-level review and sampling hint with four
-values: `rosette`, `erect_or_branching`, `linear_or_forked`, and `dense_mat`.
-It does not change the binary target: continue to include every visible sundew.
-`dense_mat` is an image-level presentation, so override that expectation by eye
-when a pygmy sundew is isolated.
+## Review order by growth form
 
-Update the local metadata and rank the remaining work with:
+`growth_form` is a taxon-level hint with four values: `rosette`,
+`erect_or_branching`, `linear_or_forked` and `dense_mat`. It does not change
+the target: include every visible sundew. `dense_mat` describes how a photo
+looks, so override it by eye when a pygmy sundew stands alone.
+
+Sync the metadata and rank the remaining work:
 
 ```powershell
 $env:PYTHONPATH = "src"
-.tools\label-studio-venv\Scripts\python.exe scripts\update_growth_form_metadata.py
 .tools\label-studio-venv\Scripts\python.exe scripts\sync_label_studio_metadata.py
 .tools\label-studio-venv\Scripts\python.exe scripts\annotation_priority.py
 ```
 
-The priority CSV goes to `data/reports/annotation-priority.csv`. Review the
-validation and test examples of branching, linear, and dense forms first, then
-return to the remaining training examples.
+The ranking goes to `data/reports/annotation-priority.csv`. Review the
+validation and test examples of branching, linear and dense forms first, then
+the rest of train.
 
-## Export reviewed masks
-
-Only annotations marked `complete` are eligible for model training:
-
-```powershell
-.tools\label-studio-venv\Scripts\python.exe scripts\export_reviewed_masks.py
-```
-
-The exporter unions all brush regions in an annotation, validates dimensions,
-and writes binary PNGs to `data/curated/masks/<split>/`. Ambiguous and rejected
-reviews stay in Label Studio and are excluded.
-
-## Freeze and audit a completed labeling pass
-
-Run the task-level and pixel-level audits before training:
+## Export, audit and freeze
 
 ```powershell
 $env:PYTHONPATH = "src"
@@ -128,24 +117,19 @@ $env:PYTHONPATH = "src"
 .tools\label-studio-venv\Scripts\python.exe scripts\audit_reviewed_masks.py
 ```
 
-The annotation audit reports missing and duplicate submissions. The mask audit
-checks binary values, dimensions, empty masks, and extreme foreground fractions.
-Its local `foreground-extremes.jpg` contact sheet should be inspected before the
-dataset version is frozen.
+- The annotation audit reports missing and duplicate submissions.
+- The exporter takes only `complete` annotations, merges all brush regions,
+  checks dimensions, and writes binary PNGs to `data/curated/masks/<split>/`.
+  Ambiguous and rejected reviews stay in Label Studio.
+- The mask audit checks binary values, dimensions, empty masks and extreme
+  foreground fractions. Look at its `foreground-extremes.jpg` contact sheet
+  before freezing.
 
-After the audit passes, train on `train`, select checkpoints using `validation`,
-and keep `test` locked until the model family, resolution, loss, and threshold
-have been chosen. Use `scripts/evaluate_checkpoint.py` for validation overlays;
-green is a correct foreground pixel, yellow is a false positive, and magenta is
-a missed sundew pixel.
+Then freeze the dataset ([dataset-release.md](dataset-release.md)). Train on
+`train`, pick checkpoints on `validation`, and keep `test` locked until the
+model, resolution, loss and threshold are chosen. `scripts/evaluate_checkpoint.py`
+draws validation overlays: green is a correct sundew pixel, yellow a false
+positive, magenta a missed sundew pixel.
 
-Label Studio documents the local-file URL form used here and recommends limiting
-the document root to the image directory:
-https://labelstud.io/guide/storage_local
-
-Its Segment Anything integration can provide interactive proposals, but every
-proposal must be inspected and corrected before it becomes a training label:
-https://labelstud.io/guide/ml_tutorials/segment_anything_model
-
-Keep annotation exports under `data/annotations/`; they are excluded from Git until
-their licensing, privacy, and quality checks are complete.
+Keep annotation exports under `data/annotations/`. They stay out of Git until
+their licensing, privacy and quality checks are complete.
