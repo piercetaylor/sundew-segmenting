@@ -348,3 +348,113 @@ the observer bootstrap of the paired difference, 1,000 resamples:
   within 0.003 of the best-epoch mean for KDw and within 0.005 for CE.
 - **Not yet run:** int8 export of seed 17 of the carried-forward arm. Because
   the release floor is not met, it moves to the transfer-set run's winner.
+
+# KDw-100c+T: the transfer set
+
+Pre-registered in `docs/species-classifier-plan.md`, "Transfer set (written
+2026-09-27, before any acquisition or run)", with its 2026-09-28 amendment.
+KDw-100c+T (`dinov2-s-kdw-e100-t-c576`, job 18068909) trains on the training
+set plus the 12,126 transfer photos, batches drawn uniformly from the union.
+Transfer rows enter the KD term only, with the expected class weight. It runs
+17,300 steps, the control's 100 epochs of 173, with the same warmup and cosine.
+Five seeds, paired with KDw-100c on seeds and starting weights. Tasks took
+2 h 40-41 min (93-94 s per 173 steps); none was preempted. The transfer share
+of batches was 0.515-0.530 (0.522 in the union). Generated tables:
+`species-distill/t-results.md`; diagnostics: `species-distill/t-diagnostics.json`.
+
+Reproduce with
+`sbatch --array=0-4 --time=08:00:00 --export=ALL,MODEL=dinov2-s,KD=1,KD_WEIGHT=label,EPOCHS=100,CACHE=1,TRANSFER=1 scripts/hellbender_species_finetune.slurm`,
+then
+`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-e100-t-c576 dinov2-s-kdw-e100-c576 dinov2-s-e100-c576 --arms full --title "Transfer set, KDw-100c+T" --report reports/species-distill.md --out-md reports/species-distill/t-results.md --out-json reports/species-distill/t-summary.json`
+and
+`python scripts/diagnose_species_distill.py dinov2-s-kdw-e100-t-c576 dinov2-s-kdw-e100-c576 dinov2-s-e100-c576 > reports/species-distill/t-diagnostics.json`.
+The diagnostics reproduce the KDw-100c and CE-100c rows of the 100-epoch
+section.
+
+## Answer
+
+Validation balanced accuracy, seed mean at the last epoch, observer
+bootstrap. Teacher (5-seed DINOv2-L ensemble): 0.834.
+
+| Arm | Last epoch [95% CI] | Plain accuracy | Top-5 | Single-model ECE (after temperature) | Share of predictions to 130+ species (true 0.599) | Teacher agreement |
+| --- | --- | ---: | ---: | --- | ---: | ---: |
+| CE-100c | 0.719 [0.697, 0.744] | 0.758 | 0.924 | 0.160 (0.036) | 0.612 | 0.802 |
+| KDw-100c | 0.735 [0.713, 0.760] | 0.773 | 0.942 | 0.089 (0.027) | 0.616 | 0.820 |
+| **KDw-100c+T** | **0.768** [0.747, 0.794] | 0.803 | **0.959** | 0.101 (0.024) | 0.621 | 0.856 |
+
+| Paired difference, last epoch | Delta [95% CI] | Seeds won |
+| --- | --- | ---: |
+| **KDw-100c+T - KDw-100c** (primary) | **+0.033 [+0.026, +0.042]** | 5/5 |
+| KDw-100c+T - CE-100c | +0.049 [+0.042, +0.059] | 5/5 |
+
+The 5-seed ensembles: +T 0.780 (top-5 0.964), KDw 0.751, CE 0.744; +T - KDw
++0.029 [+0.017, +0.040]. Seed SD fell from 0.006 to 0.002 (best epoch).
+
+By training count, per-species accuracy averaged over seeds. Intervals are
+the observer bootstrap of the paired difference, 1,000 resamples:
+
+| Training images | Species | CE-100c | KDw-100c | KDw-100c+T | +T - KDw | +T - CE |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| under 40 | 23 | 0.610 | 0.634 | 0.677 | **+0.042 [+0.017, +0.077]** | +0.066 [+0.041, +0.099] |
+| 40-79 | 28 | 0.669 | 0.679 | 0.719 | +0.040 [+0.023, +0.056] | +0.050 [+0.031, +0.067] |
+| 80-129 | 17 | 0.759 | 0.777 | 0.792 | +0.014 [+0.001, +0.028] | +0.032 [+0.016, +0.049] |
+| 130 and over | 42 | 0.795 | 0.810 | 0.842 | +0.032 [+0.025, +0.039] | +0.047 [+0.039, +0.055] |
+
+- **The transfer set is the largest single gain in the student line.**
+  +0.033, twice the teacher's gain over CE at 100 epochs (+0.016). The gap to
+  the teacher falls from 0.099 to 0.066.
+- **The thin species gained most, against the prior.** The pre-registration
+  expected little for them (+0.00 to +0.015), since they got only 1-15 new
+  photos each. They gained +0.042. The gain is therefore not mainly more
+  photos of the thin species: matching the teacher on more photos of other
+  species also sharpens the boundaries around the thin ones. This is the
+  fidelity reading of the KD-25 section (Stanton et al. 2021): with the
+  training images alone, the student could fit the teacher only where the
+  teacher had already fitted the labels.
+- **Fidelity rose, over-fitting fell.** Validation agreement with the teacher
+  0.856 (KDw-100c 0.820), KL 0.21 (0.31), and 0.28 on thin species (0.41).
+  The final training loss is 0.12 against 0.05 for KDw-100c: half of each
+  batch is transfer photos, so each training photo is seen about 48 times, not 100.
+
+## Decision, applied as written
+
+| Rule | Fires? |
+| --- | --- |
+| +T - KD(w)-100c: CI excludes 0, positive: the transfer set is in the student recipe; +T is carried forward | **yes**: +0.033 [+0.026, +0.042], 5/5 |
+| gain < +0.01 (amended 2026-09-28): the transfer set is dropped | no |
+| Teacher agrees with the iNaturalist ID on under 0.6 of captive photos: "captive targets suspect" | **not yet measured** (below) |
+| Carried-forward recipe: the highest last-epoch seed mean | **KDw-100c+T**, 0.768 |
+| Shipped model: seed 17 | seed 17 of KDw-100c+T: 0.763, top-5 0.959 (last epoch) |
+| Release floor: seed mean >= 0.75 and top-5 >= 0.95 | **met**: 0.768 and 0.959 |
+| A run diverges or fails | no: seed SD 0.002-0.003 |
+
+The floor is met on validation. By the test-protocol amendment of
+2026-09-29, what remains before release is, in order: the int8 ONNX export
+of seed 17 with its accuracy change against fp32; its temperature, fitted on
+validation; and the single scoring of the test split.
+
+## Against the prior
+
+| Prior | Outcome |
+| --- | --- |
+| overall +0.02 (+0.005 to +0.035) | held high: +0.033 |
+| under 40: +0.00 to +0.015 | **missed, favourably**: +0.042 |
+| 130 and over: +0.01 to +0.03 | missed narrowly: +0.032 |
+| absolute about 0.755 (restated after KDw-100c) | missed, favourably: 0.768 |
+
+## Other diagnostics
+
+- **Calibration**: still under-confident (mean confidence 0.70 against plain
+  accuracy 0.80). Fitted temperature 0.76; ECE 0.101 before, 0.024 after,
+  the best of the three arms after temperature.
+- **Prediction share**: 0.621 to the commonest 42 species against a true
+  0.599, the same lean as KDw-100c (0.616).
+- **Best epochs** 79-88; the last-epoch mean is within 0.004 of the
+  best-epoch mean.
+- **Not yet computed**, pre-registered for this arm: the teacher's
+  max-probability and agreement with the iNaturalist ID on the transfer set,
+  by source (this includes the captive row of the rule, which is recorded
+  and does not change the decision); student-teacher agreement on the
+  transfer set; its share by source and species. They need a forward pass of
+  the teacher and seed 17 over the 12,126 transfer photos, which no script
+  does yet.
