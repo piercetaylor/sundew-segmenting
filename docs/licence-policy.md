@@ -113,16 +113,14 @@ and the existing tooling covers it.
 - No commercial use of anything derived from the corpus.
 - Exact coordinates continue to be neither requested nor stored.
 
-## If trained weights are shared
+## Trained weights
 
-No weights are published yet. If they are:
-
-- **Species model** (DINOv2-S, distilled from DINOv2-L): the DINOv2 weights
-  are Apache-2.0 (Meta, via timm), so nothing upstream blocks release. Because
-  the training photos include CC BY-NC and iNaturalist's terms rule out
-  commercial AI training, the plan is CC BY-NC 4.0, with a model card that
-  credits DINOv2 and timm, includes the Apache-2.0 notice, and states the data
-  terms.
+- **Species model, published** in [`release/species-v1.0.0/`](../release/species-v1.0.0/) (2026-09-29):
+  CC BY-NC 4.0. The DINOv2 weights it starts from are Apache-2.0 (Meta, via
+  timm), so nothing upstream blocks release; the training photos include
+  CC BY-NC, and iNaturalist's terms rule out commercial AI training. The
+  folder has a model card crediting DINOv2 and timm, the licence text, and
+  `ATTRIBUTION.md` for all 23,244 training photos.
 - **Segmentation model**: SegFormer-B0's encoder in segmentation-models-pytorch
   (`mit_b0`) comes from NVIDIA's SegFormer, under the NVIDIA Source Code
   Licence for research and noncommercial use only. Any SegFormer weights must

@@ -92,6 +92,7 @@ src/            the sundew_segmentation package: acquisition, curation, segmenta
 scripts/        command-line steps and the Hellbender SLURM jobs
 docs/           design, plan, cluster, annotation, release and licence guides
 docs/reports/   one report per experiment, with its numbers and decision
+release/        the published species model (int8 ONNX), its model card, licence and photo credits
 data/           annotation policy and small tracked metadata (images are not in Git)
 annotation/     the Label Studio labelling config
 assets/         the README preview image and its attribution record
@@ -101,7 +102,7 @@ deprecated/     retired docs, reports and scripts, kept for the record
 
 ## Use and citation
 
-This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and nothing else in this repository changes those terms. The code is released under the Apache License 2.0 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)); that licence covers the code only, not the iNaturalist photographs, the masks derived from them, or any trained weights, which keep their own terms. Cite this repository with the commit used (see [`CITATION.cff`](CITATION.cff)), and attribute each source image according to its licence.
+This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and nothing else in this repository changes those terms. The code is released under the Apache License 2.0 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)); that licence covers the code only, not the iNaturalist photographs, the masks derived from them, or any trained weights. The species model weights ([`release/species-v1.0.0/`](release/species-v1.0.0/)) are licensed under CC BY-NC 4.0, with credit for every training photo in its `ATTRIBUTION.md`. Cite this repository with the commit used (see [`CITATION.cff`](CITATION.cff)), and attribute each source image according to its licence.
 
 **Computing acknowledgement.** Training ran on Hellbender. As [the Hellbender wiki](https://itrss-wiki.rnet.missouri.edu/pub/hpc/hellbender) asks, any publication using this work should include:
 

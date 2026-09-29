@@ -1,0 +1,96 @@
+{
+  "name": "sundew-species",
+  "version": "1.0.0",
+  "licence": "CC-BY-NC-4.0",
+  "code_licence": "Apache-2.0",
+  "model": "dinov2-s",
+  "backbone": "vit_small_patch14_dinov2.lvd142m",
+  "recipe": "KDw-100c+T (dinov2-s-kdw-e100-t-c576)",
+  "seed": 17,
+  "epoch": 100,
+  "file": "model-int8.onnx",
+  "files": {
+    "model-int8.onnx": {
+      "sha256": "d7ee150eaf5d1c7ddae00a2a94e66ddcfd48b55166b940f4dfa35f0e3cc8af16",
+      "bytes": 22433589
+    },
+    "labels.json": {
+      "sha256": "42e1eba442ea40fbd499a7e99466d82d112eec4a0deee52e6f493c86890e4b0c",
+      "bytes": 2532
+    }
+  },
+  "quantisation": {
+    "method": "onnxruntime.quantization.quantize_dynamic",
+    "weight_type": "QInt8",
+    "per_channel": false,
+    "calibration": null
+  },
+  "opset": 17,
+  "input": {
+    "name": "pixels",
+    "shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "dtype": "float32",
+    "layout": "NCHW",
+    "channels": "RGB",
+    "range": "[0, 1] (pixel / 255)",
+    "normalisation_in_graph": true,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "resize": "short side to 255 px, bicubic, then centre crop 224 px",
+    "training_source": "full frames pre-shrunk to short side 576 px (LANCZOS), then the resize above",
+    "exif_rotation": "training ignored EXIF orientation; browsers apply it (effect not measured)"
+  },
+  "output": {
+    "name": "logits",
+    "shape": [
+      1,
+      110
+    ],
+    "classes": "labels.json order",
+    "probabilities": "softmax(logits / temperature)"
+  },
+  "temperature": 0.74,
+  "checkpoint_sha256": "1fb9ff7f908cdafc1abea23d671999c009e0ca0d250b587777b36cfd459e81d2",
+  "versions": {
+    "torch": "2.5.1+cu124",
+    "timm": "1.0.29",
+    "onnx": "1.23.1",
+    "onnxruntime": "1.30.0",
+    "numpy": "2.4.6"
+  },
+  "metrics": {
+    "validation": {
+      "balanced_accuracy": 0.7634647488713365,
+      "accuracy": 0.8002020712301086,
+      "top5_accuracy": 0.9565546855266481,
+      "section_balanced_accuracy": 0.909727279292672
+    },
+    "test_report": "docs/reports/species-test.md",
+    "test": {
+      "balanced_accuracy": 0.7751,
+      "balanced_accuracy_ci95": [
+        0.752,
+        0.794
+      ],
+      "accuracy": 0.8116,
+      "top5_accuracy": 0.9623,
+      "section_balanced_accuracy": 0.9205,
+      "ece_after_temperature": 0.0310,
+      "note": "scored once, int8 on Intel Xeon (AVX512-VNNI); see docs/reports/species-test.md"
+    },
+    "validation_note": "int8 on AMD EPYC at export; Intel gives 0.7639"
+  }
+}
