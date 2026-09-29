@@ -1,0 +1,950 @@
+{
+ "teacher_check": {
+  "val_balanced_accuracy": 0.8344310924838677,
+  "max_abs_prob_diff_vs_teacher_val_npz": 0.0,
+  "top1_match_vs_teacher_val_npz": 1.0
+ },
+ "n": 12126,
+ "sources": {
+  "a": "wild, research grade",
+  "b": "captive",
+  "c": "needs-ID or casual"
+ },
+ "bins": [
+  "under 40",
+  "40-79",
+  "80-129",
+  "130 and over"
+ ],
+ "infraspecific_remapped": {
+  "Drosera bulbosa bulbosa -> Drosera bulbosa": 2,
+  "Drosera spatulata spatulata -> Drosera spatulata": 4,
+  "Drosera spatulata bakoensis -> Drosera spatulata": 1,
+  "Drosera huegelii phillmanniana -> Drosera huegelii": 1,
+  "Drosera tomentosa glabrata -> Drosera tomentosa": 1,
+  "Drosera bulbosa coronata -> Drosera bulbosa": 1
+ },
+ "by_source": {
+  "a": {
+   "n": 7970,
+   "teacher_maxprob": 0.7708648443222046,
+   "teacher_inat_agree": 0.8977415307402761,
+   "student_teacher_agree": 0.952823086574655,
+   "student_inat_agree": 0.8948557089084065,
+   "kl": 0.07740218937397003,
+   "species": 97
+  },
+  "b": {
+   "n": 659,
+   "teacher_maxprob": 0.613245964050293,
+   "teacher_inat_agree": 0.6813353566009105,
+   "student_teacher_agree": 0.881638846737481,
+   "student_inat_agree": 0.6752655538694993,
+   "kl": 0.11523958295583725,
+   "species": 48
+  },
+  "c": {
+   "n": 3497,
+   "teacher_maxprob": 0.6849098801612854,
+   "teacher_inat_agree": 0.7437803831855877,
+   "student_teacher_agree": 0.9082070346010866,
+   "student_inat_agree": 0.7472118959107806,
+   "kl": 0.11645834147930145,
+   "species": 107
+  },
+  "all": {
+   "n": 12126,
+   "teacher_maxprob": 0.7375105619430542,
+   "teacher_inat_agree": 0.8415800758700314,
+   "student_teacher_agree": 0.9360877453405905,
+   "student_inat_agree": 0.8403430644895267,
+   "kl": 0.09072183817625046,
+   "species": 110
+  }
+ },
+ "by_bin": {
+  "under 40": {
+   "n": 201,
+   "teacher_maxprob": 0.7158942818641663,
+   "teacher_inat_agree": 0.6965174129353234,
+   "student_teacher_agree": 0.9104477611940298,
+   "student_inat_agree": 0.7014925373134329,
+   "kl": 0.10417823493480682,
+   "species": 23
+  },
+  "40-79": {
+   "n": 417,
+   "teacher_maxprob": 0.7439673542976379,
+   "teacher_inat_agree": 0.8009592326139089,
+   "student_teacher_agree": 0.9064748201438849,
+   "student_inat_agree": 0.7721822541966427,
+   "kl": 0.11529546231031418,
+   "species": 28
+  },
+  "80-129": {
+   "n": 826,
+   "teacher_maxprob": 0.7275778651237488,
+   "teacher_inat_agree": 0.7929782082324455,
+   "student_teacher_agree": 0.9249394673123487,
+   "student_inat_agree": 0.7905569007263923,
+   "kl": 0.09946674108505249,
+   "species": 17
+  },
+  "130 and over": {
+   "n": 10682,
+   "teacher_maxprob": 0.7384332418441772,
+   "teacher_inat_agree": 0.8496536229170567,
+   "student_teacher_agree": 0.9385882793484366,
+   "student_inat_agree": 0.8494663920614117,
+   "kl": 0.08883313834667206,
+   "species": 42
+  }
+ },
+ "by_source_bin": {
+  "a": {
+   "under 40": {
+    "n": 62,
+    "teacher_maxprob": 0.8298872709274292,
+    "teacher_inat_agree": 0.9032258064516129,
+    "student_teacher_agree": 0.9354838709677419,
+    "student_inat_agree": 0.8870967741935484,
+    "kl": 0.061995480209589005,
+    "species": 17
+   },
+   "40-79": {
+    "n": 122,
+    "teacher_maxprob": 0.7730728983879089,
+    "teacher_inat_agree": 0.9016393442622951,
+    "student_teacher_agree": 0.9262295081967213,
+    "student_inat_agree": 0.8934426229508197,
+    "kl": 0.10564826428890228,
+    "species": 22
+   },
+   "80-129": {
+    "n": 394,
+    "teacher_maxprob": 0.798550546169281,
+    "teacher_inat_agree": 0.9238578680203046,
+    "student_teacher_agree": 0.9670050761421319,
+    "student_inat_agree": 0.916243654822335,
+    "kl": 0.07318300008773804,
+    "species": 16
+   },
+   "130 and over": {
+    "n": 7392,
+    "teacher_maxprob": 0.7688577771186829,
+    "teacher_inat_agree": 0.8962391774891775,
+    "student_teacher_agree": 0.9526515151515151,
+    "student_inat_agree": 0.8938041125541125,
+    "kl": 0.0772901177406311,
+    "species": 42
+   }
+  },
+  "b": {
+   "under 40": {
+    "n": 8,
+    "teacher_maxprob": 0.6323907375335693,
+    "teacher_inat_agree": 0.625,
+    "student_teacher_agree": 1.0,
+    "student_inat_agree": 0.625,
+    "kl": 0.09113702178001404,
+    "species": 5
+   },
+   "40-79": {
+    "n": 10,
+    "teacher_maxprob": 0.566550612449646,
+    "teacher_inat_agree": 0.5,
+    "student_teacher_agree": 0.7,
+    "student_inat_agree": 0.4,
+    "kl": 0.11737535148859024,
+    "species": 7
+   },
+   "80-129": {
+    "n": 22,
+    "teacher_maxprob": 0.40782269835472107,
+    "teacher_inat_agree": 0.3181818181818182,
+    "student_teacher_agree": 0.6363636363636364,
+    "student_inat_agree": 0.3181818181818182,
+    "kl": 0.14357131719589233,
+    "species": 9
+   },
+   "130 and over": {
+    "n": 619,
+    "teacher_maxprob": 0.62105393409729,
+    "teacher_inat_agree": 0.6978998384491115,
+    "student_teacher_agree": 0.8917609046849758,
+    "student_inat_agree": 0.6930533117932148,
+    "kl": 0.11450964212417603,
+    "species": 27
+   }
+  },
+  "c": {
+   "under 40": {
+    "n": 131,
+    "teacher_maxprob": 0.6670427322387695,
+    "teacher_inat_agree": 0.6030534351145038,
+    "student_teacher_agree": 0.8931297709923665,
+    "student_inat_agree": 0.6183206106870229,
+    "kl": 0.12493900954723358,
+    "species": 20
+   },
+   "40-79": {
+    "n": 285,
+    "teacher_maxprob": 0.7377333045005798,
+    "teacher_inat_agree": 0.7684210526315789,
+    "student_teacher_agree": 0.9052631578947369,
+    "student_inat_agree": 0.7333333333333333,
+    "kl": 0.11935216188430786,
+    "species": 28
+   },
+   "80-129": {
+    "n": 410,
+    "teacher_maxprob": 0.6765324473381042,
+    "teacher_inat_agree": 0.6926829268292682,
+    "student_teacher_agree": 0.9,
+    "student_inat_agree": 0.6951219512195121,
+    "kl": 0.12235818058252335,
+    "species": 17
+   },
+   "130 and over": {
+    "n": 2671,
+    "teacher_maxprob": 0.681435763835907,
+    "teacher_inat_agree": 0.7558966679146387,
+    "student_teacher_agree": 0.9105204043429427,
+    "student_inat_agree": 0.763010108573568,
+    "kl": 0.11482799053192139,
+    "species": 42
+   }
+  },
+  "all": {
+   "under 40": {
+    "n": 201,
+    "teacher_maxprob": 0.7158942818641663,
+    "teacher_inat_agree": 0.6965174129353234,
+    "student_teacher_agree": 0.9104477611940298,
+    "student_inat_agree": 0.7014925373134329,
+    "kl": 0.10417823493480682,
+    "species": 23
+   },
+   "40-79": {
+    "n": 417,
+    "teacher_maxprob": 0.7439673542976379,
+    "teacher_inat_agree": 0.8009592326139089,
+    "student_teacher_agree": 0.9064748201438849,
+    "student_inat_agree": 0.7721822541966427,
+    "kl": 0.11529546231031418,
+    "species": 28
+   },
+   "80-129": {
+    "n": 826,
+    "teacher_maxprob": 0.7275778651237488,
+    "teacher_inat_agree": 0.7929782082324455,
+    "student_teacher_agree": 0.9249394673123487,
+    "student_inat_agree": 0.7905569007263923,
+    "kl": 0.09946674108505249,
+    "species": 17
+   },
+   "130 and over": {
+    "n": 10682,
+    "teacher_maxprob": 0.7384332418441772,
+    "teacher_inat_agree": 0.8496536229170567,
+    "student_teacher_agree": 0.9385882793484366,
+    "student_inat_agree": 0.8494663920614117,
+    "kl": 0.08883313834667206,
+    "species": 42
+   }
+  }
+ },
+ "share_by_source_bin": {
+  "a": [
+   0.005112980372752762,
+   0.010061025894771565,
+   0.03249216559459014,
+   0.6095992083127165
+  ],
+  "b": [
+   0.0006597394029358403,
+   0.0008246742536698004,
+   0.001814283358073561,
+   0.05104733630216065
+  ],
+  "c": [
+   0.010803232723074386,
+   0.023503216229589313,
+   0.03381164440046182,
+   0.2202704931552037
+  ],
+  "all": [
+   0.016575952498762987,
+   0.034388916378030675,
+   0.06811809335312552,
+   0.8809170377700808
+  ]
+ },
+ "per_species": {
+  "Drosera aberrans": {
+   "train": 188,
+   "a": 198,
+   "b": 2,
+   "c": 100
+  },
+  "Drosera admirabilis": {
+   "train": 92,
+   "a": 28,
+   "b": 2,
+   "c": 43
+  },
+  "Drosera alba": {
+   "train": 31,
+   "a": 4,
+   "b": 1,
+   "c": 5
+  },
+  "Drosera aliciae": {
+   "train": 170,
+   "a": 175,
+   "b": 25,
+   "c": 100
+  },
+  "Drosera androsacea": {
+   "train": 38,
+   "a": 2,
+   "b": 0,
+   "c": 11
+  },
+  "Drosera anglica": {
+   "train": 187,
+   "a": 189,
+   "b": 11,
+   "c": 100
+  },
+  "Drosera aquatica": {
+   "train": 35,
+   "a": 6,
+   "b": 0,
+   "c": 8
+  },
+  "Drosera arcturi": {
+   "train": 167,
+   "a": 272,
+   "b": 0,
+   "c": 27
+  },
+  "Drosera auriculata": {
+   "train": 188,
+   "a": 195,
+   "b": 5,
+   "c": 100
+  },
+  "Drosera barbigera": {
+   "train": 39,
+   "a": 7,
+   "b": 0,
+   "c": 0
+  },
+  "Drosera binata": {
+   "train": 174,
+   "a": 174,
+   "b": 98,
+   "c": 26
+  },
+  "Drosera brevicornis": {
+   "train": 29,
+   "a": 5,
+   "b": 0,
+   "c": 2
+  },
+  "Drosera brevifolia": {
+   "train": 187,
+   "a": 201,
+   "b": 13,
+   "c": 85
+  },
+  "Drosera bulbosa": {
+   "train": 154,
+   "a": 87,
+   "b": 0,
+   "c": 26
+  },
+  "Drosera burkeana": {
+   "train": 41,
+   "a": 2,
+   "b": 0,
+   "c": 4
+  },
+  "Drosera burmanni": {
+   "train": 181,
+   "a": 171,
+   "b": 29,
+   "c": 100
+  },
+  "Drosera capensis": {
+   "train": 171,
+   "a": 164,
+   "b": 100,
+   "c": 36
+  },
+  "Drosera capillaris": {
+   "train": 191,
+   "a": 174,
+   "b": 26,
+   "c": 100
+  },
+  "Drosera cayennensis": {
+   "train": 44,
+   "a": 7,
+   "b": 0,
+   "c": 11
+  },
+  "Drosera cistiflora": {
+   "train": 177,
+   "a": 199,
+   "b": 1,
+   "c": 100
+  },
+  "Drosera collina": {
+   "train": 161,
+   "a": 249,
+   "b": 1,
+   "c": 46
+  },
+  "Drosera collinsiae": {
+   "train": 30,
+   "a": 8,
+   "b": 0,
+   "c": 5
+  },
+  "Drosera communis": {
+   "train": 54,
+   "a": 2,
+   "b": 0,
+   "c": 11
+  },
+  "Drosera cuneifolia": {
+   "train": 123,
+   "a": 43,
+   "b": 3,
+   "c": 42
+  },
+  "Drosera dielsiana": {
+   "train": 32,
+   "a": 1,
+   "b": 0,
+   "c": 8
+  },
+  "Drosera dilatatopetiolaris": {
+   "train": 71,
+   "a": 18,
+   "b": 1,
+   "c": 30
+  },
+  "Drosera drummondii": {
+   "train": 162,
+   "a": 172,
+   "b": 0,
+   "c": 62
+  },
+  "Drosera eneabba": {
+   "train": 50,
+   "a": 1,
+   "b": 0,
+   "c": 7
+  },
+  "Drosera eremaea": {
+   "train": 61,
+   "a": 7,
+   "b": 0,
+   "c": 26
+  },
+  "Drosera ericgreenii": {
+   "train": 28,
+   "a": 3,
+   "b": 0,
+   "c": 1
+  },
+  "Drosera erythrogyne": {
+   "train": 109,
+   "a": 12,
+   "b": 0,
+   "c": 16
+  },
+  "Drosera erythrorhiza": {
+   "train": 164,
+   "a": 262,
+   "b": 0,
+   "c": 38
+  },
+  "Drosera esterhuyseniae": {
+   "train": 95,
+   "a": 31,
+   "b": 1,
+   "c": 25
+  },
+  "Drosera filiformis": {
+   "train": 167,
+   "a": 210,
+   "b": 58,
+   "c": 31
+  },
+  "Drosera finlaysonii": {
+   "train": 132,
+   "a": 55,
+   "b": 12,
+   "c": 17
+  },
+  "Drosera floridana": {
+   "train": 35,
+   "a": 5,
+   "b": 0,
+   "c": 0
+  },
+  "Drosera fulva": {
+   "train": 26,
+   "a": 0,
+   "b": 2,
+   "c": 7
+  },
+  "Drosera gigantea": {
+   "train": 97,
+   "a": 32,
+   "b": 0,
+   "c": 4
+  },
+  "Drosera glabripes": {
+   "train": 141,
+   "a": 160,
+   "b": 1,
+   "c": 53
+  },
+  "Drosera glanduligera": {
+   "train": 168,
+   "a": 260,
+   "b": 0,
+   "c": 40
+  },
+  "Drosera gunniana": {
+   "train": 174,
+   "a": 200,
+   "b": 0,
+   "c": 100
+  },
+  "Drosera heterophylla": {
+   "train": 72,
+   "a": 9,
+   "b": 0,
+   "c": 2
+  },
+  "Drosera hilaris": {
+   "train": 169,
+   "a": 212,
+   "b": 0,
+   "c": 85
+  },
+  "Drosera hirsuta": {
+   "train": 64,
+   "a": 4,
+   "b": 0,
+   "c": 18
+  },
+  "Drosera hookeri": {
+   "train": 168,
+   "a": 199,
+   "b": 1,
+   "c": 100
+  },
+  "Drosera huegelii": {
+   "train": 40,
+   "a": 2,
+   "b": 0,
+   "c": 5
+  },
+  "Drosera humilis": {
+   "train": 41,
+   "a": 0,
+   "b": 0,
+   "c": 7
+  },
+  "Drosera hyperostigma": {
+   "train": 100,
+   "a": 33,
+   "b": 0,
+   "c": 14
+  },
+  "Drosera indica": {
+   "train": 147,
+   "a": 62,
+   "b": 3,
+   "c": 48
+  },
+  "Drosera intermedia": {
+   "train": 185,
+   "a": 160,
+   "b": 39,
+   "c": 100
+  },
+  "Drosera latifolia": {
+   "train": 46,
+   "a": 0,
+   "b": 0,
+   "c": 13
+  },
+  "Drosera linearis": {
+   "train": 158,
+   "a": 245,
+   "b": 3,
+   "c": 6
+  },
+  "Drosera lunata": {
+   "train": 148,
+   "a": 153,
+   "b": 0,
+   "c": 99
+  },
+  "Drosera macrantha": {
+   "train": 170,
+   "a": 223,
+   "b": 0,
+   "c": 76
+  },
+  "Drosera macrophylla": {
+   "train": 40,
+   "a": 2,
+   "b": 0,
+   "c": 9
+  },
+  "Drosera madagascariensis": {
+   "train": 122,
+   "a": 8,
+   "b": 6,
+   "c": 15
+  },
+  "Drosera magna": {
+   "train": 114,
+   "a": 23,
+   "b": 0,
+   "c": 19
+  },
+  "Drosera menziesii": {
+   "train": 108,
+   "a": 5,
+   "b": 2,
+   "c": 17
+  },
+  "Drosera micrantha": {
+   "train": 70,
+   "a": 0,
+   "b": 1,
+   "c": 15
+  },
+  "Drosera miniata": {
+   "train": 56,
+   "a": 12,
+   "b": 0,
+   "c": 3
+  },
+  "Drosera minutiflora": {
+   "train": 28,
+   "a": 4,
+   "b": 0,
+   "c": 6
+  },
+  "Drosera modesta": {
+   "train": 58,
+   "a": 2,
+   "b": 0,
+   "c": 7
+  },
+  "Drosera montana": {
+   "train": 39,
+   "a": 0,
+   "b": 0,
+   "c": 13
+  },
+  "Drosera monticola": {
+   "train": 23,
+   "a": 0,
+   "b": 0,
+   "c": 1
+  },
+  "Drosera murfetii": {
+   "train": 64,
+   "a": 0,
+   "b": 0,
+   "c": 24
+  },
+  "Drosera natalensis": {
+   "train": 140,
+   "a": 55,
+   "b": 3,
+   "c": 57
+  },
+  "Drosera neesii": {
+   "train": 35,
+   "a": 0,
+   "b": 0,
+   "c": 12
+  },
+  "Drosera neocaledonica": {
+   "train": 81,
+   "a": 6,
+   "b": 0,
+   "c": 2
+  },
+  "Drosera nitidula": {
+   "train": 27,
+   "a": 1,
+   "b": 2,
+   "c": 4
+  },
+  "Drosera ordensis": {
+   "train": 27,
+   "a": 5,
+   "b": 2,
+   "c": 0
+  },
+  "Drosera pallida": {
+   "train": 165,
+   "a": 235,
+   "b": 0,
+   "c": 63
+  },
+  "Drosera pauciflora": {
+   "train": 111,
+   "a": 33,
+   "b": 1,
+   "c": 53
+  },
+  "Drosera peltata": {
+   "train": 111,
+   "a": 5,
+   "b": 2,
+   "c": 100
+  },
+  "Drosera petiolaris": {
+   "train": 34,
+   "a": 0,
+   "b": 0,
+   "c": 11
+  },
+  "Drosera planchonii": {
+   "train": 173,
+   "a": 224,
+   "b": 0,
+   "c": 75
+  },
+  "Drosera platypoda": {
+   "train": 68,
+   "a": 8,
+   "b": 1,
+   "c": 5
+  },
+  "Drosera platystigma": {
+   "train": 67,
+   "a": 5,
+   "b": 0,
+   "c": 9
+  },
+  "Drosera porrecta": {
+   "train": 158,
+   "a": 187,
+   "b": 0,
+   "c": 33
+  },
+  "Drosera praefolia": {
+   "train": 38,
+   "a": 4,
+   "b": 0,
+   "c": 4
+  },
+  "Drosera pulchella": {
+   "train": 105,
+   "a": 65,
+   "b": 4,
+   "c": 5
+  },
+  "Drosera purpurascens": {
+   "train": 109,
+   "a": 46,
+   "b": 0,
+   "c": 13
+  },
+  "Drosera pygmaea": {
+   "train": 157,
+   "a": 277,
+   "b": 5,
+   "c": 18
+  },
+  "Drosera ramentacea": {
+   "train": 46,
+   "a": 0,
+   "b": 1,
+   "c": 4
+  },
+  "Drosera roseana": {
+   "train": 40,
+   "a": 7,
+   "b": 1,
+   "c": 5
+  },
+  "Drosera rosulata": {
+   "train": 160,
+   "a": 130,
+   "b": 0,
+   "c": 21
+  },
+  "Drosera rotundifolia": {
+   "train": 195,
+   "a": 132,
+   "b": 68,
+   "c": 100
+  },
+  "Drosera rupicola": {
+   "train": 31,
+   "a": 0,
+   "b": 0,
+   "c": 3
+  },
+  "Drosera schmutzii": {
+   "train": 31,
+   "a": 2,
+   "b": 0,
+   "c": 11
+  },
+  "Drosera scorpioides": {
+   "train": 54,
+   "a": 6,
+   "b": 4,
+   "c": 4
+  },
+  "Drosera serpens": {
+   "train": 67,
+   "a": 5,
+   "b": 1,
+   "c": 25
+  },
+  "Drosera sessilifolia": {
+   "train": 61,
+   "a": 0,
+   "b": 0,
+   "c": 3
+  },
+  "Drosera slackii": {
+   "train": 39,
+   "a": 2,
+   "b": 1,
+   "c": 2
+  },
+  "Drosera spatulata": {
+   "train": 191,
+   "a": 111,
+   "b": 89,
+   "c": 100
+  },
+  "Drosera spilos": {
+   "train": 77,
+   "a": 3,
+   "b": 0,
+   "c": 23
+  },
+  "Drosera squamosa": {
+   "train": 89,
+   "a": 8,
+   "b": 0,
+   "c": 6
+  },
+  "Drosera stenopetala": {
+   "train": 141,
+   "a": 75,
+   "b": 0,
+   "c": 7
+  },
+  "Drosera stolonifera": {
+   "train": 161,
+   "a": 133,
+   "b": 0,
+   "c": 50
+  },
+  "Drosera stricticaulis": {
+   "train": 43,
+   "a": 2,
+   "b": 0,
+   "c": 6
+  },
+  "Drosera subhirtella": {
+   "train": 57,
+   "a": 1,
+   "b": 0,
+   "c": 5
+  },
+  "Drosera sulphurea": {
+   "train": 29,
+   "a": 2,
+   "b": 0,
+   "c": 3
+  },
+  "Drosera tomentosa": {
+   "train": 95,
+   "a": 0,
+   "b": 1,
+   "c": 29
+  },
+  "Drosera tracyi": {
+   "train": 167,
+   "a": 271,
+   "b": 19,
+   "c": 10
+  },
+  "Drosera trinervia": {
+   "train": 174,
+   "a": 199,
+   "b": 1,
+   "c": 100
+  },
+  "Drosera tubaestylis": {
+   "train": 62,
+   "a": 13,
+   "b": 0,
+   "c": 2
+  },
+  "Drosera uniflora": {
+   "train": 123,
+   "a": 16,
+   "b": 0,
+   "c": 7
+  },
+  "Drosera venusta": {
+   "train": 34,
+   "a": 1,
+   "b": 0,
+   "c": 14
+  },
+  "Drosera whittakeri": {
+   "train": 180,
+   "a": 197,
+   "b": 3,
+   "c": 100
+  },
+  "Drosera xerophila": {
+   "train": 158,
+   "a": 99,
+   "b": 1,
+   "c": 36
+  },
+  "Drosera zeyheri": {
+   "train": 139,
+   "a": 46,
+   "b": 2,
+   "c": 100
+  },
+  "Drosera zonaria": {
+   "train": 74,
+   "a": 4,
+   "b": 0,
+   "c": 2
+  }
+ },
+ "captive_rule": {
+  "threshold": 0.6,
+  "teacher_inat_agree": 0.6813353566009105,
+  "fires": false
+ }
+}

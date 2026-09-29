@@ -422,7 +422,7 @@ the observer bootstrap of the paired difference, 1,000 resamples:
 | --- | --- |
 | +T - KD(w)-100c: CI excludes 0, positive: the transfer set is in the student recipe; +T is carried forward | **yes**: +0.033 [+0.026, +0.042], 5/5 |
 | gain < +0.01 (amended 2026-09-28): the transfer set is dropped | no |
-| Teacher agrees with the iNaturalist ID on under 0.6 of captive photos: "captive targets suspect" | **not yet measured** (below) |
+| Teacher agrees with the iNaturalist ID on under 0.6 of captive photos: "captive targets suspect" | no: 0.681 on the 659 captive photos (below) |
 | Carried-forward recipe: the highest last-epoch seed mean | **KDw-100c+T**, 0.768 |
 | Shipped model: seed 17 | seed 17 of KDw-100c+T: 0.763, top-5 0.959 (last epoch) |
 | Release floor: seed mean >= 0.75 and top-5 >= 0.95 | **met**: 0.768 and 0.959 |
@@ -451,10 +451,63 @@ validation; and the single scoring of the test split.
   0.599, the same lean as KDw-100c (0.616).
 - **Best epochs** 79-88; the last-epoch mean is within 0.004 of the
   best-epoch mean.
-- **Not yet computed**, pre-registered for this arm: the teacher's
-  max-probability and agreement with the iNaturalist ID on the transfer set,
-  by source (this includes the captive row of the rule, which is recorded
-  and does not change the decision); student-teacher agreement on the
-  transfer set; its share by source and species. They need a forward pass of
-  the teacher and seed 17 over the 12,126 transfer photos, which no script
-  does yet.
+
+## The transfer set under the teacher
+
+Pre-registered for this arm. The teacher (5-seed ensemble, tau 1) and the
+shipped student (seed 17, last epoch) run over the 12,126 transfer photos
+with the validation transform (224 px). The iNaturalist ID is the record's
+taxon; 10 photos of 6 infraspecific taxa are mapped to their species. The
+teacher reproduces its validation score (0.834) and its stored validation
+targets exactly. Job 18079959, 2.5 min on one A100. Output:
+`species-distill/t-transfer-diagnostics.json`; per-photo top-1, max-probability
+and probabilities in `transfer-diagnostics.npz` beside the seed-17 checkpoint
+(not in Git). Reproduce with
+`sbatch scripts/hellbender_transfer_diagnostics.slurm`
+(`scripts/diagnose_transfer_set.py`).
+
+| Source | Photos | Species | Teacher max-prob | Teacher = iNat ID | Student = teacher | Student = iNat ID | KL(teacher \|\| student) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| (a) wild, research grade | 7,970 | 97 | 0.771 | 0.898 | 0.953 | 0.895 | 0.077 |
+| (b) captive | 659 | 48 | 0.613 | **0.681** | 0.882 | 0.675 | 0.115 |
+| (c) needs-ID or casual | 3,497 | 107 | 0.685 | 0.744 | 0.908 | 0.747 | 0.116 |
+| all | 12,126 | 110 | 0.738 | 0.842 | 0.936 | 0.840 | 0.091 |
+
+By the training count of the iNaturalist-ID species. The share columns are of
+the whole set:
+
+| Training images | Photos | Share (a) | Share (b) | Share (c) | Teacher max-prob | Teacher = iNat ID | Student = teacher | KL |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| under 40 | 201 | 0.005 | 0.001 | 0.011 | 0.716 | 0.697 | 0.910 | 0.104 |
+| 40-79 | 417 | 0.010 | 0.001 | 0.024 | 0.744 | 0.801 | 0.906 | 0.115 |
+| 80-129 | 826 | 0.032 | 0.002 | 0.034 | 0.728 | 0.793 | 0.925 | 0.099 |
+| 130 and over | 10,682 | 0.610 | 0.051 | 0.220 | 0.738 | 0.850 | 0.939 | 0.089 |
+
+- **Captive rule: does not fire.** The teacher agrees with the iNaturalist ID
+  on 0.681 of captive photos, above the 0.6 threshold. The captive targets are
+  not recorded as suspect. They are still the least reliable source. The
+  teacher's mean max-probability there is 0.613, against 0.771 on wild
+  research-grade photos. Captive agreement is lowest on the few captive photos
+  of mid-count species (80-129: 0.318 on 22 photos), and those cells are
+  small.
+- **Confidence and agreement follow the source.** Research-grade (a) is the
+  teacher's domain: 0.898 agreement, against its plain accuracy of 0.856 on
+  validation (mean max-probability 0.742 there, 0.771 here). Needs-ID (c) is lower (0.744, max-prob 0.685). The
+  disagreements with the iNaturalist ID are partly teacher errors and partly
+  wrong community IDs, which the rows cannot tell apart. For (b) and (c)
+  neither the IDs nor the teacher is ground truth.
+- **The student fits the teacher on the transfer set**: 0.936 top-1 agreement
+  and KL 0.091, against 0.856 and 0.21 on validation. These are training
+  photos for the student, so the gap is fit, not generalisation. It fits worst
+  where the teacher is least sure: (b) 0.882, (c) 0.908.
+- **Few photos of the thin species.** Species under 40 training images have
+  201 transfer photos (0.017 of the set; 1-15 per species), 131 of them from
+  needs-ID (c). The teacher agrees with those IDs least often (0.697; 0.603
+  on (c)). 0.881 of the set belongs to the 42 species with 130 and over.
+- **This fits the fidelity reading of the thin-species gain.** The teacher
+  puts 0.097 of its probability mass on transfer photos onto the 23 thin
+  species, about 1,180 photo-equivalents, against 201 photos with a thin ID.
+  Its top-1 lands on a thin species for 0.026 of photos. Most of the
+  thin-species KD signal therefore comes from the teacher's soft targets on
+  photos of other species, not from new photos of the thin ones. This is
+  consistent with the +0.042 gain there. It does not prove it.
