@@ -165,6 +165,17 @@ def build(tag: str, n_classes: int, drop_path: float, image_size: int, device: s
     return net, mean, std, param_groups
 
 
+def eval_transform(arm: str, s: int, mean, std):
+    """Validation geometry: squash to s x s (full-square), else short side to
+    int(1.14 s) and centre-crop s; bicubic; then ToTensor and Normalize.
+    scripts/export_species_onnx.py imports this, so an export sees the same pixels."""
+    from torchvision import transforms
+    bicubic = transforms.InterpolationMode.BICUBIC
+    geom = ([transforms.Resize((s, s), interpolation=bicubic)] if arm == "full-square"
+            else [transforms.Resize(int(s * 1.14), interpolation=bicubic), transforms.CenterCrop(s)])
+    return transforms.Compose(geom + [transforms.ToTensor(), transforms.Normalize(mean, std)])
+
+
 def open_clip_groups(visual, wd, decay):
     """Layer-wise lr decay for an open_clip VisionTransformer, mirroring timm's:
     patch embedding and tokens are layer 0, resblock i is layer i+1, the final
@@ -290,9 +301,7 @@ def main() -> int:
         transforms.ColorJitter(0.2, 0.2, 0.2, 0.0),
         transforms.ToTensor(), norm,
     ])
-    eval_tf = transforms.Compose(
-        (square if square else [transforms.Resize(int(s * 1.14), interpolation=bicubic), transforms.CenterCrop(s)])
-        + [transforms.ToTensor(), norm])
+    eval_tf = eval_transform(args.arm, s, mean, std)
 
     class DS(Dataset):
         def __init__(self, rows, tf): self.rows, self.tf = rows, tf
