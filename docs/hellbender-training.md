@@ -4,6 +4,8 @@ Use Hellbender for the final U-Net and SegFormer comparison. The reviewed
 dataset snapshot is small, while 768-pixel training benefits substantially from
 an NVIDIA GPU.
 
+**Citation.** The Hellbender wiki (https://itrss-wiki.rnet.missouri.edu/pub/hpc/hellbender) asks every publication that uses the cluster to include: "The computation for this work was performed on the high performance computing infrastructure operated by Research Support Solutions in the Division of IT at the University of Missouri, Columbia MO DOI: https://doi.org/10.32469/10355/97710", and to send a copy to muitrss@missouri.edu. The README carries it.
+
 ## Environment
 
 The training stack is defined in `environment.yml` and built with the cluster's

@@ -80,4 +80,12 @@ python scripts/summarize_species_finetune.py --help
 
 ## Use and citation
 
-This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and the software licence doesn't change that. Cite this repository with the commit used, and attribute each source image according to its licence. More detail: [project plan](docs/project-plan.md), [release guide](docs/dataset-release.md), [archived README](docs/legacy-readme.md).
+This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and the software licence doesn't change that. Cite this repository with the commit used, and attribute each source image according to its licence.
+
+**Computing acknowledgement.** Training ran on Hellbender. As [the Hellbender wiki](https://itrss-wiki.rnet.missouri.edu/pub/hpc/hellbender) asks, any publication using this work should include:
+
+> The computation for this work was performed on the high performance computing infrastructure operated by Research Support Solutions in the Division of IT at the University of Missouri, Columbia MO DOI: https://doi.org/10.32469/10355/97710
+
+The wiki also asks authors to email muitrss@missouri.edu and share a copy of the publication.
+
+More detail: [project plan](docs/project-plan.md), [release guide](docs/dataset-release.md), [archived README](docs/legacy-readme.md).
