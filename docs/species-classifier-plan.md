@@ -1016,5 +1016,50 @@ The other rows, the prior and the floor are unchanged.
 - **Sequential dependence:** the arm cannot launch until the 100-epoch rule
   has selected the KD variant.
 
+### Test protocol for the shipped student (written 2026-09-29, before the +T run and before any test image is read)
+
+The test protocol of 2026-09-26 scores the teacher ensemble and the
+ResNet-18 anchor, once, "after the teacher configuration is final". It
+predates the student line, so the model that ships is not in it, and the
+resolution step it waits on (224 -> 384 px, step 3 above) has not run. Both
+gaps are closed here, before the +T result is known.
+
+**The teacher configuration is final at 224 px.** Every student so far,
+including +T, is distilled from the 224 px DINOv2-L ensemble, and a 384 px
+teacher would reopen distillation (a new teacher, new KD arms). The 384 px
+step is deferred past this release. If it runs later, it is judged on
+validation only: the test split is read once, here, and not reused.
+
+**Added to the scored set, at the same single reading:**
+
+| Scored | Why |
+| --- | --- |
+| Carried-forward student arm (+T if its rule fires, otherwise KDw-100c), five single seeds, last epoch | the seed mean describes the shipped model |
+| Its 5-seed ensemble (mean softmax) | reported, not shipped |
+| **Seed 17 of that arm, as shipped**: int8 ONNX (or fp32, below), with its temperature | the model a user runs |
+| CE-100c, five single seeds, last epoch | the distillation gain on test |
+
+**Order, all before the test is read:**
+
+1. apply the +T rule;
+2. export seed 17 of the carried-forward arm to ONNX (opset 17, 224 px,
+   batch 1) and quantise to int8 as in the bake-off tiebreaker. If int8 costs
+   more than 0.01 validation balanced accuracy against its own fp32
+   checkpoint, fp32 ships instead; the threshold is the tiebreaker's;
+3. fit the shipped model's temperature on validation;
+4. score everything in the table above, and the 2026-09-26 set, in one job.
+
+**Metrics and intervals** as in the 2026-09-26 protocol: balanced accuracy
+(primary), plain accuracy, top-5, section-level balanced accuracy, ECE
+before and after temperature, per-bin accuracy by training count;
+observer-grouped bootstrap, 2,000 resamples. The student-minus-CE-100c
+difference is paired by seed and bootstrapped the same way.
+
+**The release floor stays on validation**, as pre-registered (seed mean
+>= 0.75, top-5 >= 0.95). The test is reported with the release whatever it
+is and is not a second gate. If the shipped model scores below the floor on
+test, or outside its validation interval, that is stated in the release
+notes, and nothing is retrained or re-tuned.
+
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.
