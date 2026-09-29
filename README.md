@@ -8,7 +8,7 @@ The preview's credits and licences are in [its attribution record](assets/datase
 
 ## Where it stands
 
-**Data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](reports/dataset-freeze-v0.3.0.md)), plus 30 field masks. The species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](reports/dataset-card.md).
+**Data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](docs/reports/dataset-freeze-v0.3.0.md)), plus 30 field masks. The species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
 
 **Segmentation.** SegFormer-B0 beat a U-Net on all five seeds (validation IoU 0.632 vs 0.610). Adding the field masks raised IoU on messy real-world photos from 0.552 to 0.613. Only 2.4% of uncurated photos got a crop that missed the plant.
 
@@ -27,7 +27,7 @@ The large DINOv2-L model is the most accurate, but it's too big to run on a phon
 
 **Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. Browser preprocessing and int8 behaviour in WebAssembly are not yet measured.
 
-The reports behind each number are in `reports/`: [distillation](reports/species-distill.md), [export](reports/species-release.md) and [held-out test](reports/species-test.md). The reasoning and pre-registered rules are in [the species classifier plan](docs/species-classifier-plan.md).
+The reports behind each number are in `docs/reports/`: [distillation](docs/reports/species-distill.md), [export](docs/reports/species-release.md) and [held-out test](docs/reports/species-test.md). The reasoning and pre-registered rules are in [the species classifier plan](docs/species-classifier-plan.md).
 
 ## Running it
 
@@ -88,4 +88,4 @@ This is a personal, noncommercial research project. [iNaturalist's terms](https:
 
 The wiki also asks authors to email muitrss@missouri.edu and share a copy of the publication.
 
-More detail: [project plan](docs/project-plan.md), [release guide](docs/dataset-release.md), [archived README](docs/legacy-readme.md).
+More detail: [project plan](deprecated/docs/project-plan.md), [release guide](docs/dataset-release.md), [archived README](deprecated/docs/legacy-readme.md).

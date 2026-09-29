@@ -23,7 +23,7 @@
 #     sbatch --export=ALL,SPLIT=test scripts/hellbender_species_test.slurm
 #
 # Read-once guard: with SPLIT=test the script refuses to start when
-# reports/species-test/test-results.json exists. That file is written last and
+# docs/reports/species-test/test-results.json exists. That file is written last and
 # atomically, at the very end, so a preempted and requeued task has written
 # nothing and reruns the same computation; once it exists nothing reruns.
 
@@ -39,8 +39,8 @@ fi
 BASE=/cluster/VAST/mendozacozatld-lab/PierceTaylor
 cd "$BASE/sundew-segmenting"
 
-if [ "$SPLIT" = test ] && [ -e reports/species-test/test-results.json ]; then
-  echo "reports/species-test/test-results.json exists: the test split was already scored. Not rerunning."
+if [ "$SPLIT" = test ] && [ -e docs/reports/species-test/test-results.json ]; then
+  echo "docs/reports/species-test/test-results.json exists: the test split was already scored. Not rerunning."
   exit 0
 fi
 

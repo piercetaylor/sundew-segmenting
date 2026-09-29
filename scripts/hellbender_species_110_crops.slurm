@@ -19,12 +19,12 @@
 #
 # The checkpoint, threshold and pad MUST match the ones that produced the
 # ten-species crops. If they drift, the crop arm is no longer measuring the
-# same thing that scored +0.0246 in reports/species-crop-comparison.md, and
+# same thing that scored +0.0246 in deprecated/reports/species-crop-comparison.md, and
 # the comparison against 0.7542 becomes meaningless. threshold 0.6 and pad
 # 0.10 are the script's own defaults and are passed explicitly here so a
 # future change to those defaults cannot silently alter the corpus.
 #
-# seed-101 is the field-trained SegFormer-B0 from reports/field-compare.md,
+# seed-101 is the field-trained SegFormer-B0 from docs/reports/field-compare.md,
 # the +0.061 IoU model, and is the checkpoint the ten-species crops used.
 
 set -euo pipefail

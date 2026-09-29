@@ -17,7 +17,7 @@ Scored, all at the one reading:
 1. teacher: DINOv2-L (`dinov2-l-reg`, `full`), classifier-best.pt, the 5-seed
    ensemble (mean softmax) and the five single seeds. Original JPEGs, as it
    was trained. The ensemble's temperature is the recorded T = 0.72 (224 px,
-   reports/species-finetune/teacher-analysis.json);
+   docs/reports/species-finetune/teacher-analysis.json);
 2. anchor: ResNet-18 on split-110-test (models/species-110-test/resnet18),
    `full` (original JPEGs) and `crop` (sundew-species-corpus/crops/crops),
    five seeds each. Only classifier-best.pt exists (train_species_classifier.py
@@ -58,7 +58,7 @@ classifier-metrics.json, the export's val-logits.npz) and the reported
 numbers; it never opens a test image. `--split test` first does the same
 validation pass and stops before opening any test image if a check fails;
 then scores the test. It refuses to run if the final output
-(reports/species-test/test-results.json) already exists, and needs
+(docs/reports/species-test/test-results.json) already exists, and needs
 release.json. Every output is written only at the end, the JSON last and
 atomically, so a job preempted and requeued before that point has written
 nothing and simply reruns the same pre-registered computation.
@@ -91,7 +91,7 @@ SPLIT_DIR = CORPUS / "split-110-test"
 FT = pathlib.Path("models/species-110/finetune")
 ANCHOR_DIR = pathlib.Path("models/species-110-test/resnet18")
 RELEASE = pathlib.Path("models/species-110/release/dinov2-s-kdw-e100-t-c576-seed17")
-OUT = pathlib.Path("reports/species-test")
+OUT = pathlib.Path("docs/reports/species-test")
 LOGITS = pathlib.Path("models/species-110/test-scoring")
 SEEDS = (17, 101, 202, 303, 404)
 TEACHER, STUDENT, CE = "dinov2-l-reg", "dinov2-s-kdw-e100-t-c576", "dinov2-s-e100-c576"
@@ -100,24 +100,24 @@ GRID = np.round(np.arange(0.30, 3.001, 0.01), 2)  # diagnose_species_distill.py
 # Teacher ensemble temperature fixed by the 2026-09-26 protocol ("T = 0.72 at 224 px"),
 # fitted by analyze_species_teacher.py on the validation ensemble; checked against its JSON below.
 TEACHER_T = 0.72
-TEACHER_T_SOURCE = pathlib.Path("reports/species-finetune/teacher-analysis.json")
+TEACHER_T_SOURCE = pathlib.Path("docs/reports/species-finetune/teacher-analysis.json")
 REPS, BOOT_SEED = 2000, 20260926
 CACHE_SHORT, CACHE_QUALITY = 576, 95  # make_full_cache.py defaults, as used for full-s576
 TOL = 1e-3
 
 # Reported validation numbers the val pass must reproduce (to TOL).
 KNOWN = {
-    # reports/species-finetune/results.md (best epoch per seed); the best-epoch ensemble is
+    # docs/reports/species-finetune/results.md (best epoch per seed); the best-epoch ensemble is
     # 0.834 in the 2026-09-27 amendment ("0.834 against 0.835" for the last-epoch one)
     "teacher/seed-17": 0.8230, "teacher/seed-101": 0.8229, "teacher/seed-202": 0.8261,
     "teacher/seed-303": 0.8245, "teacher/seed-404": 0.8216, "teacher/ensemble": 0.834,
-    # reports/species-110-baseline.md, rerun on split-110-test, best epoch
+    # docs/reports/species-110-baseline.md, rerun on split-110-test, best epoch
     "anchor-full/seed-mean": 0.4985, "anchor-crop/seed-mean": 0.5156,
-    # reports/species-distill/t-results.md, last epoch
+    # docs/reports/species-distill/t-results.md, last epoch
     "student/seed-mean": 0.7684, "student/ensemble": 0.7797, "student/seed-17": 0.7634,
     "ce100c/seed-mean": 0.7189,
 }
-# reports/species-distill/t-diagnostics.json (diagnose_species_distill.py): seed means.
+# docs/reports/species-distill/t-diagnostics.json (diagnose_species_distill.py): seed means.
 KNOWN_DIAG = {
     "student": {"ece": 0.10112, "ece_t": 0.02421, "temp": 0.758, "acc": 0.80333, "top5": 0.95893,
                 "bins": [0.67679, 0.71912, 0.79151, 0.84200]},

@@ -8,7 +8,7 @@ predictions-{best,last}.npz, and writes a Markdown table plus a JSON summary:
   observer-grouped bootstrap interval: every seed is rescored on the same
   resample of observers, then averaged. This is the primary interval, because
   it covers both seed noise and which photos happen to be in validation;
-- the seed-paired t interval on 4 df, as in reports/species-110-baseline.md,
+- the seed-paired t interval on 4 df, as in docs/reports/species-110-baseline.md,
   as a secondary check. It treats validation as fixed, so it is narrower;
 - the 5-seed ensemble (mean softmax) with an observer-grouped bootstrap
   interval, and paired ensemble differences on shared resamples.
@@ -30,7 +30,7 @@ ARMS = ("full", "crop", "full-square")
 SEEDS = (17, 101, 202, 303, 404)
 T975_4DF = 2.776445
 # ResNet-18 rerun on split-110-test, 5 seeds, best epoch.
-# reports/species-110-baseline.md
+# docs/reports/species-110-baseline.md
 ANCHOR = {"full": 0.4985, "crop": 0.5156}
 
 
@@ -43,7 +43,7 @@ def parse_args() -> argparse.Namespace:
                    help="model tags; model differences are first minus each later one")
     p.add_argument("--arms", nargs="+", default=list(ARMS))
     p.add_argument("--title", default="Fine-tuned teachers")
-    p.add_argument("--report", default="reports/species-finetune.md", help="where the interpretation lives")
+    p.add_argument("--report", default="docs/reports/species-finetune.md", help="where the interpretation lives")
     p.add_argument("--reps", type=int, default=2000)
     p.add_argument("--seed", type=int, default=20260926)
     return p.parse_args()

@@ -11,7 +11,7 @@ seed for seed. The generated table is `species-distill/kd25-results.md`.
 Reproduce with
 `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1 scripts/hellbender_species_finetune.slurm`,
 then
-`python scripts/summarize_species_finetune.py --models dinov2-s-kd dinov2-s --arms full --title "Distillation KD-25" --report reports/species-distill.md --out-md reports/species-distill/kd25-results.md --out-json reports/species-distill/kd25-summary.json`.
+`python scripts/summarize_species_finetune.py --models dinov2-s-kd dinov2-s --arms full --title "Distillation KD-25" --report docs/reports/species-distill.md --out-md docs/reports/species-distill/kd25-results.md --out-json docs/reports/species-distill/kd25-summary.json`.
 
 The run:
 
@@ -151,7 +151,7 @@ epoch). Two KD-25c tasks were preempted and resumed. Generated table:
 Reproduce with
 `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s,KD=1,CACHE=1 scripts/hellbender_species_finetune.slurm`,
 the same with `KD_WEIGHT=label`, then
-`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-c576 dinov2-s-kd-c576 dinov2-s-c576 --arms full --title "Class-weighted KD, 25 epochs, cache" --report reports/species-distill.md --out-md reports/species-distill/kdw25-results.md --out-json reports/species-distill/kdw25-summary.json`.
+`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-c576 dinov2-s-kd-c576 dinov2-s-c576 --arms full --title "Class-weighted KD, 25 epochs, cache" --report docs/reports/species-distill.md --out-md docs/reports/species-distill/kdw25-results.md --out-json docs/reports/species-distill/kdw25-summary.json`.
 
 ## Answer
 
@@ -255,9 +255,9 @@ No task was preempted or failed. Generated tables:
 Reproduce with
 `sbatch --array=0-4 --time=08:00:00 --export=ALL,MODEL=dinov2-s,EPOCHS=100,CACHE=1 scripts/hellbender_species_finetune.slurm`,
 the same with `KD=1` and with `KD=1,KD_WEIGHT=label`, then
-`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-e100-c576 dinov2-s-kd-e100-c576 dinov2-s-e100-c576 --arms full --title "Distillation, 100 epochs, cache" --report reports/species-distill.md --out-md reports/species-distill/e100-results.md --out-json reports/species-distill/e100-summary.json`
+`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-e100-c576 dinov2-s-kd-e100-c576 dinov2-s-e100-c576 --arms full --title "Distillation, 100 epochs, cache" --report docs/reports/species-distill.md --out-md docs/reports/species-distill/e100-results.md --out-json docs/reports/species-distill/e100-summary.json`
 and
-`python scripts/diagnose_species_distill.py dinov2-s-kdw-e100-c576 dinov2-s-kd-e100-c576 dinov2-s-e100-c576 dinov2-s-kdw-c576 dinov2-s-c576 > reports/species-distill/e100-diagnostics.json`.
+`python scripts/diagnose_species_distill.py dinov2-s-kdw-e100-c576 dinov2-s-kd-e100-c576 dinov2-s-e100-c576 dinov2-s-kdw-c576 dinov2-s-c576 > docs/reports/species-distill/e100-diagnostics.json`.
 The diagnostics script reproduces every 25-epoch diagnostic in the section
 above to the third decimal place.
 
@@ -365,9 +365,9 @@ of batches was 0.515-0.530 (0.522 in the union). Generated tables:
 Reproduce with
 `sbatch --array=0-4 --time=08:00:00 --export=ALL,MODEL=dinov2-s,KD=1,KD_WEIGHT=label,EPOCHS=100,CACHE=1,TRANSFER=1 scripts/hellbender_species_finetune.slurm`,
 then
-`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-e100-t-c576 dinov2-s-kdw-e100-c576 dinov2-s-e100-c576 --arms full --title "Transfer set, KDw-100c+T" --report reports/species-distill.md --out-md reports/species-distill/t-results.md --out-json reports/species-distill/t-summary.json`
+`python scripts/summarize_species_finetune.py --models dinov2-s-kdw-e100-t-c576 dinov2-s-kdw-e100-c576 dinov2-s-e100-c576 --arms full --title "Transfer set, KDw-100c+T" --report docs/reports/species-distill.md --out-md docs/reports/species-distill/t-results.md --out-json docs/reports/species-distill/t-summary.json`
 and
-`python scripts/diagnose_species_distill.py dinov2-s-kdw-e100-t-c576 dinov2-s-kdw-e100-c576 dinov2-s-e100-c576 > reports/species-distill/t-diagnostics.json`.
+`python scripts/diagnose_species_distill.py dinov2-s-kdw-e100-t-c576 dinov2-s-kdw-e100-c576 dinov2-s-e100-c576 > docs/reports/species-distill/t-diagnostics.json`.
 The diagnostics reproduce the KDw-100c and CE-100c rows of the 100-epoch
 section.
 

@@ -115,7 +115,7 @@ an on-device student"); the generated table, which lists all 20 models, is
 Reproduce with
 `jid=$(sbatch --parsable --array=0-10 --export=ALL,MODEL_SET=small scripts/hellbender_backbone_screen.slurm)`
 then
-`sbatch --dependency=afterok:$jid --export=ALL,OUT=reports/species-backbone-screen-small scripts/hellbender_backbone_screen_summary.slurm`.
+`sbatch --dependency=afterok:$jid --export=ALL,OUT=docs/reports/species-backbone-screen-small scripts/hellbender_backbone_screen_summary.slurm`.
 Eleven A100 tasks of about six minutes each (job 17943537, summary 17943538,
 2026-09-25).
 

@@ -15,7 +15,7 @@ SUPPORT_FILES = {
     "metadata/mask-audit.json": Path("data/reports/mask-audit/report.json"),
     "metadata/reviewed-mask-export.json": Path("data/reports/reviewed-mask-export.json"),
     "docs/annotation-policy.md": Path("data/annotation-policy.md"),
-    "docs/dataset-card.md": Path("reports/dataset-card.md"),
+    "docs/dataset-card.md": Path("docs/reports/dataset-card.md"),
 }
 
 

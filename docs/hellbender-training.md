@@ -36,7 +36,7 @@ Paths are overridable via `REPO_DIR`, `DATA_ROOT`, `CACHE_ROOT`, and `ENV_NAME`.
 ## Submitting the comparison
 
 ```bash
-sbatch scripts/hellbender_train.slurm
+sbatch deprecated/scripts/hellbender_train.slurm
 ```
 
 `logs/` must exist before submitting: Slurm opens the output files itself and
@@ -73,7 +73,7 @@ Monitor with `squeue -u "$USER"`. Checkpoints and metrics are written under
 `MODEL_ROOT` to write elsewhere, which is useful for short trial runs:
 
 ```bash
-sbatch --export=ALL,EPOCHS=2,MODEL_ROOT=models/smoke scripts/hellbender_train.slurm
+sbatch --export=ALL,EPOCHS=2,MODEL_ROOT=models/smoke deprecated/scripts/hellbender_train.slurm
 ```
 
 Both models use the frozen training split (144 train / 19 validation), select

@@ -14,7 +14,7 @@ import shutil
 
 
 RELEASE_FILES = (
-    Path("reports/dataset-card.md"),
+    Path("docs/reports/dataset-card.md"),
     Path("data/annotation-policy.md"),
     Path("docs/annotation-workflow.md"),
     Path("data/raw/inaturalist/metadata.jsonl"),

@@ -1,6 +1,6 @@
 # Improving the 110-species classifier
 
-Written 2026-09-23, after `reports/species-110-baseline.md` put the fine-tuned
+Written 2026-09-23, after `docs/reports/species-110-baseline.md` put the fine-tuned
 ResNet-18 at **0.546** validation balanced accuracy on crops (0.525 on full
 frames). This document records where the project stands, what an independent
 review of the setup found, and the next experiment with its prior and decision
@@ -14,14 +14,14 @@ step 1 under "After the screen".
 
 | Step | Result | Record |
 | --- | --- | --- |
-| Crop failure rate on uncurated photos | 2.43%, 95% CI [1.40%, 4.21%] | `reports/crop-review-result.md` |
-| Does the crop help? (10 species) | +0.025 balanced acc, 5/5 seeds; cropping, not resampling | `reports/species-crop-comparison.md` |
-| Scaled scrape | 110 species, 17,678 images, CC0/BY/NC | `docs/crop-readiness-plan.md` |
-| Does the crop help? (110 species) | +0.021, 5/5 seeds; crop 0.546, full 0.525 | `reports/species-110-baseline.md` |
-| Which backbone? (frozen screen) | BioCLIP-2 0.750, DINOv2-L 0.729; fine-tune both | `reports/species-backbone-screen.md` |
-| Held-out test split | 2,601 images carved from train, grouped by observer | `reports/split-110-test.txt` |
-| ResNet-18 anchor on `split-110-test` | crop 0.516, full 0.499; +0.017, 5/5 seeds | `reports/species-110-baseline.md` |
-| Fine-tune script smoke test | passed (job 17929407), resume from `last.pt` verified | `reports/species-finetune-smoke.md` |
+| Crop failure rate on uncurated photos | 2.43%, 95% CI [1.40%, 4.21%] | `docs/reports/crop-review-result.md` |
+| Does the crop help? (10 species) | +0.025 balanced acc, 5/5 seeds; cropping, not resampling | `deprecated/reports/species-crop-comparison.md` |
+| Scaled scrape | 110 species, 17,678 images, CC0/BY/NC | `deprecated/docs/crop-readiness-plan.md` |
+| Does the crop help? (110 species) | +0.021, 5/5 seeds; crop 0.546, full 0.525 | `docs/reports/species-110-baseline.md` |
+| Which backbone? (frozen screen) | BioCLIP-2 0.750, DINOv2-L 0.729; fine-tune both | `docs/reports/species-backbone-screen.md` |
+| Held-out test split | 2,601 images carved from train, grouped by observer | `docs/reports/species-test/split-110-test.txt` |
+| ResNet-18 anchor on `split-110-test` | crop 0.516, full 0.499; +0.017, 5/5 seeds | `docs/reports/species-110-baseline.md` |
+| Fine-tune script smoke test | passed (job 17929407), resume from `last.pt` verified | `deprecated/reports/species-finetune-smoke.md` |
 
 The segment -> crop -> classify pipeline is justified twice over. The weak
 link is now the classifier: an 11M-parameter ResNet-18 from 2015, pretrained
@@ -76,7 +76,7 @@ promising a number.
 | --- | --- |
 | Script | `scripts/screen_species_backbones.py` (one model per call) |
 | Job | `scripts/hellbender_backbone_screen.slurm`, array 0-8, one A100 each |
-| Summary | `scripts/summarize_backbone_screen.py` -> `reports/species-backbone-screen/` |
+| Summary | `scripts/summarize_backbone_screen.py` -> `docs/reports/species-backbone-screen/` |
 | Resolution | 224 px for every model, so only the backbone varies |
 | Arms | `crop`; `full` (Resize + CenterCrop, as fine-tuned); `full-square` (whole frame squashed, nothing cut) |
 | Readouts | linear probe (primary); k-NN k=10 cosine; zero-shot for BioCLIP |
@@ -113,7 +113,7 @@ images were observed in 2020 or later). That is fine for deployment, but it
 makes their screen numbers optimistic by an amount we cannot measure. Any
 research claim that rests on a BioCLIP result must say so. Measured
 2026-09-26 for BioCLIP-2 by splitting validation at its training-data dates
-(`reports/species-finetune.md`, "BioCLIP-2 contamination"): not detected,
+(`docs/reports/species-finetune.md`, "BioCLIP-2 contamination"): not detected,
 bounded at about +0.017 fine-tuned and +0.061 frozen (`crop`).
 
 ### Prior, written before the run
@@ -126,7 +126,7 @@ bounded at about +0.017 fine-tuned and +0.061 frozen (`crop`).
   (partly contamination), the second for fine-grained features.
 - The crop - full gap shrinks for strong backbones (the reviewer's guess), and
   `full-square` beats `full`, if the centring hypothesis in
-  `reports/species-crop-comparison.md` is right.
+  `deprecated/reports/species-crop-comparison.md` is right.
 
 ### Decision rule
 
@@ -159,7 +159,7 @@ removes no comparison, so it cannot favour the crop.
    observer, so the fine-tune comparison is not selected on the data it is
    scored on. **Done 2026-09-23:** `sundew-species-corpus/split-110-test`, by
    `scripts/carve_test_split.py`, per-class table in
-   `reports/split-110-test.txt`.
+   `docs/reports/species-test/split-110-test.txt`.
    - Carved from **train**, not validation. Validation already picked the
      screened backbones, so photos from it are not untouched; it stays
      byte-identical, so every validation number to date still reads the same.
@@ -177,7 +177,7 @@ removes no comparison, so it cannot favour the crop.
      ResNet-18 rerun on `split-110-test` (the same 10-task array, split path
      changed), not 0.546. **Done 2026-09-24, job 17928590:** crop 0.516,
      full 0.499, crop - full +0.017 [+0.005, +0.029], 5/5 seeds
-     (`reports/species-110-baseline.md`). 19% less training data cost
+     (`docs/reports/species-110-baseline.md`). 19% less training data cost
      0.026-0.030 on both arms; the crop effect held.
    - The test split is scored once, after every configuration is fixed.
      `scripts/finetune_species_backbone.py` drops test rows before reading
@@ -186,7 +186,7 @@ removes no comparison, so it cannot favour the crop.
    amendment), at 224 px with the ViT recipe above and
    hue jitter off. Five seeds, paired, as before.
    - **Ready to launch (2026-09-24).** The smoke test passed on its second
-     attempt (job 17929407, `reports/species-finetune-smoke.md`): every
+     attempt (job 17929407, `deprecated/reports/species-finetune-smoke.md`): every
      library and arm runs, resume after preemption works, and DINOv2-L at
      batch 64 peaks at 20.7 GiB. Attempt 1 failed in the test harness, not
      the training script: it killed the run before the first checkpoint
@@ -196,13 +196,13 @@ removes no comparison, so it cannot favour the crop.
      fired, crop - full-square +0.006 [-0.009, +0.024] on BioCLIP-2):
      `sbatch --array=0-14 --export=ALL,MODEL=bioclip-2 scripts/hellbender_species_finetune.slurm`
      and the same with `MODEL=dinov2-l-reg`. 30 tasks, up to 5 h each.
-   - **Done 2026-09-25, jobs 17943517 / 17943518** (`reports/species-finetune.md`):
+   - **Done 2026-09-25, jobs 17943517 / 17943518** (`docs/reports/species-finetune.md`):
      DINOv2-L `full` 0.824, `crop` 0.820; BioCLIP-2 0.802 / 0.799; anchor
      0.499 / 0.516. DINOv2-L beats BioCLIP-2 on every arm, 5/5 seeds, and is
      the teacher. `crop` - `full` is -0.004 [-0.012, +0.006] for DINOv2-L
      (observer bootstrap of the seed mean), so the crop buys nothing and is
      dropped from the species path: later stages use `full`.
-   - **Audit, 2026-09-26** (`reports/species-finetune.md`, "Audit"): split
+   - **Audit, 2026-09-26** (`docs/reports/species-finetune.md`, "Audit"): split
      verified clean; intervals switched to the observer bootstrap of the
      seed mean; TinyViT crash, `full-square` upsampling and requeue-retrain
      fixed in `scripts/finetune_species_backbone.py`.
@@ -248,7 +248,7 @@ parameters: `dinov2-s`, `dinov2-s-reg`, `dinov3-vit-s`, `dinov3-vit-s-plus`,
 `mobilenetv4-conv-m-in12k`, `mobilenetv4-hybrid-m-in12k`,
 `efficientnetv2-s-in21k`, `mobileclip2-s2` (image tower only, so no
 zero-shot). Job 17943537, summary 17943538 ->
-`reports/species-backbone-screen-small/`, which lists all 20 models.
+`docs/reports/species-backbone-screen-small/`, which lists all 20 models.
 
 Prior, written before the run: DINOv2-S or DINOv3-S leads the small models,
 MobileNetV4 and EfficientNetV2 trail, and every small model lands below
@@ -266,7 +266,7 @@ Before building on it: DINOv3 weights carry Meta's own licence, with conditions
 on derived models. A DINOv3 student is used only after that licence is checked
 for free public release.
 
-**Result, 2026-09-25** (`reports/species-backbone-screen.md`): `dinov2-s`
+**Result, 2026-09-25** (`docs/reports/species-backbone-screen.md`): `dinov2-s`
 0.637 [0.613, 0.664], so the first row fires and DINOv2-S is the student.
 `tinyvit-21m-in22k` (0.620) is not separated from it and ties on `full`
 (0.614 vs 0.616). With the teacher now on `full` (above), which student to
@@ -289,7 +289,7 @@ teacher, and the better one becomes the student that distillation targets.
 | Recipe | the teachers': AdamW lr 5e-5, 2 warmup, 25 epochs, patience 8, head lr x10, wd 0.05, label smoothing 0.05, bf16, batch 64. Both fall into the `LAYER_DECAY=0.75`, `DROP_PATH=0.1` branch of `scripts/hellbender_species_finetune.slurm` |
 | Launch | `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s scripts/hellbender_species_finetune.slurm` and `sbatch --array=0-4 --export=ALL,MODEL=tinyvit-21m-in22k scripts/hellbender_species_finetune.slurm` (indices 0-4 are `full`) |
 | Cost | 10 A100 tasks. Small models are bound by JPEG decoding, like the ResNet-18 `full` arm (45-56 min per task), so ~45-60 min each: **8-10 A100-h**, about 1 h of wall time if the tasks run together |
-| Summary | `python scripts/summarize_species_finetune.py --models dinov2-s tinyvit-21m-in22k --arms full --title "Student bake-off" --report reports/species-student-bakeoff.md --out-md reports/species-student-bakeoff/results.md --out-json reports/species-student-bakeoff/summary.json` (options added before any result exists; the difference reads `dinov2-s` - `tinyvit-21m-in22k`) |
+| Summary | `python scripts/summarize_species_finetune.py --models dinov2-s tinyvit-21m-in22k --arms full --title "Student bake-off" --report docs/reports/species-student-bakeoff.md --out-md docs/reports/species-student-bakeoff/results.md --out-json docs/reports/species-student-bakeoff/summary.json` (options added before any result exists; the difference reads `dinov2-s` - `tinyvit-21m-in22k`) |
 
 **Layer decay differs between the two, and is accepted as is.** Checked by
 building both on CPU with `build()` from `scripts/finetune_species_backbone.py`
@@ -362,7 +362,7 @@ What this run does not decide:
 - **Browser behaviour on real devices**: WebGPU availability, memory and
   real phone latency are measured on the chosen student only, after this run.
 
-**Result, 2026-09-27** (`reports/species-student-bakeoff.md`, jobs 17987233 /
+**Result, 2026-09-27** (`docs/reports/species-student-bakeoff.md`, jobs 17987233 /
 17987234): `dinov2-s` 0.712 [0.691, 0.736], `tinyvit-21m-in22k` 0.622
 [0.602, 0.651], last-epoch seed means; difference +0.090 [+0.075, +0.102].
 The first row fires: **DINOv2-S is the student**. It clears the 0.70 floor
@@ -469,7 +469,7 @@ preemption. The smoke test (`--limit`) must show four things:
 - the measured seconds per epoch.
 
 **Smoke test passed, 2026-09-27** (job 18012907,
-`scripts/hellbender_species_distill_smoke.slurm`, 512 images per split). The
+`deprecated/scripts/hellbender_species_distill_smoke.slurm`, 512 images per split). The
 student init hash was identical with and without teachers. On those 512
 images the rebuilt teacher ensemble agreed with the saved best-epoch
 predictions on every top-1 prediction, with a maximum probability difference
@@ -479,7 +479,7 @@ memory was 9.5 GiB with teachers, against 3.3 GiB without. Seconds per epoch
 come from the first real task, since 512 images is too few to time.
 **KD-25 launched** as job 18012985 (`--array=0-4`, `KD=1`).
 
-**Result, KD-25, 2026-09-27** (`reports/species-distill.md`): 0.711 [0.688,
+**Result, KD-25, 2026-09-27** (`docs/reports/species-distill.md`): 0.711 [0.688,
 0.736] against CE-25 0.712. **KD - CE -0.001 [-0.008, +0.006]**, 0 of 5
 seeds. The first rule does not fire, and the prior (0.735) missed. The
 per-class diagnostic shows why the net is zero:
@@ -498,7 +498,7 @@ run.**
    JPEGs (105-120 s per epoch). `scripts/make_full_cache.py` writes train and
    validation frames once, short side 576 px:
    - LANCZOS resize, as the crops and the `full768` control used; that
-     control changed ResNet-18 by +0.0001 (`reports/species-crop-comparison.md`);
+     control changed ResNet-18 by +0.0001 (`deprecated/reports/species-crop-comparison.md`);
    - no EXIF rotation, as the loader applies none;
    - JPEG quality 95, 4:4:4 chroma.
 
@@ -530,7 +530,7 @@ validation frames, 4.4 GB.
 epoch, against 0.712 on the originals. The difference is **-0.002 [-0.006,
 +0.001]**, inside [-0.015, +0.015]. Tasks took 12-15 min instead of 43-47.
 `dinov2-s-c576` is the CE control for every later arm. Table:
-`reports/species-distill/cache-equivalence.md`.
+`docs/reports/species-distill/cache-equivalence.md`.
 
 ### Class-weighted KD (written 2026-09-27, before any run)
 
@@ -600,7 +600,7 @@ bake-off's.
   KD variant) to 33 (both).
 
 **Smoke test passed, 2026-09-27** (job 18014924,
-`scripts/hellbender_species_kdw_smoke.slurm`):
+`deprecated/scripts/hellbender_species_kdw_smoke.slurm`):
 
 - the teacher ensemble scores **0.8344** on the full cached validation,
   against 0.8341 on the originals;
@@ -614,7 +614,7 @@ bake-off's.
 
 **Launched 2026-09-27:** KD-25c job 18015109, KDw-25c job 18015110.
 
-**Result, 25-epoch arms, 2026-09-27** (`reports/species-distill.md`,
+**Result, 25-epoch arms, 2026-09-27** (`docs/reports/species-distill.md`,
 second part):
 
 | Arm | Last-epoch seed mean |
@@ -634,7 +634,7 @@ second part):
   variants go to 100 epochs, as the selection row says: KD-100c job
   18016920, KDw-100c job 18016921, alongside CE-100c (job 18016204).
 
-**Result, 100-epoch arms, 2026-09-28** (`reports/species-distill.md`,
+**Result, 100-epoch arms, 2026-09-28** (`docs/reports/species-distill.md`,
 third part):
 
 | Arm | Last-epoch seed mean |
@@ -920,7 +920,7 @@ used. **Selected 2026-09-28: KDw** (0.735 vs KD 0.731). The arm is
 
 **Dry run, 2026-09-27** (`scripts/acquire_transfer_set.py`, metadata only,
 no images). The observation-id ceiling is 404031620. Plan:
-`reports/species-distill/transfer-plan.md`.
+`docs/reports/species-distill/transfer-plan.md`.
 
 **12,179 images planned**, at the bottom of the expected 12-18k:
 
@@ -955,7 +955,7 @@ split photo, 13 within dHash 6 of one, and 5 within the set. **12,126 kept**
 
 **Training support, smoke-tested 2026-09-28** (`--transfer-records`,
 `--transfer-full-dir`, `--steps` in `finetune_species_backbone.py`; `TRANSFER=1`
-in the launcher; `scripts/hellbender_species_transfer_smoke.slurm`, jobs
+in the launcher; `deprecated/scripts/hellbender_species_transfer_smoke.slurm`, jobs
 18041124 and 18041125):
 
 - without transfer records nothing changed: the KDw smoke replays with the

@@ -11,11 +11,11 @@ are in `species-finetune/teacher-analysis.md`.
 Reproduce with
 `sbatch --array=0-14 --export=ALL,MODEL=bioclip-2 scripts/hellbender_species_finetune.slurm`,
 the same with `MODEL=dinov2-l-reg`, then
-`python scripts/summarize_species_finetune.py --out-md reports/species-finetune/results.md --out-json reports/species-finetune/summary.json`
+`python scripts/summarize_species_finetune.py --out-md docs/reports/species-finetune/results.md --out-json docs/reports/species-finetune/summary.json`
 and
-`python scripts/analyze_species_teacher.py --out-md reports/species-finetune/teacher-analysis.md --out-json reports/species-finetune/teacher-analysis.json`;
+`python scripts/analyze_species_teacher.py --out-md docs/reports/species-finetune/teacher-analysis.md --out-json docs/reports/species-finetune/teacher-analysis.json`;
 the contamination check with
-`python scripts/check_bioclip_contamination.py --out-md reports/species-finetune/contamination.md --out-json reports/species-finetune/contamination.json`.
+`python scripts/check_bioclip_contamination.py --out-md docs/reports/species-finetune/contamination.md --out-json docs/reports/species-finetune/contamination.json`.
 Jobs 17943517 (`bioclip-2`) and 17943518 (`dinov2-l-reg`), 30 A100 tasks of
 27-53 min, 2026-09-25 02:29-05:51. Recipe: AdamW lr 5e-5, 2 warmup epochs,
 25 epochs, patience 8, layer decay 0.85, drop-path 0.2 (DINOv2-L only;

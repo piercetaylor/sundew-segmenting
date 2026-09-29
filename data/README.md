@@ -15,7 +15,7 @@ data/
 │   ├── metadata.jsonl       # provenance, grouped split, derivative details
 │   ├── curation.jsonl       # decision for all 500 reviewed candidates
 │   └── summary.json
-└── reports/                 # contact sheets and audit output
+└── docs/reports/                 # contact sheets and audit output
 ```
 
 Only photographs with an image-level `cc0` or `cc-by` license are accepted. The

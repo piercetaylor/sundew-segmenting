@@ -1,6 +1,6 @@
 # 110 species: the ResNet-18 baseline, full frame vs crop
 
-The ten-species comparison in `reports/species-crop-comparison.md`, rerun
+The ten-species comparison in `deprecated/reports/species-crop-comparison.md`, rerun
 unchanged on the scaled corpus. Only the class set and the data volume moved:
 same ResNet-18 from ImageNet at 224 px, same recipe, same five seeds, same
 observer-grouped split logic.
@@ -36,7 +36,7 @@ Validation balanced accuracy at the best epoch, five seeds:
 
 ## Reading 0.55
 
-The prior written into `docs/crop-readiness-plan.md` before this run — far
+The prior written into `deprecated/docs/crop-readiness-plan.md` before this run — far
 below the 0.754 at ten species — held. For scale: chance is 1/110 = 0.9%. The
 numbers are low because the problem is harder, and because the model is small:
 

@@ -10,7 +10,7 @@ before any run: `docs/species-classifier-plan.md`, "Student bake-off (written
 Reproduce with
 `sbatch --array=0-4 --export=ALL,MODEL=dinov2-s scripts/hellbender_species_finetune.slurm`,
 the same with `MODEL=tinyvit-21m-in22k`, then
-`python scripts/summarize_species_finetune.py --models dinov2-s tinyvit-21m-in22k --arms full --title "Student bake-off" --report reports/species-student-bakeoff.md --out-md reports/species-student-bakeoff/results.md --out-json reports/species-student-bakeoff/summary.json`.
+`python scripts/summarize_species_finetune.py --models dinov2-s tinyvit-21m-in22k --arms full --title "Student bake-off" --report docs/reports/species-student-bakeoff.md --out-md docs/reports/species-student-bakeoff/results.md --out-json docs/reports/species-student-bakeoff/summary.json`.
 Jobs 17987233 (`dinov2-s`) and 17987234 (`tinyvit-21m-in22k`), 10 A100 tasks
 of 44-47 min (7.4 A100-h), 2026-09-26 18:46 to 2026-09-27 01:05. All ran 25
 epochs; none failed or was requeued. Peak GPU memory 3.3 GiB (DINOv2-S),

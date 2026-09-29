@@ -36,7 +36,7 @@ times tighter** and sits **entirely below 5%**.
 
 ## The decision
 
-`docs/crop-readiness-plan.md` fixed the rule before the data was seen:
+`deprecated/docs/crop-readiness-plan.md` fixed the rule before the data was seen:
 
 | Measured rate | Action |
 | --- | --- |
@@ -58,7 +58,7 @@ the one that is wrong on its face:
 | Uncertain counted as crop failures | 29/493 = 5.88% | [4.13%, 8.32%] | no |
 
 The third row is the reason the distinction matters, and it is not the right
-reading. The review protocol in `docs/crop-review-handoff.md` defined uncertain
+reading. The review protocol in `deprecated/docs/crop-review-handoff.md` defined uncertain
 as *"too blurry to tell whether a sundew is in the crop"* — a containment
 judgement. The reviewer used a different and more useful criterion: *"those I
 would not be able to ID confidently from a photo... because the photo was
@@ -68,7 +68,7 @@ unidentifiable, and 16 of the 17 have confidence and box geometry
 indistinguishable from the passes. Folding them into the crop failure rate would
 charge the segmentation model for the photographer's focus.
 
-This also has to be read alongside `reports/species-crop-comparison.md`, which
+This also has to be read alongside `deprecated/reports/species-crop-comparison.md`, which
 established that the crop is worth +0.0246 balanced accuracy over full frames.
 A failure rate of 2% is the price of an effect worth 2.5 points, and it corrupts
 the classifier's *input* while leaving its *label* — which comes from
@@ -104,7 +104,7 @@ code and were unaffected.
 Four of the twelve produced a box covering 92-100% of the frame — the model
 selected essentially everything and located nothing. Two more (103, 191)
 produced a box under 30%, the opposite mode: it locked onto a fragment. The
-same two opposite failure modes `reports/field-probe-evaluation.md` found on
+same two opposite failure modes `deprecated/reports/field-probe-evaluation.md` found on
 `field-eval` are still here, in the same proportion, and they still cancel in
 any mean.
 
@@ -160,7 +160,7 @@ cropping close to the plant."* Measured, it is not there:
 
 The uncertain images are cropped essentially like the passes. And where box
 size does move with an outcome, it moves the *helpful* way:
-`reports/species-crop-comparison.md` measured classifier accuracy rising with
+`deprecated/reports/species-crop-comparison.md` measured classifier accuracy rising with
 box fraction (r = +0.108, t = +2.15; boxes over 90% of frame scored 0.802
 against 0.697 for boxes under 50%). Looser crops are not a defect in this
 pipeline. What these seventeen share is photographic quality — blur, clutter,

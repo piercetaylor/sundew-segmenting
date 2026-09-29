@@ -10,7 +10,7 @@
 #SBATCH --error=logs/%x-%A_%a.out
 
 # The 110-species classifier on the scaled corpus (17,678 images), scaling up
-# reports/species-crop-comparison.md from ten species to the full class set.
+# deprecated/reports/species-crop-comparison.md from ten species to the full class set.
 #
 # Indices 0-4 are the full-frame arm, 5-9 the crop arm, in seed order. Submit
 # 0-4 now; 5-9 only once every crop exists, because the trainer refuses to run
