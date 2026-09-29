@@ -100,17 +100,24 @@ def fetch_json(url: str, timeout: float = 45.0) -> dict[str, Any]:
 def extract_candidates(
     observations: Iterable[Mapping[str, Any]],
     allowed_licenses: Mapping[str, str] = ALLOWED_LICENSES,
+    quality_grades: Iterable[str] = ("research",),
+    allow_captive: bool = False,
 ) -> list[Candidate]:
     """Return one eligible photograph per observation without location fields.
 
     ``allowed_licenses`` defaults to the narrow CC0/CC-BY policy, so a caller
     that widens the API query without widening this too gets nothing back
-    rather than silently acquiring photographs it did not mean to.
+    rather than silently acquiring photographs it did not mean to. Quality
+    grade and captivity follow the same rule: research-grade wild records
+    unless the caller widens both explicitly (the distillation transfer set).
     """
+    grades = set(quality_grades)
     candidates: list[Candidate] = []
     seen_photos: set[int] = set()
     for observation in observations:
-        if observation.get("quality_grade") != "research" or observation.get("captive") is True:
+        if observation.get("quality_grade") not in grades:
+            continue
+        if observation.get("captive") is True and not allow_captive:
             continue
 
         taxon = observation.get("taxon") or {}

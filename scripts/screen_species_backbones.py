@@ -186,7 +186,9 @@ def knn_scores(train_x, train_y, val_x, n_classes, device, k=10, temperature=0.0
 
 
 def metrics(y, scores, n_classes, section_of) -> dict:
-    top5 = np.argsort(-scores, axis=1)[:, :5]
+    # Stable, so the top-1 among tied scores (common with bf16 logits) is the
+    # lowest index, the same as argmax.
+    top5 = np.argsort(-scores, axis=1, kind="stable")[:, :5]
     pred = top5[:, 0]
     sec_hit = np.array([section_of[p] == section_of[t] for p, t in zip(pred, y)])
     return {

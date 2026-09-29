@@ -25,6 +25,30 @@ Model selection is on validation, as before. Rows whose split is "test" are
 dropped before anything is read: the held-out test split is scored once, by a
 separate script, after every configuration is fixed.
 
+Distillation (docs/species-classifier-plan.md, "Distillation into DINOv2-S"):
+with --teacher-checkpoints, the target is the teachers' mean softmax instead of
+the label. Loss KL(teacher || student) at --kd-tau, scaled by tau^2, with no
+label term and no label smoothing; --kd-class-weight optionally weights each
+image by the class weight of its label, or by the class weight expected under
+the teacher (for images without a label). The teachers are frozen,
+in eval mode, and see the same augmented batch as the student. They are built
+after the student and draw no random numbers, so a KD run starts from the same
+weights and sees the same batches as the label-trained run with its seed; the
+"student init sha256" line lets a smoke test confirm it.
+
+Transfer set (docs/species-classifier-plan.md, "Transfer set"): with
+--transfer-records, photos without a label join the training rows and enter the
+KD term only (KD runs only; the full arm only). Batches are drawn uniformly from
+the union: a seeded, endless stream of permutations of it, cut into blocks of
+one training-set epoch's steps (len(train) // batch size), so validation,
+checkpoints and the history keep the control's cadence. Under
+--kd-class-weight label, labelled rows keep their label weight and transfer rows
+get the expected weight; under expected, every row does; under none, all weigh 1.
+The weight diagnostics are over labelled rows only. --steps fixes the number of
+optimizer steps, and the cosine runs to zero over them, so a +T arm matches its
+control's compute and schedule rather than its epochs. Runs without transfer
+records draw batches exactly as before.
+
 Preemption: the full state is written to last.pt after every epoch and picked up
 on restart. Data order and augmentation are seeded per epoch, so a resumed run
 sees the same batches it would have seen.
@@ -32,6 +56,7 @@ sees the same batches it would have seen.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import pathlib
@@ -56,6 +81,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--sections", type=pathlib.Path, required=True)
     p.add_argument("--crop-dir", type=pathlib.Path, required=True)
     p.add_argument("--output", type=pathlib.Path, required=True)
+    p.add_argument("--full-dir", type=pathlib.Path, default=None,
+                   help="Read full frames from this cache (make_full_cache.py) instead of the originals; full arm only.")
     p.add_argument("--image-size", type=int, default=224)
     p.add_argument("--epochs", type=int, default=25)
     p.add_argument("--warmup-epochs", type=float, default=2.0)
@@ -70,6 +97,19 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--patience", type=int, default=8)
     p.add_argument("--seed", type=int, default=17)
     p.add_argument("--workers", type=int, default=7)
+    p.add_argument("--teacher-checkpoints", type=pathlib.Path, nargs="+", default=None,
+                   help="classifier-best.pt files of the teachers; their mean softmax becomes the target.")
+    p.add_argument("--kd-tau", type=float, default=1.0)
+    p.add_argument("--kd-class-weight", choices=("none", "label", "expected"), default="none",
+                   help="Weight each image's KL by the CE baseline's class weight of its true label, or by the "
+                        "class weight expected under the teacher ensemble, sum_c t_c w_c (usable without labels). "
+                        "Normalised as the weighted CE is.")
+    p.add_argument("--transfer-records", type=pathlib.Path, default=None,
+                   help="Unlabeled rows (acquire_transfer_set.py --dedup) that enter the KD term only.")
+    p.add_argument("--transfer-full-dir", type=pathlib.Path, default=None,
+                   help="Read transfer photos from this cache instead of their originals.")
+    p.add_argument("--steps", type=int, default=None,
+                   help="Total optimizer steps; overrides --epochs. An epoch stays len(train) // batch size steps.")
     p.add_argument("--limit", type=int, default=None,
                    help="Smoke test: a fixed random N images per split; outputs get a -smoke suffix.")
     return p.parse_args()
@@ -83,7 +123,8 @@ def build(tag: str, n_classes: int, drop_path: float, image_size: int, device: s
     if lib == "timm":
         import timm
         from timm.optim import param_groups_layer_decay
-        kw = {"img_size": image_size} if "vit_" in name else {}
+        # Plain ViTs only; tiny_vit_ and fastvit_ also contain "vit_" and reject img_size.
+        kw = {"img_size": image_size} if name.startswith("vit_") else {}
         if drop_path and not name.startswith("resnet"):
             kw["drop_path_rate"] = drop_path
         backbone = timm.create_model(name, pretrained=True, num_classes=0, **kw)
@@ -122,6 +163,17 @@ def build(tag: str, n_classes: int, drop_path: float, image_size: int, device: s
         gs.append({"params": [net.head.bias], "weight_decay": 0.0, "lr_scale": head_mult})
         return gs
     return net, mean, std, param_groups
+
+
+def eval_transform(arm: str, s: int, mean, std):
+    """Validation geometry: squash to s x s (full-square), else short side to
+    int(1.14 s) and centre-crop s; bicubic; then ToTensor and Normalize.
+    scripts/export_species_onnx.py imports this, so an export sees the same pixels."""
+    from torchvision import transforms
+    bicubic = transforms.InterpolationMode.BICUBIC
+    geom = ([transforms.Resize((s, s), interpolation=bicubic)] if arm == "full-square"
+            else [transforms.Resize(int(s * 1.14), interpolation=bicubic), transforms.CenterCrop(s)])
+    return transforms.Compose(geom + [transforms.ToTensor(), transforms.Normalize(mean, std)])
 
 
 def open_clip_groups(visual, wd, decay):
@@ -170,39 +222,86 @@ def main() -> int:
         raise SystemExit(f"unexpected split values {sorted(unknown)}")
     held_out = sum(r["split"] == "test" for r in rows)
     rows = [r for r in rows if r["split"] != "test"]
+    if args.full_dir and args.arm != "full":
+        raise SystemExit("--full-dir is for the full arm only")
     for r in rows:
-        r["_path"] = str(args.crop_dir / f"inat_{r['photo_id']}.jpg") if args.arm == "crop" else r["image"]
+        if args.arm == "crop":
+            r["_path"] = str(args.crop_dir / f"inat_{r['photo_id']}.jpg")
+        elif args.full_dir:
+            r["_path"] = str(args.full_dir / f"inat_{r['photo_id']}.jpg")
+        else:
+            r["_path"] = r["image"]
     # Every arm must see the same images, so check the crops even on a full-frame
     # arm: a photo without a crop would otherwise be in one arm and not the other.
     missing = [r["photo_id"] for r in rows
-               if not (args.crop_dir / f"inat_{r['photo_id']}.jpg").exists() or not pathlib.Path(r["image"]).exists()]
+               if not (args.crop_dir / f"inat_{r['photo_id']}.jpg").exists() or not pathlib.Path(r["image"]).exists()
+               or not pathlib.Path(r["_path"]).exists()]
     if missing:
         raise SystemExit(f"{len(missing)} images missing from an arm; refusing to run an unpaired comparison")
 
     train = [r for r in rows if r["split"] == "train"]
     val = [r for r in rows if r["split"] == "validation"]
+    transfer = []
+    if args.transfer_records:
+        if not args.teacher_checkpoints or args.arm != "full":
+            raise SystemExit("--transfer-records needs --teacher-checkpoints and the full arm")
+        transfer = [json.loads(l) for l in open(args.transfer_records, encoding="utf-8") if l.strip()]
+        if any(r["split"] != "transfer" or r.get("label") is not None for r in transfer):
+            raise SystemExit("transfer rows must have split 'transfer' and no label")
+        overlap = {r["photo_id"] for r in transfer} & {r["photo_id"] for r in rows}
+        if overlap:
+            raise SystemExit(f"{len(overlap)} transfer photos are also in a split")
+        for r in transfer:
+            r["_path"] = str(args.transfer_full_dir / f"inat_{r['photo_id']}.jpg") if args.transfer_full_dir else r["image"]
+        missing = [r["photo_id"] for r in transfer if not pathlib.Path(r["_path"]).exists()]
+        if missing:
+            raise SystemExit(f"{len(missing)} transfer images missing")
     if args.limit:
         rng = np.random.default_rng(0)
         train = [train[i] for i in sorted(rng.choice(len(train), args.limit, replace=False))]
         val = [val[i] for i in sorted(rng.choice(len(val), args.limit, replace=False))]
+        if transfer:
+            transfer = [transfer[i] for i in sorted(rng.choice(len(transfer), min(args.limit, len(transfer)), replace=False))]
     ty = np.array([index[r["label"]] for r in train]); vy = np.array([index[r["label"]] for r in val])
     print(f"model={args.model}  arm={args.arm}  seed={args.seed}  train={len(train)}  val={len(val)}  "
-          f"test_held_out={held_out}  classes={n}  device={device}", flush=True)
+          f"test_held_out={held_out}  transfer={len(transfer)}  classes={n}  device={device}", flush=True)
 
     net, mean, std, param_groups = build(args.model, n, args.drop_path, args.image_size, device)
+    sha = hashlib.sha256()
+    for k, v in sorted(net.state_dict().items()):
+        sha.update(k.encode()); sha.update(v.detach().float().cpu().numpy().tobytes())
+    init_sha = sha.hexdigest()
+    print(f"student init sha256 {init_sha}", flush=True)
+
+    # Teachers come after the student, so building them cannot shift the student's initial weights.
+    teachers = []
+    for path in args.teacher_checkpoints or []:
+        st = torch.load(path, map_location="cpu", weights_only=False)
+        if st["labels"] != labels or st["image_size"] != args.image_size:
+            raise SystemExit(f"{path}: labels or image size differ from this run")
+        t, t_mean, t_std, _ = build(st["model"], n, 0.0, args.image_size, device)
+        if tuple(t_mean) != tuple(mean) or tuple(t_std) != tuple(std):
+            raise SystemExit(f"{path}: normalisation differs from the student's; one view cannot serve both")
+        t.load_state_dict(st["model_state"]); t.eval().requires_grad_(False)
+        teachers.append(t)
+        del st
+    tau = args.kd_tau
     s = args.image_size
     bicubic = transforms.InterpolationMode.BICUBIC
     norm = transforms.Normalize(mean, std)
     square = [transforms.Resize((s, s), interpolation=bicubic)] if args.arm == "full-square" else []
-    train_tf = transforms.Compose(square + [
+    # Training squashes to a larger square first, so the smallest random crop
+    # (scale 0.7) is still ~s px and is never upsampled. Squashing straight to s
+    # would train full-square on blurrier crops than the other arms see.
+    s_big = int(round(s / 0.7 ** 0.5))
+    train_square = [transforms.Resize((s_big, s_big), interpolation=bicubic)] if square else []
+    train_tf = transforms.Compose(train_square + [
         transforms.RandomResizedCrop(s, scale=(0.7, 1.0), interpolation=bicubic),
         transforms.RandomHorizontalFlip(),
         transforms.ColorJitter(0.2, 0.2, 0.2, 0.0),
         transforms.ToTensor(), norm,
     ])
-    eval_tf = transforms.Compose(
-        (square if square else [transforms.Resize(int(s * 1.14), interpolation=bicubic), transforms.CenterCrop(s)])
-        + [transforms.ToTensor(), norm])
+    eval_tf = eval_transform(args.arm, s, mean, std)
 
     class DS(Dataset):
         def __init__(self, rows, tf): self.rows, self.tf = rows, tf
@@ -210,11 +309,37 @@ def main() -> int:
         def __getitem__(self, i):
             r = self.rows[i]
             with Image.open(r["_path"]) as im:
-                return self.tf(im.convert("RGB")), index[r["label"]]
+                # -1 marks a transfer row: no label, KD term only.
+                return self.tf(im.convert("RGB")), index[r["label"]] if r["label"] is not None else -1
+
+    steps_per_epoch = len(train) // args.batch_size
+    total = args.steps or args.epochs * steps_per_epoch
+    args.epochs = math.ceil(total / steps_per_epoch)
+
+    class UnionBlocks(torch.utils.data.Sampler):
+        """Epoch e is the e-th block of steps_per_epoch batches from an endless
+        stream of seeded permutations of the union, so it replays on resume."""
+        def __init__(self, size): self.size, self.epoch = size, 1
+        def __len__(self): return self._span()[1] - self._span()[0]
+        def _span(self):
+            per = steps_per_epoch * args.batch_size
+            return (self.epoch - 1) * per, min(self.epoch * per, total * args.batch_size)
+        def __iter__(self):
+            lo, hi = self._span()
+            perms = [np.random.default_rng([args.seed, k]).permutation(self.size)
+                     for k in range(lo // self.size, (hi - 1) // self.size + 1)]
+            base = (lo // self.size) * self.size
+            return iter(np.concatenate(perms)[lo - base:hi - base].tolist())
 
     g = torch.Generator()
-    tl = DataLoader(DS(train, train_tf), batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
-                    pin_memory=True, drop_last=True, generator=g, persistent_workers=False)
+    if transfer:
+        sampler = UnionBlocks(len(train) + len(transfer))
+        tl = DataLoader(DS(train + transfer, train_tf), batch_size=args.batch_size, sampler=sampler,
+                        num_workers=args.workers, pin_memory=True, drop_last=True, persistent_workers=False)
+    else:
+        sampler = None
+        tl = DataLoader(DS(train, train_tf), batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
+                        pin_memory=True, drop_last=True, generator=g, persistent_workers=False)
     vl = DataLoader(DS(val, eval_tf), batch_size=args.batch_size * 2, shuffle=False,
                     num_workers=args.workers, pin_memory=True)
 
@@ -222,8 +347,7 @@ def main() -> int:
     for gr in groups:
         gr["lr"] = args.learning_rate * gr.pop("lr_scale", 1.0)
     opt = torch.optim.AdamW(groups, lr=args.learning_rate, betas=(0.9, 0.999))
-    steps_per_epoch = len(tl)
-    total, warmup = args.epochs * steps_per_epoch, int(args.warmup_epochs * steps_per_epoch)
+    warmup = int(args.warmup_epochs * steps_per_epoch)
 
     def lr_factor(step):
         if step < warmup:
@@ -231,9 +355,36 @@ def main() -> int:
         return 0.5 * (1 + math.cos(math.pi * (step - warmup) / max(1, total - warmup)))
     sched = torch.optim.lr_scheduler.LambdaLR(opt, lr_factor)
 
-    criterion = nn.CrossEntropyLoss(weight=torch.as_tensor(class_weights(ty, n), device=device),
-                                    label_smoothing=args.label_smoothing)
     autocast = lambda: torch.autocast(device, dtype=torch.bfloat16, enabled=device == "cuda")
+    if teachers:
+        cw = torch.as_tensor(class_weights(ty, n), device=device)
+        wstats = {"n": 0, "transfer": 0, "absdiff": 0.0, "disagree": 0}
+
+        def teacher_probs(x):
+            with torch.no_grad(), autocast():
+                return torch.stack([torch.softmax(t(x).float() / tau, -1) for t in teachers]).mean(0)
+
+        def criterion(out, y, x):
+            log_p = torch.log_softmax(out / tau, -1)
+            t = teacher_probs(x)
+            kl = nn.functional.kl_div(log_p, t, reduction="none").sum(1)
+            has = y >= 0  # transfer rows carry -1
+            yl = y.clamp(min=0)
+            # How far the label-free weight is from the label weight, on labelled rows.
+            wstats["n"] += int(has.sum()); wstats["transfer"] += int((~has).sum())
+            wstats["absdiff"] += ((cw[yl] - t @ cw).abs() * has).sum().item()
+            wstats["disagree"] += ((t.argmax(1) != y) & has).sum().item()
+            if args.kd_class_weight == "none":
+                return kl.mean() * tau ** 2
+            # Same normalisation as nn.CrossEntropyLoss(weight=...): sum(w_i l_i) / sum(w_i).
+            w = torch.where(has, cw[yl], t @ cw) if args.kd_class_weight == "label" else t @ cw
+            return (w * kl).sum() / w.sum() * tau ** 2
+    else:
+        ce = nn.CrossEntropyLoss(weight=torch.as_tensor(class_weights(ty, n), device=device),
+                                 label_smoothing=args.label_smoothing)
+
+        def criterion(out, y, x):
+            return ce(out, y)
 
     def evaluate():
         net.eval()
@@ -244,14 +395,40 @@ def main() -> int:
         return np.concatenate(out)
 
     suffix = "-smoke" if args.limit else ""
+    t_val, teacher_val = None, None
+    if teachers:
+        # Teacher ensemble on validation, once: a check that the checkpoints loaded
+        # as trained, and the reference for the per-epoch fidelity diagnostics.
+        out = []
+        for x, _ in vl:
+            out.append(teacher_probs(x.to(device, non_blocking=True)).cpu().numpy())
+        t_val = np.concatenate(out)
+        teacher_val = metrics(vy, np.log(np.clip(t_val, 1e-12, None)), n, section_of)
+        print(f"teacher ensemble on validation: balanced accuracy {teacher_val['balanced_accuracy']:.4f}", flush=True)
+        np.savez_compressed(args.output / f"teacher-val{suffix}.npz", val_photo_id=np.array([r["photo_id"] for r in val]),
+                            val_label=vy, probs=t_val.astype(np.float32))
     best, best_epoch, since, history, start_epoch = -1.0, -1, 0, [], 1
     last = args.output / f"last{suffix}.pt"
+    done = args.output / f"classifier-metrics{suffix}.json"
+    if done.exists() and not last.exists():
+        # last.pt is deleted on completion, so a requeue after the end would
+        # otherwise retrain from scratch and overwrite a finished run.
+        print(f"already finished ({done}); nothing to do")
+        return 0
     if last.exists():
         st = torch.load(last, map_location=device, weights_only=False)
         net.load_state_dict(st["model"]); opt.load_state_dict(st["opt"]); sched.load_state_dict(st["sched"])
         best, best_epoch, since, history = st["best"], st["best_epoch"], st["since"], st["history"]
         start_epoch = st["epoch"] + 1
         print(f"resumed after epoch {st['epoch']} (best {best:.4f} at {best_epoch})", flush=True)
+
+    def fidelity(scores, t):
+        """Top-1 agreement with the teacher ensemble and mean KL(teacher || student) on validation."""
+        z = scores / tau
+        log_p = z - z.max(1, keepdims=True)
+        log_p = log_p - np.log(np.exp(log_p).sum(1, keepdims=True))
+        kl = np.sum(t * (np.log(np.clip(t, 1e-12, None)) - log_p), axis=1).mean()
+        return {"val_teacher_agreement": float(np.mean(scores.argmax(1) == t.argmax(1))), "val_teacher_kl": float(kl)}
 
     ids = np.array([r["photo_id"] for r in val])
     observers = np.array([r["observer_login"] for r in val])
@@ -261,24 +438,35 @@ def main() -> int:
             break
         # Seeded per epoch so a resumed run replays the same order, augmentation and drop-path.
         g.manual_seed(args.seed * 1000 + epoch); torch.manual_seed(args.seed * 1000 + epoch)
+        if sampler is not None:
+            sampler.epoch = epoch
         net.train()
-        tot, t0 = 0.0, time.time()
+        tot, seen, t0 = 0.0, 0, time.time()
+        if teachers:
+            wstats.update(n=0, transfer=0, absdiff=0.0, disagree=0)
         for x, y in tl:
+            if sched.last_epoch >= total:  # --steps ends mid-epoch
+                break
             x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
             with autocast():
-                loss = criterion(net(x).float(), y)
+                loss = criterion(net(x).float(), y, x)
             opt.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(net.parameters(), 1.0)
             opt.step(); sched.step()
-            tot += loss.item() * x.size(0)
+            tot += loss.item() * x.size(0); seen += x.size(0)
 
         scores = evaluate()
         m = metrics(vy, scores, n, section_of)
-        history.append({"epoch": epoch, "train_loss": tot / (steps_per_epoch * args.batch_size),
+        history.append({"epoch": epoch, "step": sched.last_epoch, "train_loss": tot / max(seen, 1),
                         "val_balanced_accuracy": m["balanced_accuracy"], "val_accuracy": m["accuracy"],
                         "val_top5_accuracy": m["top5_accuracy"],
                         "val_section_balanced_accuracy": m["section_balanced_accuracy"],
+                        **(fidelity(scores, t_val) if t_val is not None else {}),
+                        **({"train_weight_absdiff": wstats["absdiff"] / wstats["n"],
+                            "train_teacher_label_disagree": wstats["disagree"] / wstats["n"],
+                            "train_transfer_share": wstats["transfer"] / (wstats["n"] + wstats["transfer"])}
+                           if teachers else {}),
                         "epoch_seconds": round(time.time() - t0, 1)})
         print(json.dumps(history[-1]), flush=True)
         if m["balanced_accuracy"] > best:
@@ -304,12 +492,26 @@ def main() -> int:
         "train_samples": len(train), "validation_samples": len(val), "test_held_out": held_out,
         "recipe": {k: getattr(args, k) for k in ("image_size", "epochs", "warmup_epochs", "batch_size",
                    "learning_rate", "layer_decay", "head_lr_mult", "weight_decay", "drop_path",
-                   "label_smoothing", "patience")},
+                   "label_smoothing", "patience", "steps")},
+        "transfer": {"records": str(args.transfer_records), "full_dir": str(args.transfer_full_dir) if args.transfer_full_dir else None,
+                     "samples": len(transfer)} if transfer else None,
+        "loss": "kd" if teachers else "ce",
+        "full_dir": str(args.full_dir) if args.full_dir else None,
+        "kd": {"teacher_checkpoints": [str(c) for c in args.teacher_checkpoints], "tau": tau, "class_weight": args.kd_class_weight,
+               "teacher_val_balanced_accuracy": teacher_val["balanced_accuracy"] if teacher_val else None,
+               "teacher_val_top5_accuracy": teacher_val["top5_accuracy"] if teacher_val else None}
+              if teachers else None,
+        "student_init_sha256": init_sha,
         "epochs_run": len(history), "best_balanced_accuracy": best, "best_epoch": best_epoch,
         "peak_gpu_gib": round(torch.cuda.max_memory_allocated() / 2**30, 1) if device == "cuda" else None,
         "last": history[-1], "elapsed_seconds_this_attempt": round(time.time() - started, 1),
         "history": history,
     }, indent=2) + "\n", encoding="utf-8")
+    # The last-epoch weights are kept: the test protocol scores the last epoch, and a
+    # shipped student is a last-epoch checkpoint.
+    torch.save({"model_state": net.state_dict(), "model": args.model, "labels": labels, "arm": args.arm,
+                "seed": args.seed, "image_size": s, "epoch": history[-1]["epoch"]},
+               args.output / f"classifier-last{suffix}.pt")
     last.unlink(missing_ok=True)
     peak = f", peak GPU memory {torch.cuda.max_memory_allocated() / 2**30:.1f} GiB" if device == "cuda" else ""
     print(f"\nbest balanced accuracy {best:.4f} at epoch {best_epoch}{peak}")

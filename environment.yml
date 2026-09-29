@@ -28,3 +28,6 @@ dependencies:
       - torchvision==0.20.1+cu124
       # Segformer decoder requires smp >= 0.4.0; pyproject's >=0.3.3 is too loose.
       - segmentation-models-pytorch==0.5.0
+      # int8 ONNX export and CPU inference of the shipped species student.
+      - onnx==1.23.1
+      - onnxruntime==1.30.0

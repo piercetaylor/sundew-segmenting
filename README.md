@@ -1,28 +1,91 @@
 # Sundew Segmentation
 
-This project curates licensed photographs of wild sundews and develops a model for segmenting visible plant tissue in RGB images. Its scripts cover image acquisition, annotation review, dataset validation, baseline training, and evaluation.
+This project finds the sundew (*Drosera*) in a photo, crops to it, and identifies the species. It is built on licensed iNaturalist photographs. Training runs on the Hellbender SLURM cluster, and every comparison uses five paired seeds with its decision rule written down before the run.
 
 ![Twelve licensed sundew examples](assets/dataset-preview.jpg)
 
-The preview's image credits and licenses are listed in [its attribution record](assets/dataset-preview-attribution.md).
+The preview's credits and licences are in [its attribution record](assets/dataset-preview-attribution.md).
 
-## Dataset and current result
+## Where it stands
 
-The source is Research Grade, non-captive [iNaturalist](https://www.inaturalist.org/) observations with an image-level CC0 or CC BY license. The 250-image core was selected from 500 screened candidates. The [reviewed v0.3.0 snapshot](reports/dataset-freeze-v0.3.0.md) contains 191 accepted image-mask pairs: 144 train, 19 validation, and 28 locked test pairs. Forty-seven reviewed tasks were ambiguous and 12 were rejected. Photographs and masks are kept outside Git; the [dataset card](reports/dataset-card.md) documents provenance, splits, licenses, and limitations.
+**Data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](reports/dataset-freeze-v0.3.0.md)), plus 30 field masks. The species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](reports/dataset-card.md).
 
-A five-epoch CPU development run with U-Net/ResNet-34 at 256 pixels used 143 training masks and 19 observer-held-out validation masks. Its mean per-image validation Dice was 0.749 and IoU was 0.609, as recorded in the [experiment report](reports/experiments/unet-resnet34-v0.1-dev-validation.json). The test split remains locked. Thin linear and forked forms were the weakest validation group; these figures do not establish final model performance.
+**Segmentation.** SegFormer-B0 beat a U-Net on all five seeds (validation IoU 0.632 vs 0.610). Adding the field masks raised IoU on messy real-world photos from 0.552 to 0.613. Only 2.4% of uncurated photos got a crop that missed the plant.
 
-## Reproduce the workflow
+**Species classifier.** Balanced accuracy over 110 species:
 
-Python 3.10 or newer is required. The [project plan](docs/project-plan.md) describes acquisition and curation, and the [annotation workflow](docs/annotation-workflow.md) covers mask review. After the reviewed masks are available locally, the baseline can be trained with:
+| Model | Validation | Test |
+| --- | ---: | ---: |
+| ResNet-18 baseline | 0.50 | 0.52 |
+| DINOv2-S, fine-tuned | 0.72 | 0.74 |
+| DINOv2-S, distilled from DINOv2-L | 0.735 | - |
+| DINOv2-S, distilled, plus the transfer set | 0.768 | 0.783 |
+| **Shipped: that model's seed 17, int8 ONNX** | **0.764** | **0.775** (top-5 0.962) |
+| DINOv2-L teacher, 5-model ensemble | 0.834 | 0.842 |
 
-```sh
-python -m pip install -e ".[baseline]"
-python scripts/train_baseline.py --model unet-resnet34
+The large DINOv2-L model is the most accurate, but it's too big to run on a phone, so it teaches the small DINOv2-S instead. Weighting that teaching by species keeps the rare species from being crowded out, and adding 12,126 unlabelled photos for the teacher to label gave the largest single gain (+0.033). The shipped model is 22 MB, runs in about 120 ms on one CPU thread, and clears the release floor (0.75, top-5 0.95). The test set was scored once, after everything else was fixed.
+
+**Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. Browser preprocessing and int8 behaviour in WebAssembly are not yet measured.
+
+The reports behind each number are in `reports/`: [distillation](reports/species-distill.md), [export](reports/species-release.md) and [held-out test](reports/species-test.md). The reasoning and pre-registered rules are in [the species classifier plan](docs/species-classifier-plan.md).
+
+## Running it
+
+Python 3.10+. Downloaded images and model weights stay out of Git, but the manifests, splits and attribution records are enough to rebuild them. The cluster environment is in `environment.yml`, and [Hellbender training](docs/hellbender-training.md) covers setup. `python -m unittest discover -s tests` runs the repository checks.
+
+**Build the dataset.** The downloader records creator, licence, source and checksum for every photo:
+
+```powershell
+$env:PYTHONPATH = "src"
+python scripts/acquire_inaturalist.py --count 500
+python scripts/make_contact_sheets.py --output data/reports/curation_sheets
+python scripts/build_curated_dataset.py
+python scripts/export_label_studio_tasks.py
+python scripts/validate_dataset.py --verify-hashes
 ```
 
-The planned comparison also includes SegFormer-B0. [The training guide](docs/hellbender-training.md) covers the larger GPU run, and [the dataset release guide](docs/dataset-release.md) covers checksums and packaging. `pytest` runs the repository checks. The [archived README](docs/legacy-readme.md) retains the longer operational notes.
+**Annotate.** Label Studio with MobileSAM proposals, which a person accepts or rejects (see [the annotation workflow](docs/annotation-workflow.md)):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_annotation_stack.ps1   # once
+powershell -ExecutionPolicy Bypass -File scripts/start_label_studio.ps1
+powershell -ExecutionPolicy Bypass -File scripts/start_mobilesam_backend.ps1
+.tools\label-studio-venv\Scripts\python.exe scripts/initialize_label_studio_project.py
+.tools\label-studio-venv\Scripts\python.exe scripts/generate_sam_preannotations.py --upload --skip-reviewed
+```
+
+**Train segmentation:**
+
+```bash
+python scripts/export_reviewed_masks.py && python scripts/freeze_reviewed_dataset.py
+sbatch scripts/hellbender_seed_sweep.slurm      # U-Net vs SegFormer
+sbatch scripts/hellbender_field_compare.slurm   # with and without field masks
+```
+
+**Train the species classifier.** Build the corpus, crops, frame cache and transfer set, train the teacher, then distil. `hellbender_species_finetune.slurm` takes the model and options as environment variables, as documented in its header:
+
+```bash
+sbatch scripts/hellbender_species_corpus.slurm
+sbatch scripts/hellbender_species_110_crops.slurm
+sbatch scripts/hellbender_full_cache.slurm      # 576 px frames, used by CACHE=1
+sbatch scripts/hellbender_transfer_set.slurm    # unlabelled photos, used by TRANSFER=1
+sbatch --array=0-4 --export=ALL,MODEL=dinov2-l-reg scripts/hellbender_species_finetune.slurm   # teacher
+sbatch --array=0-4 --time=08:00:00 \
+  --export=ALL,MODEL=dinov2-s,KD=1,KD_WEIGHT=label,EPOCHS=100,CACHE=1,TRANSFER=1 \
+  scripts/hellbender_species_finetune.slurm                                                   # shipped recipe
+python scripts/summarize_species_finetune.py --help
+```
+
+**Export and score.** `hellbender_species_export.slurm` writes the fp32 and int8 ONNX models and a `release.json` (preprocessing, temperature, checksums) to `models/species-110/release/`. `hellbender_species_test.slurm` scores the held-out test split; it refuses to run a second time.
 
 ## Use and citation
 
-This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) prohibit using its data for commercial AI and machine-learning training. Each photograph retains its own license and attribution; the repository does not relicense the images. Confirm the current source terms and individual photo licenses before reuse. Cite this repository with the commit used and cite or attribute each source image according to its license.
+This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and the software licence doesn't change that. Cite this repository with the commit used, and attribute each source image according to its licence.
+
+**Computing acknowledgement.** Training ran on Hellbender. As [the Hellbender wiki](https://itrss-wiki.rnet.missouri.edu/pub/hpc/hellbender) asks, any publication using this work should include:
+
+> The computation for this work was performed on the high performance computing infrastructure operated by Research Support Solutions in the Division of IT at the University of Missouri, Columbia MO DOI: https://doi.org/10.32469/10355/97710
+
+The wiki also asks authors to email muitrss@missouri.edu and share a copy of the publication.
+
+More detail: [project plan](docs/project-plan.md), [release guide](docs/dataset-release.md), [archived README](docs/legacy-readme.md).

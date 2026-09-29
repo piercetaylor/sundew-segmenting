@@ -1,0 +1,1044 @@
+{
+  "teacher": "dinov2-l-reg/full, 5-seed last-epoch ensemble",
+  "validation_images": 3959,
+  "balanced_accuracy": 0.8346739742757907,
+  "accuracy": 0.8570346046981561,
+  "calibration": {
+    "temperature": 0.72,
+    "ece_before": 0.11754455925328887,
+    "ece_after": 0.018740623764059515,
+    "mean_confidence_before": 0.7395177483558655,
+    "mean_confidence_after": 0.8700809478759766,
+    "nll_before": 0.6384541880675074,
+    "nll_after": 0.5385902224929036
+  },
+  "train_count_spearman": 0.21628384013705115,
+  "train_count_bands": [
+    {
+      "train_range": [
+        0,
+        40
+      ],
+      "species": 23,
+      "mean_accuracy": 0.7627623070532615
+    },
+    {
+      "train_range": [
+        40,
+        80
+      ],
+      "species": 28,
+      "mean_accuracy": 0.8091761726689245
+    },
+    {
+      "train_range": [
+        80,
+        130
+      ],
+      "species": 17,
+      "mean_accuracy": 0.8690473370687125
+    },
+    {
+      "train_range": [
+        130,
+        1000000000
+      ],
+      "species": 42,
+      "mean_accuracy": 0.8771396796003318
+    }
+  ],
+  "errors": 566,
+  "errors_in_section": 0.676678445229682,
+  "top_pairs": [
+    {
+      "a": "Drosera macrantha",
+      "b": "Drosera planchonii",
+      "errors": 16,
+      "a_as_b": 10,
+      "b_as_a": 6,
+      "same_section": true
+    },
+    {
+      "a": "Drosera aberrans",
+      "b": "Drosera whittakeri",
+      "errors": 11,
+      "a_as_b": 5,
+      "b_as_a": 6,
+      "same_section": true
+    },
+    {
+      "a": "Drosera dielsiana",
+      "b": "Drosera natalensis",
+      "errors": 11,
+      "a_as_b": 9,
+      "b_as_a": 2,
+      "same_section": true
+    },
+    {
+      "a": "Drosera gunniana",
+      "b": "Drosera hookeri",
+      "errors": 10,
+      "a_as_b": 6,
+      "b_as_a": 4,
+      "same_section": true
+    },
+    {
+      "a": "Drosera hirsuta",
+      "b": "Drosera macrantha",
+      "errors": 10,
+      "a_as_b": 9,
+      "b_as_a": 1,
+      "same_section": true
+    },
+    {
+      "a": "Drosera auriculata",
+      "b": "Drosera peltata",
+      "errors": 9,
+      "a_as_b": 2,
+      "b_as_a": 7,
+      "same_section": true
+    },
+    {
+      "a": "Drosera huegelii",
+      "b": "Drosera planchonii",
+      "errors": 9,
+      "a_as_b": 8,
+      "b_as_a": 1,
+      "same_section": false
+    },
+    {
+      "a": "Drosera auriculata",
+      "b": "Drosera gunniana",
+      "errors": 7,
+      "a_as_b": 5,
+      "b_as_a": 2,
+      "same_section": true
+    },
+    {
+      "a": "Drosera collina",
+      "b": "Drosera squamosa",
+      "errors": 7,
+      "a_as_b": 2,
+      "b_as_a": 5,
+      "same_section": true
+    },
+    {
+      "a": "Drosera drummondii",
+      "b": "Drosera menziesii",
+      "errors": 7,
+      "a_as_b": 3,
+      "b_as_a": 4,
+      "same_section": false
+    },
+    {
+      "a": "Drosera erythrogyne",
+      "b": "Drosera pallida",
+      "errors": 7,
+      "a_as_b": 3,
+      "b_as_a": 4,
+      "same_section": true
+    },
+    {
+      "a": "Drosera lunata",
+      "b": "Drosera peltata",
+      "errors": 7,
+      "a_as_b": 5,
+      "b_as_a": 2,
+      "same_section": true
+    },
+    {
+      "a": "Drosera purpurascens",
+      "b": "Drosera stolonifera",
+      "errors": 7,
+      "a_as_b": 4,
+      "b_as_a": 3,
+      "same_section": true
+    },
+    {
+      "a": "Drosera androsacea",
+      "b": "Drosera spilos",
+      "errors": 6,
+      "a_as_b": 1,
+      "b_as_a": 5,
+      "same_section": true
+    },
+    {
+      "a": "Drosera anglica",
+      "b": "Drosera intermedia",
+      "errors": 6,
+      "a_as_b": 3,
+      "b_as_a": 3,
+      "same_section": true
+    }
+  ],
+  "sections": [
+    {
+      "section": "Brasiliae",
+      "species": 3,
+      "validation": 58,
+      "balanced_accuracy": 0.7098214285714285
+    },
+    {
+      "section": "Luniferae",
+      "species": 5,
+      "validation": 261,
+      "balanced_accuracy": 0.7601833529671385
+    },
+    {
+      "section": "Macrantha",
+      "species": 9,
+      "validation": 375,
+      "balanced_accuracy": 0.7662979885966412
+    },
+    {
+      "section": "Lasiocephala",
+      "species": 5,
+      "validation": 70,
+      "balanced_accuracy": 0.7742424242424243
+    },
+    {
+      "section": "Ergaleium",
+      "species": 7,
+      "validation": 180,
+      "balanced_accuracy": 0.7902776421573413
+    },
+    {
+      "section": "Bryastrum",
+      "species": 14,
+      "validation": 386,
+      "balanced_accuracy": 0.7955731872671862
+    },
+    {
+      "section": "Ptycnostigma",
+      "species": 22,
+      "validation": 814,
+      "balanced_accuracy": 0.8315467525744178
+    },
+    {
+      "section": "Erythrorhiza",
+      "species": 13,
+      "validation": 494,
+      "balanced_accuracy": 0.8517952565098509
+    },
+    {
+      "section": "Thelocalyx",
+      "species": 2,
+      "validation": 78,
+      "balanced_accuracy": 0.8741379310344828
+    },
+    {
+      "section": "Stolonifera",
+      "species": 7,
+      "validation": 196,
+      "balanced_accuracy": 0.8793385752569426
+    },
+    {
+      "section": "Drosera",
+      "species": 13,
+      "validation": 616,
+      "balanced_accuracy": 0.9008192040486708
+    },
+    {
+      "section": "Arachnopus",
+      "species": 4,
+      "validation": 129,
+      "balanced_accuracy": 0.9106531803542672
+    },
+    {
+      "section": "Arcturia",
+      "species": 2,
+      "validation": 81,
+      "balanced_accuracy": 0.9444444444444444
+    },
+    {
+      "section": "Phycopsis",
+      "species": 1,
+      "validation": 56,
+      "balanced_accuracy": 0.9464285714285714
+    },
+    {
+      "section": "Coelophylla",
+      "species": 1,
+      "validation": 73,
+      "balanced_accuracy": 0.9863013698630136
+    },
+    {
+      "section": "Psychophila",
+      "species": 2,
+      "validation": 92,
+      "balanced_accuracy": 1.0
+    }
+  ],
+  "per_species": [
+    {
+      "species": "Drosera aberrans",
+      "section": "Erythrorhiza",
+      "train": 188,
+      "validation": 58,
+      "accuracy": 0.8275862068965517
+    },
+    {
+      "species": "Drosera admirabilis",
+      "section": "Ptycnostigma",
+      "train": 92,
+      "validation": 45,
+      "accuracy": 0.9555555555555556
+    },
+    {
+      "species": "Drosera alba",
+      "section": "Ptycnostigma",
+      "train": 31,
+      "validation": 15,
+      "accuracy": 0.9333333333333333
+    },
+    {
+      "species": "Drosera aliciae",
+      "section": "Ptycnostigma",
+      "train": 170,
+      "validation": 58,
+      "accuracy": 0.7241379310344828
+    },
+    {
+      "species": "Drosera androsacea",
+      "section": "Bryastrum",
+      "train": 38,
+      "validation": 18,
+      "accuracy": 0.6666666666666666
+    },
+    {
+      "species": "Drosera anglica",
+      "section": "Drosera",
+      "train": 187,
+      "validation": 61,
+      "accuracy": 0.8852459016393442
+    },
+    {
+      "species": "Drosera aquatica",
+      "section": "Arachnopus",
+      "train": 35,
+      "validation": 16,
+      "accuracy": 0.9375
+    },
+    {
+      "species": "Drosera arcturi",
+      "section": "Arcturia",
+      "train": 167,
+      "validation": 54,
+      "accuracy": 0.9259259259259259
+    },
+    {
+      "species": "Drosera auriculata",
+      "section": "Luniferae",
+      "train": 188,
+      "validation": 64,
+      "accuracy": 0.828125
+    },
+    {
+      "species": "Drosera barbigera",
+      "section": "Bryastrum",
+      "train": 39,
+      "validation": 17,
+      "accuracy": 0.8823529411764706
+    },
+    {
+      "species": "Drosera binata",
+      "section": "Phycopsis",
+      "train": 174,
+      "validation": 56,
+      "accuracy": 0.9464285714285714
+    },
+    {
+      "species": "Drosera brevicornis",
+      "section": "Lasiocephala",
+      "train": 29,
+      "validation": 11,
+      "accuracy": 0.7272727272727273
+    },
+    {
+      "species": "Drosera brevifolia",
+      "section": "Drosera",
+      "train": 187,
+      "validation": 59,
+      "accuracy": 0.8983050847457628
+    },
+    {
+      "species": "Drosera bulbosa",
+      "section": "Erythrorhiza",
+      "train": 154,
+      "validation": 49,
+      "accuracy": 0.9795918367346939
+    },
+    {
+      "species": "Drosera burkeana",
+      "section": "Ptycnostigma",
+      "train": 41,
+      "validation": 19,
+      "accuracy": 0.7894736842105263
+    },
+    {
+      "species": "Drosera burmanni",
+      "section": "Thelocalyx",
+      "train": 181,
+      "validation": 58,
+      "accuracy": 0.9482758620689655
+    },
+    {
+      "species": "Drosera capensis",
+      "section": "Ptycnostigma",
+      "train": 171,
+      "validation": 55,
+      "accuracy": 0.9090909090909091
+    },
+    {
+      "species": "Drosera capillaris",
+      "section": "Drosera",
+      "train": 191,
+      "validation": 59,
+      "accuracy": 0.7966101694915254
+    },
+    {
+      "species": "Drosera cayennensis",
+      "section": "Drosera",
+      "train": 44,
+      "validation": 19,
+      "accuracy": 0.9473684210526315
+    },
+    {
+      "species": "Drosera cistiflora",
+      "section": "Ptycnostigma",
+      "train": 177,
+      "validation": 55,
+      "accuracy": 0.8909090909090909
+    },
+    {
+      "species": "Drosera collina",
+      "section": "Erythrorhiza",
+      "train": 161,
+      "validation": 57,
+      "accuracy": 0.8771929824561403
+    },
+    {
+      "species": "Drosera collinsiae",
+      "section": "Ptycnostigma",
+      "train": 30,
+      "validation": 9,
+      "accuracy": 0.8888888888888888
+    },
+    {
+      "species": "Drosera communis",
+      "section": "Drosera",
+      "train": 54,
+      "validation": 21,
+      "accuracy": 0.8095238095238095
+    },
+    {
+      "species": "Drosera cuneifolia",
+      "section": "Ptycnostigma",
+      "train": 123,
+      "validation": 39,
+      "accuracy": 0.8461538461538461
+    },
+    {
+      "species": "Drosera dielsiana",
+      "section": "Ptycnostigma",
+      "train": 32,
+      "validation": 13,
+      "accuracy": 0.15384615384615385
+    },
+    {
+      "species": "Drosera dilatatopetiolaris",
+      "section": "Lasiocephala",
+      "train": 71,
+      "validation": 22,
+      "accuracy": 0.7272727272727273
+    },
+    {
+      "species": "Drosera drummondii",
+      "section": "Macrantha",
+      "train": 162,
+      "validation": 52,
+      "accuracy": 0.75
+    },
+    {
+      "species": "Drosera eneabba",
+      "section": "Bryastrum",
+      "train": 50,
+      "validation": 15,
+      "accuracy": 0.6666666666666666
+    },
+    {
+      "species": "Drosera eremaea",
+      "section": "Macrantha",
+      "train": 61,
+      "validation": 19,
+      "accuracy": 0.7368421052631579
+    },
+    {
+      "species": "Drosera ericgreenii",
+      "section": "Ptycnostigma",
+      "train": 28,
+      "validation": 13,
+      "accuracy": 0.9230769230769231
+    },
+    {
+      "species": "Drosera erythrogyne",
+      "section": "Macrantha",
+      "train": 109,
+      "validation": 34,
+      "accuracy": 0.8823529411764706
+    },
+    {
+      "species": "Drosera erythrorhiza",
+      "section": "Erythrorhiza",
+      "train": 164,
+      "validation": 51,
+      "accuracy": 0.9215686274509803
+    },
+    {
+      "species": "Drosera esterhuyseniae",
+      "section": "Ptycnostigma",
+      "train": 95,
+      "validation": 46,
+      "accuracy": 0.9565217391304348
+    },
+    {
+      "species": "Drosera filiformis",
+      "section": "Drosera",
+      "train": 167,
+      "validation": 58,
+      "accuracy": 0.9655172413793104
+    },
+    {
+      "species": "Drosera finlaysonii",
+      "section": "Arachnopus",
+      "train": 132,
+      "validation": 40,
+      "accuracy": 0.875
+    },
+    {
+      "species": "Drosera floridana",
+      "section": "Drosera",
+      "train": 35,
+      "validation": 17,
+      "accuracy": 1.0
+    },
+    {
+      "species": "Drosera fulva",
+      "section": "Lasiocephala",
+      "train": 26,
+      "validation": 12,
+      "accuracy": 0.5833333333333334
+    },
+    {
+      "species": "Drosera gigantea",
+      "section": "Ergaleium",
+      "train": 97,
+      "validation": 39,
+      "accuracy": 1.0
+    },
+    {
+      "species": "Drosera glabripes",
+      "section": "Ptycnostigma",
+      "train": 141,
+      "validation": 69,
+      "accuracy": 0.9130434782608695
+    },
+    {
+      "species": "Drosera glanduligera",
+      "section": "Coelophylla",
+      "train": 168,
+      "validation": 73,
+      "accuracy": 0.9863013698630136
+    },
+    {
+      "species": "Drosera gunniana",
+      "section": "Luniferae",
+      "train": 174,
+      "validation": 57,
+      "accuracy": 0.8245614035087719
+    },
+    {
+      "species": "Drosera heterophylla",
+      "section": "Ergaleium",
+      "train": 72,
+      "validation": 33,
+      "accuracy": 0.8484848484848485
+    },
+    {
+      "species": "Drosera hilaris",
+      "section": "Ptycnostigma",
+      "train": 169,
+      "validation": 54,
+      "accuracy": 0.9444444444444444
+    },
+    {
+      "species": "Drosera hirsuta",
+      "section": "Macrantha",
+      "train": 64,
+      "validation": 30,
+      "accuracy": 0.36666666666666664
+    },
+    {
+      "species": "Drosera hookeri",
+      "section": "Luniferae",
+      "train": 168,
+      "validation": 53,
+      "accuracy": 0.8867924528301887
+    },
+    {
+      "species": "Drosera huegelii",
+      "section": "Ergaleium",
+      "train": 40,
+      "validation": 19,
+      "accuracy": 0.5263157894736842
+    },
+    {
+      "species": "Drosera humilis",
+      "section": "Stolonifera",
+      "train": 41,
+      "validation": 15,
+      "accuracy": 0.9333333333333333
+    },
+    {
+      "species": "Drosera hyperostigma",
+      "section": "Bryastrum",
+      "train": 100,
+      "validation": 31,
+      "accuracy": 0.8709677419354839
+    },
+    {
+      "species": "Drosera indica",
+      "section": "Arachnopus",
+      "train": 147,
+      "validation": 46,
+      "accuracy": 0.9782608695652174
+    },
+    {
+      "species": "Drosera intermedia",
+      "section": "Drosera",
+      "train": 185,
+      "validation": 65,
+      "accuracy": 0.9384615384615385
+    },
+    {
+      "species": "Drosera latifolia",
+      "section": "Brasiliae",
+      "train": 46,
+      "validation": 14,
+      "accuracy": 0.7857142857142857
+    },
+    {
+      "species": "Drosera linearis",
+      "section": "Drosera",
+      "train": 158,
+      "validation": 50,
+      "accuracy": 0.92
+    },
+    {
+      "species": "Drosera lunata",
+      "section": "Luniferae",
+      "train": 148,
+      "validation": 51,
+      "accuracy": 0.7058823529411765
+    },
+    {
+      "species": "Drosera macrantha",
+      "section": "Macrantha",
+      "train": 170,
+      "validation": 57,
+      "accuracy": 0.6842105263157895
+    },
+    {
+      "species": "Drosera macrophylla",
+      "section": "Erythrorhiza",
+      "train": 40,
+      "validation": 14,
+      "accuracy": 0.9285714285714286
+    },
+    {
+      "species": "Drosera madagascariensis",
+      "section": "Ptycnostigma",
+      "train": 122,
+      "validation": 37,
+      "accuracy": 0.8918918918918919
+    },
+    {
+      "species": "Drosera magna",
+      "section": "Erythrorhiza",
+      "train": 114,
+      "validation": 36,
+      "accuracy": 0.8611111111111112
+    },
+    {
+      "species": "Drosera menziesii",
+      "section": "Ergaleium",
+      "train": 108,
+      "validation": 40,
+      "accuracy": 0.8
+    },
+    {
+      "species": "Drosera micrantha",
+      "section": "Bryastrum",
+      "train": 70,
+      "validation": 34,
+      "accuracy": 0.5882352941176471
+    },
+    {
+      "species": "Drosera miniata",
+      "section": "Bryastrum",
+      "train": 56,
+      "validation": 27,
+      "accuracy": 0.9259259259259259
+    },
+    {
+      "species": "Drosera minutiflora",
+      "section": "Bryastrum",
+      "train": 28,
+      "validation": 12,
+      "accuracy": 0.75
+    },
+    {
+      "species": "Drosera modesta",
+      "section": "Macrantha",
+      "train": 58,
+      "validation": 28,
+      "accuracy": 0.8571428571428571
+    },
+    {
+      "species": "Drosera montana",
+      "section": "Brasiliae",
+      "train": 39,
+      "validation": 12,
+      "accuracy": 0.5
+    },
+    {
+      "species": "Drosera monticola",
+      "section": "Stolonifera",
+      "train": 23,
+      "validation": 11,
+      "accuracy": 0.8181818181818182
+    },
+    {
+      "species": "Drosera murfetii",
+      "section": "Arcturia",
+      "train": 64,
+      "validation": 27,
+      "accuracy": 0.9629629629629629
+    },
+    {
+      "species": "Drosera natalensis",
+      "section": "Ptycnostigma",
+      "train": 140,
+      "validation": 44,
+      "accuracy": 0.5909090909090909
+    },
+    {
+      "species": "Drosera neesii",
+      "section": "Ergaleium",
+      "train": 35,
+      "validation": 14,
+      "accuracy": 0.7857142857142857
+    },
+    {
+      "species": "Drosera neocaledonica",
+      "section": "Drosera",
+      "train": 81,
+      "validation": 25,
+      "accuracy": 0.96
+    },
+    {
+      "species": "Drosera nitidula",
+      "section": "Bryastrum",
+      "train": 27,
+      "validation": 12,
+      "accuracy": 0.5833333333333334
+    },
+    {
+      "species": "Drosera ordensis",
+      "section": "Lasiocephala",
+      "train": 27,
+      "validation": 13,
+      "accuracy": 1.0
+    },
+    {
+      "species": "Drosera pallida",
+      "section": "Macrantha",
+      "train": 165,
+      "validation": 56,
+      "accuracy": 0.8035714285714286
+    },
+    {
+      "species": "Drosera pauciflora",
+      "section": "Ptycnostigma",
+      "train": 111,
+      "validation": 35,
+      "accuracy": 0.8571428571428571
+    },
+    {
+      "species": "Drosera peltata",
+      "section": "Luniferae",
+      "train": 111,
+      "validation": 36,
+      "accuracy": 0.5555555555555556
+    },
+    {
+      "species": "Drosera petiolaris",
+      "section": "Lasiocephala",
+      "train": 34,
+      "validation": 12,
+      "accuracy": 0.8333333333333334
+    },
+    {
+      "species": "Drosera planchonii",
+      "section": "Macrantha",
+      "train": 173,
+      "validation": 71,
+      "accuracy": 0.8873239436619719
+    },
+    {
+      "species": "Drosera platypoda",
+      "section": "Stolonifera",
+      "train": 68,
+      "validation": 21,
+      "accuracy": 0.9523809523809523
+    },
+    {
+      "species": "Drosera platystigma",
+      "section": "Bryastrum",
+      "train": 67,
+      "validation": 24,
+      "accuracy": 0.8333333333333334
+    },
+    {
+      "species": "Drosera porrecta",
+      "section": "Stolonifera",
+      "train": 158,
+      "validation": 49,
+      "accuracy": 0.9183673469387755
+    },
+    {
+      "species": "Drosera praefolia",
+      "section": "Erythrorhiza",
+      "train": 38,
+      "validation": 18,
+      "accuracy": 0.8888888888888888
+    },
+    {
+      "species": "Drosera pulchella",
+      "section": "Bryastrum",
+      "train": 105,
+      "validation": 41,
+      "accuracy": 0.926829268292683
+    },
+    {
+      "species": "Drosera purpurascens",
+      "section": "Stolonifera",
+      "train": 109,
+      "validation": 36,
+      "accuracy": 0.7222222222222222
+    },
+    {
+      "species": "Drosera pygmaea",
+      "section": "Bryastrum",
+      "train": 157,
+      "validation": 76,
+      "accuracy": 0.9210526315789473
+    },
+    {
+      "species": "Drosera ramentacea",
+      "section": "Ptycnostigma",
+      "train": 46,
+      "validation": 21,
+      "accuracy": 0.9523809523809523
+    },
+    {
+      "species": "Drosera roseana",
+      "section": "Bryastrum",
+      "train": 40,
+      "validation": 19,
+      "accuracy": 0.8421052631578947
+    },
+    {
+      "species": "Drosera rosulata",
+      "section": "Erythrorhiza",
+      "train": 160,
+      "validation": 57,
+      "accuracy": 0.9298245614035088
+    },
+    {
+      "species": "Drosera rotundifolia",
+      "section": "Drosera",
+      "train": 195,
+      "validation": 60,
+      "accuracy": 0.9666666666666667
+    },
+    {
+      "species": "Drosera rupicola",
+      "section": "Stolonifera",
+      "train": 31,
+      "validation": 15,
+      "accuracy": 0.9333333333333333
+    },
+    {
+      "species": "Drosera schmutzii",
+      "section": "Erythrorhiza",
+      "train": 31,
+      "validation": 10,
+      "accuracy": 0.6
+    },
+    {
+      "species": "Drosera scorpioides",
+      "section": "Bryastrum",
+      "train": 54,
+      "validation": 24,
+      "accuracy": 0.9583333333333334
+    },
+    {
+      "species": "Drosera serpens",
+      "section": "Arachnopus",
+      "train": 67,
+      "validation": 27,
+      "accuracy": 0.8518518518518519
+    },
+    {
+      "species": "Drosera sessilifolia",
+      "section": "Thelocalyx",
+      "train": 61,
+      "validation": 20,
+      "accuracy": 0.8
+    },
+    {
+      "species": "Drosera slackii",
+      "section": "Ptycnostigma",
+      "train": 39,
+      "validation": 19,
+      "accuracy": 0.8947368421052632
+    },
+    {
+      "species": "Drosera spatulata",
+      "section": "Drosera",
+      "train": 191,
+      "validation": 61,
+      "accuracy": 0.6229508196721312
+    },
+    {
+      "species": "Drosera spilos",
+      "section": "Bryastrum",
+      "train": 77,
+      "validation": 36,
+      "accuracy": 0.7222222222222222
+    },
+    {
+      "species": "Drosera squamosa",
+      "section": "Erythrorhiza",
+      "train": 89,
+      "validation": 32,
+      "accuracy": 0.84375
+    },
+    {
+      "species": "Drosera stenopetala",
+      "section": "Psychophila",
+      "train": 141,
+      "validation": 54,
+      "accuracy": 1.0
+    },
+    {
+      "species": "Drosera stolonifera",
+      "section": "Stolonifera",
+      "train": 161,
+      "validation": 49,
+      "accuracy": 0.8775510204081632
+    },
+    {
+      "species": "Drosera stricticaulis",
+      "section": "Ergaleium",
+      "train": 43,
+      "validation": 21,
+      "accuracy": 0.8571428571428571
+    },
+    {
+      "species": "Drosera subhirtella",
+      "section": "Macrantha",
+      "train": 57,
+      "validation": 28,
+      "accuracy": 0.9285714285714286
+    },
+    {
+      "species": "Drosera sulphurea",
+      "section": "Ergaleium",
+      "train": 29,
+      "validation": 14,
+      "accuracy": 0.7142857142857143
+    },
+    {
+      "species": "Drosera tomentosa",
+      "section": "Brasiliae",
+      "train": 95,
+      "validation": 32,
+      "accuracy": 0.84375
+    },
+    {
+      "species": "Drosera tracyi",
+      "section": "Drosera",
+      "train": 167,
+      "validation": 61,
+      "accuracy": 1.0
+    },
+    {
+      "species": "Drosera trinervia",
+      "section": "Ptycnostigma",
+      "train": 174,
+      "validation": 65,
+      "accuracy": 0.9076923076923077
+    },
+    {
+      "species": "Drosera tubaestylis",
+      "section": "Erythrorhiza",
+      "train": 62,
+      "validation": 27,
+      "accuracy": 0.5925925925925926
+    },
+    {
+      "species": "Drosera uniflora",
+      "section": "Psychophila",
+      "train": 123,
+      "validation": 38,
+      "accuracy": 1.0
+    },
+    {
+      "species": "Drosera venusta",
+      "section": "Ptycnostigma",
+      "train": 34,
+      "validation": 11,
+      "accuracy": 0.5454545454545454
+    },
+    {
+      "species": "Drosera whittakeri",
+      "section": "Erythrorhiza",
+      "train": 180,
+      "validation": 56,
+      "accuracy": 0.8571428571428571
+    },
+    {
+      "species": "Drosera xerophila",
+      "section": "Ptycnostigma",
+      "train": 158,
+      "validation": 49,
+      "accuracy": 0.9183673469387755
+    },
+    {
+      "species": "Drosera zeyheri",
+      "section": "Ptycnostigma",
+      "train": 139,
+      "validation": 43,
+      "accuracy": 0.9069767441860465
+    },
+    {
+      "species": "Drosera zonaria",
+      "section": "Erythrorhiza",
+      "train": 74,
+      "validation": 29,
+      "accuracy": 0.9655172413793104
+    }
+  ]
+}
