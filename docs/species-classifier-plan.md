@@ -1063,3 +1063,32 @@ notes, and nothing is retrained or re-tuned.
 
 Not planned yet: more data, or hierarchical losses (modest gains in the
 literature). Revisit once per-class results show where the errors come from.
+
+**Scoring details, 2026-09-29, after the validation check (job 18082633) and
+before any test image is read.** `scripts/score_species_test.py`, launched by
+`scripts/hellbender_species_test.slurm`, reproduces every validation number
+above (stored predictions bit for bit). Choices the protocol did not fix:
+
+- **The shipped int8 model runs on the scoring job's CPU** (Intel Icelake
+  with VNNI, the A100 nodes). int8 ONNX logits depend on the CPU family: the
+  export ran on an AMD EPYC node, and the two differ by at most 0.58 in a
+  logit (top-1 agreement 0.991). On the Intel CPU the validation score is
+  0.7639 (export: 0.7635), and the temperature refits to the same 0.74. The
+  CPU is recorded with the result; T = 0.74 from `release.json` is used.
+- **The ResNet-18 anchor is scored at its best epoch**: only best-epoch
+  weights exist, and its reported numbers are best-epoch.
+- **Temperatures**: the teacher ensemble uses the recorded 0.72 (a refit on
+  the best-epoch ensemble also gives 0.72). Single teacher seeds, ResNet-18
+  seeds and the student ensemble get one temperature each, fitted on
+  validation on the students' grid (0.30-3.00).
+- **Top-5** uses the training-time definition (ties by stable sort); it
+  differs from the diagnostics script's by at most 1e-4.
+- **Intervals** (2,000 observer-grouped resamples) cover the accuracy
+  metrics and the bins, not ECE.
+- **Extra rows**: teacher and anchor seed means, and the student-minus-CE-100c
+  difference by bin.
+- **Test photos are not in the 576 px cache.** They are rebuilt in memory
+  with `make_full_cache.py`'s steps, which reproduce all 3,959 cached
+  validation files byte for byte.
+- The job recomputes validation first and stops before opening any test
+  image if a check fails. Test logits are kept for the per-class reporting.
