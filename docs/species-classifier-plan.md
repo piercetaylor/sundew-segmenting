@@ -947,6 +947,25 @@ weighting scales common-species rows down by their class weight, so the
 KD term's gradient mass stays balanced. The thin-bin prior (+0.00 to +0.015)
 stands. Nothing is downloaded until approved.
 
+**Downloaded 2026-09-28** (approved; job 18041103,
+`scripts/hellbender_transfer_set.slurm`). 12,165 of the 12,179 selected photos
+downloaded, and 14 failed. Deduplication removed 39: 21 byte-identical to a
+split photo, 13 within dHash 6 of one, and 5 within the set. **12,126 kept**
+(a 7,970, b 659, c 3,497), cached at 576 px in `sundew-transfer-set/full-s576`.
+
+**Training support, smoke-tested 2026-09-28** (`--transfer-records`,
+`--transfer-full-dir`, `--steps` in `finetune_species_backbone.py`; `TRANSFER=1`
+in the launcher; `scripts/hellbender_species_transfer_smoke.slurm`, jobs
+18041124 and 18041125):
+
+- without transfer records nothing changed: the KDw smoke replays with the
+  same init, identical weight diagnostics and loss within 7e-4 (bf16);
+- `--steps` stops mid-epoch at the set step;
+- with 512 transfer rows, the share in batches is 0.501 against 0.5 in the
+  union, and the loss falls (4.53, 4.05, 3.56);
+- killed after epoch 1 and resumed, the run replays the same batches: per-epoch
+  transfer share and weight diagnostics equal the uninterrupted run's.
+
 **Prior**, KD(w)-100c+T minus KD(w)-100c:
 
 | Quantity | Point | Range |
