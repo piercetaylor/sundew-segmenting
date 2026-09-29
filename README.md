@@ -1,6 +1,6 @@
 # Sundew Segmentation
 
-This project finds the sundew (*Drosera*) in a photo and names the species (one of 110) with a 22 MB int8 model that takes about 120 ms per photo on one CPU thread. It is built on licensed iNaturalist photographs and trained on the Hellbender SLURM cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
+This project does two separate jobs on photos of sundews (*Drosera*). A SegFormer-B0 model outlines the plant, and a 22 MB int8 DINOv2-S model names the species (one of 110) in about 120 ms per photo on one CPU thread. The species model reads the whole photo, so it does not need the segmenter. It is built on licensed iNaturalist photographs and trained on the Hellbender SLURM cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
 
 ![Twelve licensed sundew examples](assets/dataset-preview.jpg)
 
@@ -24,6 +24,8 @@ The preview's credits and licences are in [its attribution record](assets/datase
 | DINOv2-L teacher, 5-model ensemble | 0.834 | 0.842 |
 
 The large DINOv2-L model is the most accurate, but it's too big to run on a phone, so it teaches the small DINOv2-S instead. Weighting that teaching by species keeps the rare species from being crowded out, and adding 12,126 unlabelled photos for the teacher to label gave the largest single gain (+0.033). The shipped model is 22 MB, runs in about 120 ms on one CPU thread, and clears the release floor (0.75, top-5 0.95). The test set was scored once, after everything else was fixed.
+
+The classifier reads the whole photo, not a crop around the plant. Cropping helped the old ResNet-18 (0.516 against 0.499), but once the DINOv2 models were fine-tuned it made no difference (DINOv2-L: -0.004 [-0.012, +0.006]), so every DINOv2 model here, including the shipped one, trains and runs on full frames ([why](docs/reports/species-finetune.md)). Segmentation stands on its own: it finds and outlines the plant, and it is not a step in species identification.
 
 **Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. Browser preprocessing and int8 behaviour in WebAssembly are not yet measured.
 
@@ -62,11 +64,11 @@ sbatch scripts/hellbender_seed_sweep.slurm      # U-Net vs SegFormer
 sbatch scripts/hellbender_field_compare.slurm   # with and without field masks
 ```
 
-**Train the species classifier.** Build the corpus, crops, frame cache and transfer set, train the teacher, then distil. `hellbender_species_finetune.slurm` takes the model and options as environment variables, as documented in its header:
+**Train the species classifier.** Build the corpus, frame cache and transfer set, train the teacher, then distil. The model never sees the crops, but the training script refuses to run unless every photo also has one (so full-frame and crop runs always use the same photos), so the crops job still has to run first. `hellbender_species_finetune.slurm` takes the model and options as environment variables, as documented in its header:
 
 ```bash
 sbatch scripts/hellbender_species_corpus.slurm
-sbatch scripts/hellbender_species_110_crops.slurm
+sbatch scripts/hellbender_species_110_crops.slurm # plant crops: checked for pairing, not used by the shipped model
 sbatch scripts/hellbender_full_cache.slurm      # 576 px frames, used by CACHE=1
 sbatch scripts/hellbender_transfer_set.slurm    # unlabelled photos, used by TRANSFER=1
 sbatch --array=0-4 --export=ALL,MODEL=dinov2-l-reg scripts/hellbender_species_finetune.slurm   # teacher

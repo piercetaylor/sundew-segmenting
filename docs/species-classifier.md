@@ -7,15 +7,20 @@ right species in its top five 96% of the time). This page is the summary.
 The decisions were [pre-registered](species-classifier-plan.md), and each
 step has a report in [reports/](reports/).
 
-## The pipeline
+## How a photo is identified
 
-1. **Find the plant.** A SegFormer-B0 segmenter outlines the sundew and a crop
-   is taken around it.
+The project has two models that work independently. The segmenter
+(SegFormer-B0, see the [README](../README.md)) outlines the sundew in a photo.
+The species model described here does not use it.
+
+1. **Prepare the photo.** Resize the whole photo so its short side is 255 px,
+   then take the centre 224 x 224 px. This is a fixed centre crop, not a crop
+   around the plant.
 2. **Name the species.** A small image classifier (DINOv2-S) scores the 110
-   species. It takes the **whole photo**, resized and centre-cropped to 224 px,
-   not the crop: once a strong backbone is fine-tuned, the crop no longer helps
-   ([species-finetune.md](reports/species-finetune.md)). So segmentation is not
-   needed for species ID; it remains useful on its own.
+   species. Early on, cropping to the plant helped a ResNet-18 (0.516 against
+   0.499). Once DINOv2 models were fine-tuned it made no difference (DINOv2-L:
+   -0.004 [-0.012, +0.006]), so every DINOv2 model is trained and run on full
+   frames ([species-finetune.md](reports/species-finetune.md)).
 3. **Report probabilities.** `softmax(logits / 0.74)`: a temperature fitted on
    validation, because the raw model is under-confident.
 
