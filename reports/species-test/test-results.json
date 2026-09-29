@@ -1,0 +1,4491 @@
+{
+  "protocol": "docs/species-classifier-plan.md: test protocol 2026-09-26, amendment 2026-09-27, shipped-student protocol 2026-09-29",
+  "split": "test",
+  "bootstrap_reps": 2000,
+  "bootstrap_seed": 20260926,
+  "bins": [
+    "under 40",
+    "40-79",
+    "80-129",
+    "130 and over"
+  ],
+  "bin_species": [
+    23,
+    28,
+    17,
+    42
+  ],
+  "validation": {
+    "images": 3959,
+    "observers": 308,
+    "cache_bytes_identical": 3959,
+    "cache_bytes_differ": 0,
+    "cache_missing": 0
+  },
+  "temperatures": {
+    "teacher/seed-17": 0.76,
+    "teacher/seed-101": 0.77,
+    "teacher/seed-202": 0.75,
+    "teacher/seed-303": 0.76,
+    "teacher/seed-404": 0.77,
+    "student/seed-17": 0.75,
+    "student/seed-101": 0.76,
+    "student/seed-202": 0.76,
+    "student/seed-303": 0.76,
+    "student/seed-404": 0.76,
+    "ce100c/seed-17": 0.71,
+    "ce100c/seed-101": 0.71,
+    "ce100c/seed-202": 0.72,
+    "ce100c/seed-303": 0.72,
+    "ce100c/seed-404": 0.72,
+    "anchor-full/seed-17": 0.89,
+    "anchor-full/seed-101": 0.89,
+    "anchor-full/seed-202": 0.89,
+    "anchor-full/seed-303": 0.89,
+    "anchor-full/seed-404": 0.9,
+    "anchor-crop/seed-17": 0.88,
+    "anchor-crop/seed-101": 0.87,
+    "anchor-crop/seed-202": 0.87,
+    "anchor-crop/seed-303": 0.87,
+    "anchor-crop/seed-404": 0.88,
+    "shipped": 0.74,
+    "teacher/ensemble": 0.72,
+    "student/ensemble": 0.73
+  },
+  "teacher_temperature_source": "reports/species-finetune/teacher-analysis.json",
+  "teacher_ensemble_temperature_refit_on_best_epoch_validation": 0.72,
+  "release": {
+    "model": "dinov2-s",
+    "backbone": "vit_small_patch14_dinov2.lvd142m",
+    "arm": "full",
+    "seed": 17,
+    "epoch": 100,
+    "checkpoint": "models/species-110/finetune/dinov2-s-kdw-e100-t-c576/full/seed-17/classifier-last.pt",
+    "checkpoint_sha256": "1fb9ff7f908cdafc1abea23d671999c009e0ca0d250b587777b36cfd459e81d2",
+    "shipped": "int8",
+    "shipped_file": "model-int8.onnx",
+    "files": {
+      "model-fp32.onnx": {
+        "sha256": "92a3e7098e79e7a6a01d68f0f9a0a251dc5176583713530f09cd3c047ab7e37e",
+        "bytes": 86818074
+      },
+      "model-int8.onnx": {
+        "sha256": "d7ee150eaf5d1c7ddae00a2a94e66ddcfd48b55166b940f4dfa35f0e3cc8af16",
+        "bytes": 22433589
+      },
+      "labels.json": {
+        "sha256": "42e1eba442ea40fbd499a7e99466d82d112eec4a0deee52e6f493c86890e4b0c",
+        "bytes": 2532
+      }
+    },
+    "input": {
+      "name": "pixels",
+      "shape": [
+        1,
+        3,
+        224,
+        224
+      ],
+      "dtype": "float32",
+      "layout": "NCHW",
+      "channels": "RGB",
+      "range": "[0, 1] (pixel / 255)",
+      "normalisation_in_graph": true,
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "resize": "short side to 255 px, bicubic, then centre crop 224 px",
+      "training_source": "full frames pre-shrunk to short side 576 px (LANCZOS), /cluster/VAST/mendozacozatld-lab/PierceTaylor/sundew-species-corpus/full-s576",
+      "exif_rotation": "none (training ignored EXIF orientation)"
+    },
+    "output": {
+      "name": "logits",
+      "shape": [
+        1,
+        110
+      ],
+      "classes": "labels.json order",
+      "probabilities": "softmax(logits / temperature)"
+    },
+    "opset": 17,
+    "quantisation": {
+      "method": "onnxruntime.quantization.quantize_dynamic",
+      "weight_type": "QInt8",
+      "per_channel": false,
+      "calibration": null
+    },
+    "temperature": 0.74,
+    "calibration": {
+      "temperature": 0.74,
+      "grid": [
+        0.3,
+        3.0,
+        0.01
+      ],
+      "nll_before": 0.832085038009589,
+      "nll_after": 0.742834244284526,
+      "ece_before": 0.11106139624576199,
+      "ece_after": 0.024595979962276526,
+      "mean_confidence_before": 0.6891406749843466,
+      "mean_confidence_after": 0.818576376602749,
+      "at_grid_edge": false
+    },
+    "validation": {
+      "images": 3959,
+      "torch_fp32": {
+        "balanced_accuracy": 0.7631486022074834,
+        "accuracy": 0.8009598383430159,
+        "top5_accuracy": 0.9590805759030058,
+        "section_balanced_accuracy": 0.9103437513824327
+      },
+      "onnx_fp32": {
+        "balanced_accuracy": 0.7631486022074834,
+        "accuracy": 0.8009598383430159,
+        "top5_accuracy": 0.9590805759030058,
+        "section_balanced_accuracy": 0.9103437513824327
+      },
+      "onnx_int8": {
+        "balanced_accuracy": 0.7634647488713365,
+        "accuracy": 0.8002020712301086,
+        "top5_accuracy": 0.9565546855266481,
+        "section_balanced_accuracy": 0.909727279292672
+      },
+      "recorded_bf16_gpu": {
+        "balanced_accuracy": 0.7634237664843352,
+        "accuracy": 0.8012124273806517,
+        "top5_accuracy": 0.9590805759030058,
+        "section_balanced_accuracy": 0.9107244275357907
+      },
+      "torch_vs_recorded_top1_agreement": 0.9969689315483709,
+      "classifier_metrics_last": 0.7634237664843352,
+      "int8_minus_fp32_balanced_accuracy": 0.00031614666385315626,
+      "int8_vs_fp32_top1_agreement": 0.9552917403384693,
+      "int8_vs_fp32_max_abs_logit": 1.713733196258545,
+      "onnx_vs_torch_fp32_max_abs_logit": 3.218650817871094e-05
+    },
+    "rule": {
+      "max_int8_loss": 0.01,
+      "int8_loss": -0.00031614666385315626,
+      "fires_fp32": false
+    },
+    "export_check_max_abs_logit": 8.58306884765625e-06,
+    "latency": {
+      "provider": "CPUExecutionProvider",
+      "threads": 1,
+      "batch": 1,
+      "warmup": 20,
+      "runs": 200,
+      "host": "c040.mgmt.hellbender",
+      "cpu": "AMD EPYC 7713 64-Core Processor",
+      "fp32": {
+        "median_ms": 178.18843550048769,
+        "p10_ms": 165.63543532975018,
+        "p90_ms": 190.18628136254847
+      },
+      "int8": {
+        "median_ms": 117.63619596604258,
+        "p10_ms": 109.91009750869125,
+        "p90_ms": 126.58115243539214
+      }
+    },
+    "versions": {
+      "torch": "2.5.1+cu124",
+      "timm": "1.0.29",
+      "onnx": "1.23.1",
+      "onnxruntime": "1.30.0",
+      "numpy": "2.4.6"
+    },
+    "test_split_read": false
+  },
+  "onnx_platform": {
+    "cpu": "Intel(R) Xeon(R) Gold 6338 CPU @ 2.00GHz",
+    "avx512_vnni": true,
+    "avx2": true,
+    "onnxruntime": "1.30.0",
+    "release_export_cpu": "AMD EPYC 7713 64-Core Processor",
+    "shipped_temperature_refit_here": 0.74
+  },
+  "checks": [
+    {
+      "what": "teacher/seed-17 balanced accuracy vs stored predictions",
+      "got": 0.822966,
+      "want": 0.822966,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "teacher/seed-101 balanced accuracy vs stored predictions",
+      "got": 0.822928,
+      "want": 0.822928,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "teacher/seed-202 balanced accuracy vs stored predictions",
+      "got": 0.826054,
+      "want": 0.826054,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "teacher/seed-303 balanced accuracy vs stored predictions",
+      "got": 0.824529,
+      "want": 0.824529,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "teacher/seed-404 balanced accuracy vs stored predictions",
+      "got": 0.82164,
+      "want": 0.82164,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "student/seed-17 balanced accuracy vs stored predictions",
+      "got": 0.763424,
+      "want": 0.763424,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "student/seed-101 balanced accuracy vs stored predictions",
+      "got": 0.769005,
+      "want": 0.769005,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "student/seed-202 balanced accuracy vs stored predictions",
+      "got": 0.772133,
+      "want": 0.772133,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "student/seed-303 balanced accuracy vs stored predictions",
+      "got": 0.767938,
+      "want": 0.767938,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "student/seed-404 balanced accuracy vs stored predictions",
+      "got": 0.769361,
+      "want": 0.769361,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "ce100c/seed-17 balanced accuracy vs stored predictions",
+      "got": 0.722016,
+      "want": 0.722016,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "ce100c/seed-101 balanced accuracy vs stored predictions",
+      "got": 0.725474,
+      "want": 0.725474,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "ce100c/seed-202 balanced accuracy vs stored predictions",
+      "got": 0.710456,
+      "want": 0.710456,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "ce100c/seed-303 balanced accuracy vs stored predictions",
+      "got": 0.721097,
+      "want": 0.721097,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "ce100c/seed-404 balanced accuracy vs stored predictions",
+      "got": 0.715689,
+      "want": 0.715689,
+      "pass": true,
+      "note": "(top-1 agreement 1.0000, max |logit diff| 0.00e+00, exact: True)"
+    },
+    {
+      "what": "shipped balanced accuracy vs stored predictions",
+      "got": 0.763883,
+      "want": 0.763465,
+      "pass": true,
+      "note": "(top-1 agreement 0.9907, max |logit diff| 5.80e-01, exact: False; int8 kernels differ by CPU, export ran on AMD EPYC 7713 64-Core Processor)"
+    },
+    {
+      "what": "anchor-full/seed-17 balanced accuracy vs classifier-metrics.json",
+      "got": 0.499703,
+      "want": 0.499703,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-full/seed-101 balanced accuracy vs classifier-metrics.json",
+      "got": 0.491279,
+      "want": 0.491279,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-full/seed-202 balanced accuracy vs classifier-metrics.json",
+      "got": 0.499905,
+      "want": 0.499905,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-full/seed-303 balanced accuracy vs classifier-metrics.json",
+      "got": 0.50221,
+      "want": 0.50221,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-full/seed-404 balanced accuracy vs classifier-metrics.json",
+      "got": 0.499166,
+      "want": 0.499166,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-crop/seed-17 balanced accuracy vs classifier-metrics.json",
+      "got": 0.522533,
+      "want": 0.522533,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-crop/seed-101 balanced accuracy vs classifier-metrics.json",
+      "got": 0.516927,
+      "want": 0.516927,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-crop/seed-202 balanced accuracy vs classifier-metrics.json",
+      "got": 0.505013,
+      "want": 0.505013,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-crop/seed-303 balanced accuracy vs classifier-metrics.json",
+      "got": 0.510794,
+      "want": 0.510794,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "anchor-crop/seed-404 balanced accuracy vs classifier-metrics.json",
+      "got": 0.522937,
+      "want": 0.522937,
+      "pass": true,
+      "note": "(exact to 1e-9: True)"
+    },
+    {
+      "what": "teacher/ensemble balanced accuracy vs stored predictions",
+      "got": 0.834087,
+      "want": 0.834087,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student/ensemble balanced accuracy vs stored predictions",
+      "got": 0.779727,
+      "want": 0.779727,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "teacher/seed-17 balanced accuracy vs report",
+      "got": 0.822966,
+      "want": 0.823,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "teacher/seed-101 balanced accuracy vs report",
+      "got": 0.822928,
+      "want": 0.8229,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "teacher/seed-202 balanced accuracy vs report",
+      "got": 0.826054,
+      "want": 0.8261,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "teacher/seed-303 balanced accuracy vs report",
+      "got": 0.824529,
+      "want": 0.8245,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "teacher/seed-404 balanced accuracy vs report",
+      "got": 0.82164,
+      "want": 0.8216,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "teacher/ensemble balanced accuracy vs report",
+      "got": 0.834087,
+      "want": 0.834,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "anchor-full/seed-mean balanced accuracy vs report",
+      "got": 0.498453,
+      "want": 0.4985,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "anchor-crop/seed-mean balanced accuracy vs report",
+      "got": 0.515641,
+      "want": 0.5156,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "student/seed-mean balanced accuracy vs report",
+      "got": 0.768372,
+      "want": 0.7684,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "student/ensemble balanced accuracy vs report",
+      "got": 0.779727,
+      "want": 0.7797,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "student/seed-17 balanced accuracy vs report",
+      "got": 0.763424,
+      "want": 0.7634,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "ce100c/seed-mean balanced accuracy vs report",
+      "got": 0.718946,
+      "want": 0.7189,
+      "pass": true,
+      "note": "(report rounded)"
+    },
+    {
+      "what": "student seed-mean ECE before (diagnose)",
+      "got": 0.101117,
+      "want": 0.10112,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean ECE after (diagnose)",
+      "got": 0.024207,
+      "want": 0.02421,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean temperature (diagnose)",
+      "got": 0.758,
+      "want": 0.758,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean accuracy (diagnose)",
+      "got": 0.803334,
+      "want": 0.80333,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean top-5 (diagnose)",
+      "got": 0.958828,
+      "want": 0.95893,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean bin under 40 (diagnose)",
+      "got": 0.676789,
+      "want": 0.67679,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean bin 40-79 (diagnose)",
+      "got": 0.719119,
+      "want": 0.71912,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean bin 80-129 (diagnose)",
+      "got": 0.791507,
+      "want": 0.79151,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "student seed-mean bin 130 and over (diagnose)",
+      "got": 0.841996,
+      "want": 0.842,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean ECE before (diagnose)",
+      "got": 0.160011,
+      "want": 0.16001,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean ECE after (diagnose)",
+      "got": 0.035503,
+      "want": 0.0355,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean temperature (diagnose)",
+      "got": 0.716,
+      "want": 0.716,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean accuracy (diagnose)",
+      "got": 0.758121,
+      "want": 0.75812,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean top-5 (diagnose)",
+      "got": 0.924021,
+      "want": 0.92397,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean bin under 40 (diagnose)",
+      "got": 0.610348,
+      "want": 0.61035,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean bin 40-79 (diagnose)",
+      "got": 0.669298,
+      "want": 0.6693,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean bin 80-129 (diagnose)",
+      "got": 0.75947,
+      "want": 0.75947,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "ce100c seed-mean bin 130 and over (diagnose)",
+      "got": 0.795113,
+      "want": 0.79511,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "teacher last-epoch ensemble temperature (analyze_species_teacher)",
+      "got": 0.72,
+      "want": 0.72,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "teacher last-epoch ensemble ECE before",
+      "got": 0.117545,
+      "want": 0.117545,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "teacher last-epoch ensemble ECE after",
+      "got": 0.018741,
+      "want": 0.018741,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "teacher last-epoch ensemble balanced accuracy (0.834)",
+      "got": 0.834674,
+      "want": 0.834674,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "shipped balanced_accuracy vs release.json",
+      "got": 0.763883,
+      "want": 0.763465,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "shipped accuracy vs release.json",
+      "got": 0.799697,
+      "want": 0.800202,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "shipped top5_accuracy vs release.json",
+      "got": 0.956555,
+      "want": 0.956555,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "shipped section_balanced_accuracy vs release.json",
+      "got": 0.909336,
+      "want": 0.909727,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "shipped ECE before vs release.json",
+      "got": 0.110702,
+      "want": 0.111061,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "shipped ECE after vs release.json",
+      "got": 0.024677,
+      "want": 0.024596,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "what": "full-s576 rebuilt in memory: validation JPEGs byte-identical to the cache",
+      "got": 3959.0,
+      "want": 3959.0,
+      "pass": true,
+      "note": ""
+    }
+  ],
+  "checks_passed": true,
+  "test": {
+    "images": 2601,
+    "observers": 1095,
+    "labels": 110
+  },
+  "items": {
+    "teacher/seed-17": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.8229660949844975,
+        "accuracy": 0.847436221267997,
+        "top5_accuracy": 0.9669108360697146,
+        "section_balanced_accuracy": 0.9438857233293136,
+        "ece_before": 0.09942022819334688,
+        "ece_after": 0.023470533381496062,
+        "temperature": 0.76,
+        "mean_confidence": 0.74801599307465,
+        "bins": [
+          0.7406785200785067,
+          0.7950312066750475,
+          0.8605481644632862,
+          0.8714398072312348
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8011635690443407,
+            0.845529323161203
+          ],
+          "accuracy": [
+            0.8291880707821302,
+            0.8646513551471017
+          ],
+          "top5_accuracy": [
+            0.9604556843210943,
+            0.9725653884443592
+          ],
+          "section_balanced_accuracy": [
+            0.934744429385034,
+            0.9553172780553374
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6719570033696853,
+            0.8180236026429244
+          ],
+          [
+            0.7467627681359994,
+            0.8456663759641849
+          ],
+          [
+            0.832576790496299,
+            0.8887896686284924
+          ],
+          [
+            0.8569828156944945,
+            0.8855445790504806
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.8351587979470765,
+        "accuracy": 0.8512110726643599,
+        "top5_accuracy": 0.9700115340253749,
+        "section_balanced_accuracy": 0.9445089618118623,
+        "ece_before": 0.08907349840599896,
+        "ece_after": 0.02410670384751932,
+        "temperature": 0.76,
+        "mean_confidence": 0.7621375742583609,
+        "bins": [
+          0.7779675638371291,
+          0.8249259590659968,
+          0.8587304875668047,
+          0.8637587777009731
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8162194618627335,
+            0.8549616927134589
+          ],
+          "accuracy": [
+            0.8368910363705709,
+            0.8653772130948404
+          ],
+          "top5_accuracy": [
+            0.9631955689972693,
+            0.9766124619447392
+          ],
+          "section_balanced_accuracy": [
+            0.931583320289458,
+            0.9564007762534857
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7172567359079216,
+            0.8433106652350725
+          ],
+          [
+            0.7702649557791083,
+            0.8686399157698653
+          ],
+          [
+            0.8229717781719061,
+            0.8870902836574073
+          ],
+          [
+            0.8465287138701433,
+            0.8797418304087621
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "teacher/seed-101": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.8229281852113403,
+        "accuracy": 0.8408689062894671,
+        "top5_accuracy": 0.9679211922202576,
+        "section_balanced_accuracy": 0.9413058954368897,
+        "ece_before": 0.08709366304261772,
+        "ece_after": 0.0171474581288617,
+        "temperature": 0.77,
+        "mean_confidence": 0.7537752432468493,
+        "bins": [
+          0.7722748355875292,
+          0.7962501091015518,
+          0.8397561729475214,
+          0.8616409799948317
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8029803938578209,
+            0.8454105061239272
+          ],
+          "accuracy": [
+            0.8222264232042791,
+            0.8594603456318722
+          ],
+          "top5_accuracy": [
+            0.9612600876765267,
+            0.9742485040311708
+          ],
+          "section_balanced_accuracy": [
+            0.931591024216732,
+            0.9527877034967975
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7265898810027341,
+            0.8350196394075244
+          ],
+          [
+            0.7483203198995328,
+            0.846340237061624
+          ],
+          [
+            0.8071437613826428,
+            0.8711674850667195
+          ],
+          [
+            0.8448229487794904,
+            0.8781613956523726
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.8294283517618436,
+        "accuracy": 0.8469819300269127,
+        "top5_accuracy": 0.9703960015378701,
+        "section_balanced_accuracy": 0.94150601527699,
+        "ece_before": 0.08441221832370809,
+        "ece_after": 0.025547081986189494,
+        "temperature": 0.77,
+        "mean_confidence": 0.7636149834569973,
+        "bins": [
+          0.764855072463768,
+          0.8114017978679634,
+          0.8772907834800417,
+          0.8574347230398205
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8088106093372275,
+            0.8500447177048329
+          ],
+          "accuracy": [
+            0.8313103087093788,
+            0.8613871723163204
+          ],
+          "top5_accuracy": [
+            0.9633874448267852,
+            0.9765606508886886
+          ],
+          "section_balanced_accuracy": [
+            0.9286914437955351,
+            0.9542686379501368
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7041233812365526,
+            0.8306266810429359
+          ],
+          [
+            0.7654518674329115,
+            0.8489358819760549
+          ],
+          [
+            0.8403375757676659,
+            0.9086212343796295
+          ],
+          [
+            0.8411892028671497,
+            0.8735079465364675
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "teacher/seed-202": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.8260540021605314,
+        "accuracy": 0.8466784541550897,
+        "top5_accuracy": 0.9701944935589796,
+        "section_balanced_accuracy": 0.9456126494472867,
+        "ece_before": 0.10103665372204998,
+        "ece_after": 0.024281404278818176,
+        "temperature": 0.75,
+        "mean_confidence": 0.7456418004330397,
+        "bins": [
+          0.7691562399177825,
+          0.7926850227799418,
+          0.8631543307634516,
+          0.8644414871126761
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8022411231519336,
+            0.8491434906741852
+          ],
+          "accuracy": [
+            0.8277756397851355,
+            0.8643349792315305
+          ],
+          "top5_accuracy": [
+            0.9632221293086152,
+            0.9769346273037133
+          ],
+          "section_balanced_accuracy": [
+            0.933496040339857,
+            0.9586946638376908
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7115500112036839,
+            0.8385336952481927
+          ],
+          [
+            0.7390959540080516,
+            0.8458293966731516
+          ],
+          [
+            0.8340073510581705,
+            0.8931524302968816
+          ],
+          [
+            0.8483083578320697,
+            0.8801992149136977
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.8340185827977877,
+        "accuracy": 0.8542868127643214,
+        "top5_accuracy": 0.9707804690503652,
+        "section_balanced_accuracy": 0.9462460849334128,
+        "ece_before": 0.09429481890300968,
+        "ece_after": 0.026764659774370876,
+        "temperature": 0.75,
+        "mean_confidence": 0.7600378955489404,
+        "bins": [
+          0.757056590752243,
+          0.8219934931401098,
+          0.881267101279889,
+          0.865056761685093
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8137187487051233,
+            0.8548921420988311
+          ],
+          "accuracy": [
+            0.8396907917805563,
+            0.868663614559623
+          ],
+          "top5_accuracy": [
+            0.964011000924113,
+            0.9772817206577806
+          ],
+          "section_balanced_accuracy": [
+            0.9346775673176069,
+            0.9581682720587095
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6938109837022881,
+            0.8346814603207623
+          ],
+          [
+            0.7726286823188029,
+            0.8595795203063528
+          ],
+          [
+            0.8454852388463687,
+            0.9113666181566302
+          ],
+          [
+            0.8477093274744669,
+            0.8816767196082628
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "teacher/seed-303": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.8245290787541533,
+        "accuracy": 0.8486991664561758,
+        "top5_accuracy": 0.9684263702955291,
+        "section_balanced_accuracy": 0.9429459377759523,
+        "ece_before": 0.10068973409216861,
+        "ece_after": 0.022185849553357576,
+        "temperature": 0.76,
+        "mean_confidence": 0.7480094323640072,
+        "bins": [
+          0.752725531038561,
+          0.7905250000786762,
+          0.858875086739398,
+          0.8726174993404102
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7998963010115249,
+            0.8482403605512778
+          ],
+          "accuracy": [
+            0.8294971298154225,
+            0.8671314820094917
+          ],
+          "top5_accuracy": [
+            0.9611147094038613,
+            0.9753807180985593
+          ],
+          "section_balanced_accuracy": [
+            0.9312333298984368,
+            0.9553318076716737
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6862185226243236,
+            0.8147615352613622
+          ],
+          [
+            0.7369074018596508,
+            0.8457887014783401
+          ],
+          [
+            0.8299369788035851,
+            0.885800496369759
+          ],
+          [
+            0.8585299384895246,
+            0.8869272508365137
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.8394059693009268,
+        "accuracy": 0.857362552864283,
+        "top5_accuracy": 0.9680891964628989,
+        "section_balanced_accuracy": 0.9503985304964955,
+        "ece_before": 0.09508230569457919,
+        "ece_after": 0.02283882381403365,
+        "temperature": 0.76,
+        "mean_confidence": 0.7623190803563502,
+        "bins": [
+          0.7699102829537613,
+          0.8308718302374317,
+          0.8815134822551701,
+          0.8661090397661775
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8213883385648013,
+            0.8603874472406902
+          ],
+          "accuracy": [
+            0.8432825736183945,
+            0.8716511518176847
+          ],
+          "top5_accuracy": [
+            0.9606031654880604,
+            0.9749185669600561
+          ],
+          "section_balanced_accuracy": [
+            0.9382385816621795,
+            0.9620586573959534
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7094170548654243,
+            0.8444856509048704
+          ],
+          [
+            0.7768366409869063,
+            0.87314036334872
+          ],
+          [
+            0.848609371851298,
+            0.9097551069655893
+          ],
+          [
+            0.8482956922695499,
+            0.8825290557932437
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "teacher/seed-404": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.8216403336679609,
+        "accuracy": 0.8449103308916392,
+        "top5_accuracy": 0.9681737812578934,
+        "section_balanced_accuracy": 0.9453815997684952,
+        "ece_before": 0.08910379995278228,
+        "ece_after": 0.022951070417958012,
+        "temperature": 0.77,
+        "mean_confidence": 0.755806530938857,
+        "bins": [
+          0.7573914569001391,
+          0.7867996143901106,
+          0.8466329535670073,
+          0.8699353281240535
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8027352753488259,
+            0.8406949250342475
+          ],
+          "accuracy": [
+            0.8283145470289242,
+            0.8621143404084268
+          ],
+          "top5_accuracy": [
+            0.9613873015366279,
+            0.9748136006120477
+          ],
+          "section_balanced_accuracy": [
+            0.9356863511690859,
+            0.9562650050161222
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.707929608868508,
+            0.8116059615509411
+          ],
+          [
+            0.7384864964225984,
+            0.8314590012408775
+          ],
+          [
+            0.8144893588669776,
+            0.8786697574452546
+          ],
+          [
+            0.8536595817206141,
+            0.8858111810726532
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.8183046617925734,
+        "accuracy": 0.8419838523644751,
+        "top5_accuracy": 0.9700115340253749,
+        "section_balanced_accuracy": 0.9422431189882531,
+        "ece_before": 0.07437959393446465,
+        "ece_after": 0.033557652282659146,
+        "temperature": 0.77,
+        "mean_confidence": 0.7681822166905634,
+        "bins": [
+          0.731176673567978,
+          0.7977797421876369,
+          0.881121375545928,
+          0.8542750747520238
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7970208136769777,
+            0.8397565177927125
+          ],
+          "accuracy": [
+            0.8259904084026856,
+            0.8566515816487169
+          ],
+          "top5_accuracy": [
+            0.9628311110316722,
+            0.9766660700490405
+          ],
+          "section_balanced_accuracy": [
+            0.9283051076152645,
+            0.9553108017012205
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6696971657569484,
+            0.8032836864222734
+          ],
+          [
+            0.7414390158598405,
+            0.8406497125762179
+          ],
+          [
+            0.8418536036571391,
+            0.9126471051122428
+          ],
+          [
+            0.8371682797184199,
+            0.8708396615072285
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "student/seed-17": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7634237664843352,
+        "accuracy": 0.8012124273806517,
+        "top5_accuracy": 0.9590805759030058,
+        "section_balanced_accuracy": 0.9107244275357907,
+        "ece_before": 0.10231004287214818,
+        "ece_after": 0.0225319920141824,
+        "temperature": 0.75,
+        "mean_confidence": 0.6989627687104966,
+        "bins": [
+          0.6593699939103088,
+          0.7144297976573901,
+          0.7884772545124684,
+          0.8429275426719258
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7405606660152858,
+            0.7916335917929549
+          ],
+          "accuracy": [
+            0.780534984111452,
+            0.8224451070750881
+          ],
+          "top5_accuracy": [
+            0.9501554820511102,
+            0.9677971896859702
+          ],
+          "section_balanced_accuracy": [
+            0.8979115810160785,
+            0.9273631776505291
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6043685006107603,
+            0.7616285112743146
+          ],
+          [
+            0.6502869991152236,
+            0.7775792454666351
+          ],
+          [
+            0.7510083693309388,
+            0.8247484616328095
+          ],
+          [
+            0.826978929874287,
+            0.8584754224145864
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.783475649099408,
+        "accuracy": 0.8154555940023068,
+        "top5_accuracy": 0.9650134563629373,
+        "section_balanced_accuracy": 0.9250474330745942,
+        "ece_before": 0.09456631042493123,
+        "ece_after": 0.0264727747204972,
+        "temperature": 0.75,
+        "mean_confidence": 0.720933436101732,
+        "bins": [
+          0.6829537612146308,
+          0.748119481813091,
+          0.8324099931516811,
+          0.8422873694917443
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7609062812112526,
+            0.8033952849894296
+          ],
+          "accuracy": [
+            0.7986550040741303,
+            0.831866313058647
+          ],
+          "top5_accuracy": [
+            0.9569411678263035,
+            0.9719443076171632
+          ],
+          "section_balanced_accuracy": [
+            0.9102889224924646,
+            0.9380972946895592
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6044510641112832,
+            0.7580871734248855
+          ],
+          [
+            0.6919282474904844,
+            0.7914901618144989
+          ],
+          [
+            0.794320040777375,
+            0.8650016824320251
+          ],
+          [
+            0.8232336753309946,
+            0.8606902703713784
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "student/seed-101": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7690047317723167,
+        "accuracy": 0.8024753725688305,
+        "top5_accuracy": 0.9590805759030058,
+        "section_balanced_accuracy": 0.9149208896858579,
+        "ece_before": 0.1019237048682005,
+        "ece_after": 0.02679344864523404,
+        "temperature": 0.76,
+        "mean_confidence": 0.7006065171112219,
+        "bins": [
+          0.6774715198577764,
+          0.7291430544517942,
+          0.7811361164163907,
+          0.84079419129755
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7463064582118795,
+            0.7955828200597037
+          ],
+          "accuracy": [
+            0.7829745171509022,
+            0.8226407393590833
+          ],
+          "top5_accuracy": [
+            0.9499869723814487,
+            0.9677883176020242
+          ],
+          "section_balanced_accuracy": [
+            0.9033971609200137,
+            0.9304622776033429
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6073495135867258,
+            0.7618119540306241
+          ],
+          [
+            0.6770563369790479,
+            0.7837903584750701
+          ],
+          [
+            0.7466861245938,
+            0.8133615828111591
+          ],
+          [
+            0.8245544564224382,
+            0.8569188340335758
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7854631339556948,
+        "accuracy": 0.817762399077278,
+        "top5_accuracy": 0.9630911188004614,
+        "section_balanced_accuracy": 0.933156848670493,
+        "ece_before": 0.09682779292860015,
+        "ece_after": 0.033146434819719316,
+        "temperature": 0.76,
+        "mean_confidence": 0.7210261671440253,
+        "bins": [
+          0.6870945479641132,
+          0.7524673478150923,
+          0.8203667380265847,
+          0.8472011868256504
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7641874186120411,
+            0.8058255590989203
+          ],
+          "accuracy": [
+            0.8020573192828094,
+            0.8334787592222818
+          ],
+          "top5_accuracy": [
+            0.9547709224314118,
+            0.9706744087645773
+          ],
+          "section_balanced_accuracy": [
+            0.9176967308755613,
+            0.9471119847097487
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6156714614750328,
+            0.7607669554451915
+          ],
+          [
+            0.6984801098469691,
+            0.791892194720098
+          ],
+          [
+            0.7789479228755135,
+            0.8548557581050001
+          ],
+          [
+            0.8290613897752517,
+            0.863949457375632
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "student/seed-202": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7721328055516993,
+        "accuracy": 0.8065167971710028,
+        "top5_accuracy": 0.9575650416771913,
+        "section_balanced_accuracy": 0.9108354310132311,
+        "ece_before": 0.10350471143270912,
+        "ece_after": 0.024418203810489182,
+        "temperature": 0.76,
+        "mean_confidence": 0.7030120857382938,
+        "bins": [
+          0.6818522972816956,
+          0.7250296250418261,
+          0.7927459676803054,
+          0.844630829082657
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7529681501304021,
+            0.7984080819524234
+          ],
+          "accuracy": [
+            0.788409682919419,
+            0.8255095882588366
+          ],
+          "top5_accuracy": [
+            0.948438656261029,
+            0.9661108360568906
+          ],
+          "section_balanced_accuracy": [
+            0.8971877833967982,
+            0.9284792312108181
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6197851760392227,
+            0.7793157999345742
+          ],
+          [
+            0.6772706004565164,
+            0.7760997805178158
+          ],
+          [
+            0.7585700307893704,
+            0.8246050487708342
+          ],
+          [
+            0.8277000979527741,
+            0.8606499272597035
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7846530472994108,
+        "accuracy": 0.8181468665897732,
+        "top5_accuracy": 0.9703960015378701,
+        "section_balanced_accuracy": 0.9274288447546898,
+        "ece_before": 0.09807754600965968,
+        "ece_after": 0.019881770771747485,
+        "temperature": 0.76,
+        "mean_confidence": 0.7200693205801135,
+        "bins": [
+          0.6615942028985506,
+          0.7651686893933134,
+          0.8400225766466175,
+          0.842620510244363
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7642879737506885,
+            0.8066432585396861
+          ],
+          "accuracy": [
+            0.800645359042373,
+            0.8350853715578624
+          ],
+          "top5_accuracy": [
+            0.9624022631962014,
+            0.9773550530315994
+          ],
+          "section_balanced_accuracy": [
+            0.911362823252095,
+            0.9415720275922819
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5935005724951377,
+            0.7393112459630317
+          ],
+          [
+            0.7181195499528161,
+            0.8065146403053948
+          ],
+          [
+            0.8045141804755449,
+            0.8712508250915306
+          ],
+          [
+            0.8232425204070357,
+            0.861837649817254
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "student/seed-303": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7679379745670447,
+        "accuracy": 0.806264208133367,
+        "top5_accuracy": 0.9580702197524628,
+        "section_balanced_accuracy": 0.9143557999322317,
+        "ece_before": 0.0998213520237306,
+        "ece_after": 0.02334409254721019,
+        "temperature": 0.76,
+        "mean_confidence": 0.7064428561096364,
+        "bins": [
+          0.6621854577871538,
+          0.7179735370563927,
+          0.7981710096372945,
+          0.8469225112346993
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.74107448208164,
+            0.7966939843869077
+          ],
+          "accuracy": [
+            0.7858261833648525,
+            0.82614389745401
+          ],
+          "top5_accuracy": [
+            0.9489315487956937,
+            0.9667463880249912
+          ],
+          "section_balanced_accuracy": [
+            0.9007539729416014,
+            0.931635581625281
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5816069424081101,
+            0.745638516914189
+          ],
+          [
+            0.6630086884809937,
+            0.7768065946137279
+          ],
+          [
+            0.7646338544287166,
+            0.8312078158963434
+          ],
+          [
+            0.831974926187025,
+            0.8615976336395742
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.782854051444315,
+        "accuracy": 0.8185313341022683,
+        "top5_accuracy": 0.9692425990003845,
+        "section_balanced_accuracy": 0.9240866487079483,
+        "ece_before": 0.09855419631542015,
+        "ece_after": 0.02457468698326184,
+        "temperature": 0.76,
+        "mean_confidence": 0.7201116094296149,
+        "bins": [
+          0.6818322981366459,
+          0.7350737112720197,
+          0.8392297813013926,
+          0.8472103000950372
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7600492881596846,
+            0.8025066178633297
+          ],
+          "accuracy": [
+            0.8030825689373636,
+            0.8334666325945705
+          ],
+          "top5_accuracy": [
+            0.961772451831014,
+            0.9760017261671243
+          ],
+          "section_balanced_accuracy": [
+            0.9067842636679334,
+            0.9380686036192247
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5958977737238607,
+            0.7573063108902807
+          ],
+          [
+            0.6864056927135227,
+            0.7776258104692412
+          ],
+          [
+            0.8024334130231646,
+            0.8698724721550187
+          ],
+          [
+            0.8303015509284147,
+            0.863908684379796
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "student/seed-404": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7693605592453779,
+        "accuracy": 0.8002020712301086,
+        "top5_accuracy": 0.9603435210911846,
+        "section_balanced_accuracy": 0.915406627353674,
+        "ece_before": 0.098026544707142,
+        "ece_after": 0.02394833746144138,
+        "temperature": 0.76,
+        "mean_confidence": 0.7021755265229666,
+        "bins": [
+          0.703067636137363,
+          0.709016967526896,
+          0.7970069112216782,
+          0.8347026977216817
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7497006399532019,
+            0.7944930010439943
+          ],
+          "accuracy": [
+            0.780393554509341,
+            0.8207662410453838
+          ],
+          "top5_accuracy": [
+            0.951731193689619,
+            0.9681462581551089
+          ],
+          "section_balanced_accuracy": [
+            0.9050399998132627,
+            0.9297510054581317
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6479861239663257,
+            0.7934744369401184
+          ],
+          [
+            0.6630505773986501,
+            0.7601784588069523
+          ],
+          [
+            0.7628422123412758,
+            0.8313833183084064
+          ],
+          [
+            0.8192987621549424,
+            0.850263384419335
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7797054000702471,
+        "accuracy": 0.815840061514802,
+        "top5_accuracy": 0.9657823913879278,
+        "section_balanced_accuracy": 0.9273054758974808,
+        "ece_before": 0.09744124840234498,
+        "ece_after": 0.024060205733468905,
+        "temperature": 0.76,
+        "mean_confidence": 0.718449055905513,
+        "bins": [
+          0.6712215320910973,
+          0.7433772315821188,
+          0.8185812728523727,
+          0.8475965392105309
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7549983506226027,
+            0.8012334363598065
+          ],
+          "accuracy": [
+            0.7994141839059856,
+            0.8310016788587308
+          ],
+          "top5_accuracy": [
+            0.9573284349062653,
+            0.9732528858300534
+          ],
+          "section_balanced_accuracy": [
+            0.9088795562636927,
+            0.9410362598127404
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5877410904313078,
+            0.7461393264486296
+          ],
+          [
+            0.6900724389029184,
+            0.7876970908877905
+          ],
+          [
+            0.7769764540173155,
+            0.8523391940986016
+          ],
+          [
+            0.8283632295408588,
+            0.8650382928678438
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "ce100c/seed-17": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7220161586692,
+        "accuracy": 0.757514523869664,
+        "top5_accuracy": 0.9280121242738065,
+        "section_balanced_accuracy": 0.8781127310718546,
+        "ece_before": 0.16023584832173482,
+        "ece_after": 0.03806397127367113,
+        "temperature": 0.71,
+        "mean_confidence": 0.5972786755479292,
+        "bins": [
+          0.6245784188441342,
+          0.6737653101718056,
+          0.7630232867932648,
+          0.7909440299976392
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.703314885067775,
+            0.747510051368177
+          ],
+          "accuracy": [
+            0.7369026576787334,
+            0.7787302437717654
+          ],
+          "top5_accuracy": [
+            0.9170776332839907,
+            0.938523678359184
+          ],
+          "section_balanced_accuracy": [
+            0.8653670039984915,
+            0.8953563270507714
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5770016060444823,
+            0.7170287956116483
+          ],
+          [
+            0.6223281157874769,
+            0.7259023418633881
+          ],
+          [
+            0.728252476823717,
+            0.793985090608201
+          ],
+          [
+            0.7730807367713223,
+            0.8086706121779078
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7236454356004681,
+        "accuracy": 0.7627835447904652,
+        "top5_accuracy": 0.9323337178008458,
+        "section_balanced_accuracy": 0.8874128086563584,
+        "ece_before": 0.1458866767170905,
+        "ece_after": 0.04566588744757025,
+        "temperature": 0.71,
+        "mean_confidence": 0.6168968680733746,
+        "bins": [
+          0.5742926155969635,
+          0.7027225176661267,
+          0.8030235952358715,
+          0.7872532415157141
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7013579004542592,
+            0.7430609108370533
+          ],
+          "accuracy": [
+            0.744844116394088,
+            0.7796074090555122
+          ],
+          "top5_accuracy": [
+            0.9209560485270173,
+            0.9431300296815741
+          ],
+          "section_balanced_accuracy": [
+            0.8682639237984978,
+            0.9033780101930199
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.48920656034786464,
+            0.6444868833839346
+          ],
+          [
+            0.6537940696585162,
+            0.7439927389192592
+          ],
+          [
+            0.7619354797620013,
+            0.8395248611537173
+          ],
+          [
+            0.7670825929373909,
+            0.8068348397169217
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "ce100c/seed-101": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7254744940536881,
+        "accuracy": 0.7620611265471079,
+        "top5_accuracy": 0.9234655215963627,
+        "section_balanced_accuracy": 0.8772557523287847,
+        "ece_before": 0.16639981679755322,
+        "ece_after": 0.039951951036523124,
+        "temperature": 0.71,
+        "mean_confidence": 0.5956613097495546,
+        "bins": [
+          0.6186130074439403,
+          0.685825554258808,
+          0.7727475671894983,
+          0.7912921669815942
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7009386392861348,
+            0.751258803189853
+          ],
+          "accuracy": [
+            0.7409173981179095,
+            0.7829385069672676
+          ],
+          "top5_accuracy": [
+            0.9115059013991903,
+            0.9352574154129634
+          ],
+          "section_balanced_accuracy": [
+            0.8607871984400106,
+            0.893928295532002
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.559203551492554,
+            0.6991387799792239
+          ],
+          [
+            0.6277085383231262,
+            0.7423136992467257
+          ],
+          [
+            0.7377665699495516,
+            0.8060993640733096
+          ],
+          [
+            0.7732822004526156,
+            0.8085490141524765
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7476385606325848,
+        "accuracy": 0.7770088427527874,
+        "top5_accuracy": 0.932718185313341,
+        "section_balanced_accuracy": 0.9020818394037411,
+        "ece_before": 0.1604623383286902,
+        "ece_after": 0.03358200977574795,
+        "temperature": 0.71,
+        "mean_confidence": 0.6165465044240971,
+        "bins": [
+          0.6376121463077986,
+          0.7344208657883471,
+          0.7956169822410231,
+          0.7972830801031873
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.727603333315065,
+            0.7694131370599357
+          ],
+          "accuracy": [
+            0.7606898117067981,
+            0.7938863781340887
+          ],
+          "top5_accuracy": [
+            0.9218627909509872,
+            0.942583965478933
+          ],
+          "section_balanced_accuracy": [
+            0.8867540728955734,
+            0.9172496294717909
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5710635678805321,
+            0.7205661880390142
+          ],
+          [
+            0.6831108678746217,
+            0.7750889029125636
+          ],
+          [
+            0.7548583238049063,
+            0.8335633682284737
+          ],
+          [
+            0.7780214068821452,
+            0.8160686438957522
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "ce100c/seed-202": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7104563706091623,
+        "accuracy": 0.7527153321545845,
+        "top5_accuracy": 0.9206870421823693,
+        "section_balanced_accuracy": 0.883674942061068,
+        "ece_before": 0.1573430437108753,
+        "ece_after": 0.03985330419818472,
+        "temperature": 0.72,
+        "mean_confidence": 0.5953722884437093,
+        "bins": [
+          0.6067575523592484,
+          0.6392440362183115,
+          0.7557858901662791,
+          0.796371045614421
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.6861641168199656,
+            0.7375186224833191
+          ],
+          "accuracy": [
+            0.7298699048381451,
+            0.7744867832405111
+          ],
+          "top5_accuracy": [
+            0.9073238337972117,
+            0.9331126839903289
+          ],
+          "section_balanced_accuracy": [
+            0.8685404092082105,
+            0.9007644200774008
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5421468168135036,
+            0.6972616649667427
+          ],
+          [
+            0.5845071679075642,
+            0.6954697266716082
+          ],
+          [
+            0.7198164474335801,
+            0.7882544849771578
+          ],
+          [
+            0.7787172810034463,
+            0.8148985629924299
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7499826784969872,
+        "accuracy": 0.7766243752402922,
+        "top5_accuracy": 0.936562860438293,
+        "section_balanced_accuracy": 0.9040975732692417,
+        "ece_before": 0.16093252918399154,
+        "ece_after": 0.045401696310370755,
+        "temperature": 0.72,
+        "mean_confidence": 0.6156918460563007,
+        "bins": [
+          0.6427881297446515,
+          0.7423154826585278,
+          0.7966817519886574,
+          0.7948939131498962
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7248351322245877,
+            0.7731851363037647
+          ],
+          "accuracy": [
+            0.757614606065693,
+            0.794520831678224
+          ],
+          "top5_accuracy": [
+            0.9261933451827069,
+            0.9462661180902904
+          ],
+          "section_balanced_accuracy": [
+            0.8854487344015826,
+            0.9197013202665575
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5671760571057246,
+            0.7131352343308864
+          ],
+          [
+            0.689251275257213,
+            0.7878244270196115
+          ],
+          [
+            0.755152424229976,
+            0.8309062506435085
+          ],
+          [
+            0.7753500874182377,
+            0.8141326374176213
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "ce100c/seed-303": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7210965511037638,
+        "accuracy": 0.7645870169234655,
+        "top5_accuracy": 0.9242232887092701,
+        "section_balanced_accuracy": 0.8784271602163249,
+        "ece_before": 0.1592153541872123,
+        "ece_after": 0.029817331279132584,
+        "temperature": 0.72,
+        "mean_confidence": 0.60544540568953,
+        "bins": [
+          0.5836540521592345,
+          0.6869935799486159,
+          0.760344402780027,
+          0.8032119603792838
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.6970689795530431,
+            0.7481188178131973
+          ],
+          "accuracy": [
+            0.7416429082285628,
+            0.7863158394643812
+          ],
+          "top5_accuracy": [
+            0.911567926870648,
+            0.9360661900653273
+          ],
+          "section_balanced_accuracy": [
+            0.8642137669587258,
+            0.8978245645131442
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5201839052573743,
+            0.6764969226977596
+          ],
+          [
+            0.6357956187511801,
+            0.7403465227077463
+          ],
+          [
+            0.7284397989734686,
+            0.7906077984511126
+          ],
+          [
+            0.7870119536879048,
+            0.8202181756639023
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7449718666504136,
+        "accuracy": 0.7773933102652826,
+        "top5_accuracy": 0.9342560553633218,
+        "section_balanced_accuracy": 0.899853913854882,
+        "ece_before": 0.15716243573986508,
+        "ece_after": 0.042155236017442047,
+        "temperature": 0.72,
+        "mean_confidence": 0.6202308745254176,
+        "bins": [
+          0.618944099378882,
+          0.733793895119083,
+          0.8049707070423183,
+          0.7971538086375592
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.723794793635197,
+            0.7671212201536991
+          ],
+          "accuracy": [
+            0.7590072057646117,
+            0.7949059511794678
+          ],
+          "top5_accuracy": [
+            0.9234029598244223,
+            0.9440190433091347
+          ],
+          "section_balanced_accuracy": [
+            0.8850378634902009,
+            0.9161038042139593
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5435210411569107,
+            0.7021910259839322
+          ],
+          [
+            0.6855698394389654,
+            0.7757368491885162
+          ],
+          [
+            0.7652669193362787,
+            0.8407784682066919
+          ],
+          [
+            0.7765163724583543,
+            0.8155715872160866
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "ce100c/seed-404": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7156886384858555,
+        "accuracy": 0.7537256883051275,
+        "top5_accuracy": 0.9237181106339984,
+        "section_balanced_accuracy": 0.884213770285782,
+        "ece_before": 0.15686216802069036,
+        "ece_after": 0.02982919737373063,
+        "temperature": 0.72,
+        "mean_confidence": 0.5968635202844371,
+        "bins": [
+          0.6181384261257057,
+          0.6606617181236094,
+          0.7454511529656649,
+          0.7937468743970362
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.6933876042448631,
+            0.7429834702577853
+          ],
+          "accuracy": [
+            0.7312169476508572,
+            0.7752374777450686
+          ],
+          "top5_accuracy": [
+            0.9119480503991498,
+            0.9355219805678842
+          ],
+          "section_balanced_accuracy": [
+            0.8680711615736524,
+            0.9036845429372806
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5564484321673058,
+            0.7067199814611771
+          ],
+          [
+            0.6063428432333702,
+            0.7232614761799798
+          ],
+          [
+            0.7123864057427075,
+            0.7800984666824813
+          ],
+          [
+            0.7756053433386052,
+            0.8119680807188647
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7356145516463234,
+        "accuracy": 0.7704728950403691,
+        "top5_accuracy": 0.9331026528258363,
+        "section_balanced_accuracy": 0.8869650480508171,
+        "ece_before": 0.15974322581613384,
+        "ece_after": 0.04990215924382925,
+        "temperature": 0.72,
+        "mean_confidence": 0.6107296692242353,
+        "bins": [
+          0.596687370600414,
+          0.7255948833956353,
+          0.8008029727211313,
+          0.7919877115702152
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7142678137943033,
+            0.757247391729311
+          ],
+          "accuracy": [
+            0.7521137559462668,
+            0.7878796739323055
+          ],
+          "top5_accuracy": [
+            0.920169803281755,
+            0.9440475513783093
+          ],
+          "section_balanced_accuracy": [
+            0.8680987255597942,
+            0.9024748230347445
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5311761228176742,
+            0.6769313672438673
+          ],
+          [
+            0.6746934609582511,
+            0.7697394898146314
+          ],
+          [
+            0.7576822137760308,
+            0.8397272954328043
+          ],
+          [
+            0.770529693007621,
+            0.8107048061122751
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-full/seed-17": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.4997031828199951,
+        "accuracy": 0.5483708007072493,
+        "top5_accuracy": 0.7984339479666582,
+        "section_balanced_accuracy": 0.7363645260508715,
+        "ece_before": 0.06520533767895226,
+        "ece_after": 0.05113932979578806,
+        "temperature": 0.89,
+        "mean_confidence": 0.49300730928419645,
+        "bins": [
+          0.35450292591899807,
+          0.43582260160292463,
+          0.5386722576286579,
+          0.6060314664165103
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.48171496139632886,
+            0.5279103928342342
+          ],
+          "accuracy": [
+            0.5254883178127523,
+            0.571729876679255
+          ],
+          "top5_accuracy": [
+            0.7765298332632017,
+            0.8183898204524419
+          ],
+          "section_balanced_accuracy": [
+            0.7181991898410454,
+            0.7619311887169243
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.3013689201947586,
+            0.4608491733020912
+          ],
+          [
+            0.3837328480463962,
+            0.4904652359880583
+          ],
+          [
+            0.499417320322895,
+            0.5823470611654668
+          ],
+          [
+            0.5860749522037413,
+            0.6252300747697723
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5226659524631537,
+        "accuracy": 0.5620915032679739,
+        "top5_accuracy": 0.8269896193771626,
+        "section_balanced_accuracy": 0.7487969980674848,
+        "ece_before": 0.04973899082219447,
+        "ece_after": 0.04204487311107131,
+        "temperature": 0.89,
+        "mean_confidence": 0.5123525124457794,
+        "bins": [
+          0.3535369220151829,
+          0.5194622680994863,
+          0.6041717503865841,
+          0.5844295786009562
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4978116134289606,
+            0.543168770732109
+          ],
+          "accuracy": [
+            0.5390379972781875,
+            0.5821427218802583
+          ],
+          "top5_accuracy": [
+            0.8112380556709596,
+            0.8418606747887447
+          ],
+          "section_balanced_accuracy": [
+            0.7286354330698033,
+            0.7709061331159069
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.26876523235218885,
+            0.4269751821246386
+          ],
+          [
+            0.4592200772767955,
+            0.5673347577613734
+          ],
+          [
+            0.5471093558400526,
+            0.6517505467081318
+          ],
+          [
+            0.5589013670741979,
+            0.608710078260813
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-full/seed-101": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.49127931788372575,
+        "accuracy": 0.5380146501641829,
+        "top5_accuracy": 0.8050012629451881,
+        "section_balanced_accuracy": 0.7293821673514639,
+        "ece_before": 0.05708563601393741,
+        "ece_after": 0.051316268313531734,
+        "temperature": 0.89,
+        "mean_confidence": 0.49523946939420227,
+        "bins": [
+          0.33324784987525596,
+          0.4516043622072195,
+          0.5475603529233473,
+          0.5814899113947593
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4696099834658838,
+            0.5183761127047094
+          ],
+          "accuracy": [
+            0.5138782458634571,
+            0.5618064833106724
+          ],
+          "top5_accuracy": [
+            0.7824311818217619,
+            0.8261139836531628
+          ],
+          "section_balanced_accuracy": [
+            0.7068403369723523,
+            0.7541761103251093
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.2839815222782329,
+            0.41071175654056075
+          ],
+          [
+            0.39440352481819524,
+            0.5055473324720249
+          ],
+          [
+            0.5075238170327185,
+            0.5851160795058636
+          ],
+          [
+            0.5599966153152399,
+            0.6027299688474438
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5267076758516174,
+        "accuracy": 0.5678585159554018,
+        "top5_accuracy": 0.8204536716647444,
+        "section_balanced_accuracy": 0.7527648761930351,
+        "ece_before": 0.06244387851103391,
+        "ece_after": 0.06273502937704725,
+        "temperature": 0.89,
+        "mean_confidence": 0.5231634349847831,
+        "bins": [
+          0.3566425120772947,
+          0.5146140409298303,
+          0.6152108656712238,
+          0.5920783024631925
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5051781598837204,
+            0.5518002820852134
+          ],
+          "accuracy": [
+            0.5449519611572979,
+            0.5906314414752556
+          ],
+          "top5_accuracy": [
+            0.8043472385428907,
+            0.8368940016433853
+          ],
+          "section_balanced_accuracy": [
+            0.7345780598494402,
+            0.7733531819069448
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.2873590053737113,
+            0.44121804222347694
+          ],
+          [
+            0.4668301970930992,
+            0.5578905189898365
+          ],
+          [
+            0.5655312472389695,
+            0.6646248603179603
+          ],
+          [
+            0.5657951090017266,
+            0.6165875255283247
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "anchor-full/seed-202": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.49990541951039275,
+        "accuracy": 0.547613033594342,
+        "top5_accuracy": 0.8007072493053802,
+        "section_balanced_accuracy": 0.7293005553868986,
+        "ece_before": 0.054835102478228516,
+        "ece_after": 0.04565630785100199,
+        "temperature": 0.89,
+        "mean_confidence": 0.4990982554478225,
+        "bins": [
+          0.3550000240183979,
+          0.45639863857695456,
+          0.5109299856194308,
+          0.6038005704294046
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4786008099491566,
+            0.5268742545551979
+          ],
+          "accuracy": [
+            0.5247135043206471,
+            0.5713630070755366
+          ],
+          "top5_accuracy": [
+            0.7802146944211902,
+            0.8202724192502632
+          ],
+          "section_balanced_accuracy": [
+            0.7112563161603959,
+            0.7522693398971786
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.30329609878383273,
+            0.44091955988530174
+          ],
+          [
+            0.4079867021770913,
+            0.5034859755050971
+          ],
+          [
+            0.4684198210238539,
+            0.5500488182025285
+          ],
+          [
+            0.5841333173781331,
+            0.6243250053238268
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5168679506239856,
+        "accuracy": 0.5636293733179546,
+        "top5_accuracy": 0.8308342945021145,
+        "section_balanced_accuracy": 0.7574887261014369,
+        "ece_before": 0.053370170856509795,
+        "ece_after": 0.05103276998297212,
+        "temperature": 0.89,
+        "mean_confidence": 0.5256192899890068,
+        "bins": [
+          0.33309178743961354,
+          0.5088744249693498,
+          0.5892093688257372,
+          0.5935552449606661
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4928947974191523,
+            0.5389824492213621
+          ],
+          "accuracy": [
+            0.5406720693386471,
+            0.5866429539371943
+          ],
+          "top5_accuracy": [
+            0.8140493457851558,
+            0.8463523635998266
+          ],
+          "section_balanced_accuracy": [
+            0.7367566746731403,
+            0.7783555556530417
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.24599084792019577,
+            0.40318752455909196
+          ],
+          [
+            0.46107060303955344,
+            0.5582734939724585
+          ],
+          [
+            0.5320310406356831,
+            0.6440607358675078
+          ],
+          [
+            0.5654481154735306,
+            0.6179042158999758
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-full/seed-303": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.5022097131997778,
+        "accuracy": 0.5463500884061632,
+        "top5_accuracy": 0.802980550644102,
+        "section_balanced_accuracy": 0.7229818300635633,
+        "ece_before": 0.057911915488798274,
+        "ece_after": 0.047818405177917,
+        "temperature": 0.89,
+        "mean_confidence": 0.4960418797169605,
+        "bins": [
+          0.3629330526490307,
+          0.4570595466733504,
+          0.5371977004175212,
+          0.5944185720737186
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4796136306535333,
+            0.5303116716104972
+          ],
+          "accuracy": [
+            0.521684111375607,
+            0.5707695582051242
+          ],
+          "top5_accuracy": [
+            0.780497337432823,
+            0.822884071318798
+          ],
+          "section_balanced_accuracy": [
+            0.7024495121374352,
+            0.7491523762832637
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.30658809496712275,
+            0.4614745989078993
+          ],
+          [
+            0.39539016738768706,
+            0.5243972463528647
+          ],
+          [
+            0.4964405166395857,
+            0.5796506184428835
+          ],
+          [
+            0.5721539736320901,
+            0.6160769293331877
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5241000276080086,
+        "accuracy": 0.576316801230296,
+        "top5_accuracy": 0.8300653594771242,
+        "section_balanced_accuracy": 0.7549064332496108,
+        "ece_before": 0.0667669758164547,
+        "ece_after": 0.0588798916723518,
+        "temperature": 0.89,
+        "mean_confidence": 0.521868031050597,
+        "bins": [
+          0.3230848861283644,
+          0.5057227964182851,
+          0.6076554822462752,
+          0.6126111704292833
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5021324446211538,
+            0.5479360632905562
+          ],
+          "accuracy": [
+            0.5552519547756417,
+            0.5988479842061513
+          ],
+          "top5_accuracy": [
+            0.815131313555761,
+            0.8448016359687402
+          ],
+          "section_balanced_accuracy": [
+            0.7341729351826816,
+            0.7764992569261542
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.24143154173724826,
+            0.3907793731027426
+          ],
+          [
+            0.46411496009670417,
+            0.5489718086306187
+          ],
+          [
+            0.5595387320033929,
+            0.6552817949216231
+          ],
+          [
+            0.5864478837227584,
+            0.638283066330691
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-full/seed-404": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.49916607703446575,
+        "accuracy": 0.5420560747663551,
+        "top5_accuracy": 0.799696893154837,
+        "section_balanced_accuracy": 0.723379122438381,
+        "ece_before": 0.06084977926511443,
+        "ece_after": 0.053536987031942505,
+        "temperature": 0.9,
+        "mean_confidence": 0.4973314112671578,
+        "bins": [
+          0.354473924170384,
+          0.46469169484142264,
+          0.532474413609238,
+          0.587903231689417
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.47536726048094463,
+            0.5219185410004341
+          ],
+          "accuracy": [
+            0.5208449261949767,
+            0.5639768999930211
+          ],
+          "top5_accuracy": [
+            0.7774415756743553,
+            0.8217287635230921
+          ],
+          "section_balanced_accuracy": [
+            0.7007303618458051,
+            0.7469542838591651
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.2934412621068501,
+            0.42176139151599235
+          ],
+          [
+            0.40685469452980294,
+            0.5132403457367222
+          ],
+          [
+            0.49706216266943276,
+            0.5674994347335175
+          ],
+          [
+            0.5652449343856506,
+            0.6092898896911565
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5203816047292026,
+        "accuracy": 0.5693963860053826,
+        "top5_accuracy": 0.829680891964629,
+        "section_balanced_accuracy": 0.7508206476223049,
+        "ece_before": 0.07169562848152333,
+        "ece_after": 0.05336748329603606,
+        "temperature": 0.9,
+        "mean_confidence": 0.5099733807024255,
+        "bins": [
+          0.3335748792270532,
+          0.49451121403659,
+          0.6203840698469855,
+          0.5994502647039714
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.49650372293806666,
+            0.5427704761683917
+          ],
+          "accuracy": [
+            0.5469425752092736,
+            0.5908153465255379
+          ],
+          "top5_accuracy": [
+            0.8125223589345892,
+            0.8456688425693974
+          ],
+          "section_balanced_accuracy": [
+            0.7307859400971484,
+            0.7736740721969805
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.26572981366459625,
+            0.40704744197450143
+          ],
+          [
+            0.4395279297284635,
+            0.5391076450723522
+          ],
+          [
+            0.5659936398382057,
+            0.6675462457294375
+          ],
+          [
+            0.5752930676488408,
+            0.6248313715903651
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-crop/seed-17": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.5225334364883395,
+        "accuracy": 0.5617580197019449,
+        "top5_accuracy": 0.8123263450366254,
+        "section_balanced_accuracy": 0.7363089005060859,
+        "ece_before": 0.061792571195695825,
+        "ece_after": 0.04020282617585948,
+        "temperature": 0.88,
+        "mean_confidence": 0.5034453757993436,
+        "bins": [
+          0.4207036965517245,
+          0.4545898399782284,
+          0.5666145356693965,
+          0.6057507230299413
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4915925843071059,
+            0.5575796040908055
+          ],
+          "accuracy": [
+            0.5315744888608069,
+            0.5898090223695883
+          ],
+          "top5_accuracy": [
+            0.7933744751431906,
+            0.8316612269670235
+          ],
+          "section_balanced_accuracy": [
+            0.7118466714415426,
+            0.7662411291593275
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.36074317633640435,
+            0.5135552669384917
+          ],
+          [
+            0.3839755906097726,
+            0.5228286456459255
+          ],
+          [
+            0.5270332499482793,
+            0.6050650434507331
+          ],
+          [
+            0.5856196680294572,
+            0.6269035510953257
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5399548725623123,
+        "accuracy": 0.5751633986928104,
+        "top5_accuracy": 0.8335255670895809,
+        "section_balanced_accuracy": 0.7488879696044763,
+        "ece_before": 0.06186154586636856,
+        "ece_after": 0.035309551078293956,
+        "temperature": 0.88,
+        "mean_confidence": 0.5233766017909423,
+        "bins": [
+          0.42444789510006903,
+          0.5048353640928828,
+          0.5829898476062159,
+          0.6092027807296756
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5176684680072102,
+            0.562829519532608
+          ],
+          "accuracy": [
+            0.5533093006271239,
+            0.5968373375507344
+          ],
+          "top5_accuracy": [
+            0.818103480544501,
+            0.8483744576609681
+          ],
+          "section_balanced_accuracy": [
+            0.7290673872220725,
+            0.7706661628796514
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.35152341743933824,
+            0.5027833812542309
+          ],
+          [
+            0.46338366378303847,
+            0.5435226648491057
+          ],
+          [
+            0.5264649519987049,
+            0.6298688780948954
+          ],
+          [
+            0.5827330318969063,
+            0.6345637946017942
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-crop/seed-101": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.5169270176495724,
+        "accuracy": 0.5567062389492295,
+        "top5_accuracy": 0.8075271533215459,
+        "section_balanced_accuracy": 0.7361533916279226,
+        "ece_before": 0.0694793811097508,
+        "ece_after": 0.0372013408912077,
+        "temperature": 0.87,
+        "mean_confidence": 0.49207356222117815,
+        "bins": [
+          0.39172657538689315,
+          0.4834815415285988,
+          0.5419119085834598,
+          0.5976732166389246
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4916166073601823,
+            0.5491656940125718
+          ],
+          "accuracy": [
+            0.5302105468571595,
+            0.5819946911887621
+          ],
+          "top5_accuracy": [
+            0.785495456050616,
+            0.827803940644105
+          ],
+          "section_balanced_accuracy": [
+            0.7154862159947372,
+            0.7667516540516909
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.33130014630258425,
+            0.5081898609004727
+          ],
+          [
+            0.4235829371454855,
+            0.5371990529818673
+          ],
+          [
+            0.49905832924162413,
+            0.5867227687803892
+          ],
+          [
+            0.5770746383462687,
+            0.61850724322625
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5567481227114399,
+        "accuracy": 0.6013071895424836,
+        "top5_accuracy": 0.837754709727028,
+        "section_balanced_accuracy": 0.7787161783548356,
+        "ece_before": 0.087999051025017,
+        "ece_after": 0.04334202340524891,
+        "temperature": 0.87,
+        "mean_confidence": 0.5156114256566948,
+        "bins": [
+          0.3878364389233955,
+          0.5445756467842934,
+          0.5983336105970377,
+          0.640530140783582
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5333097077007383,
+            0.5774409140815703
+          ],
+          "accuracy": [
+            0.580135911067159,
+            0.6221788895928915
+          ],
+          "top5_accuracy": [
+            0.8218826129500287,
+            0.8524043295870694
+          ],
+          "section_balanced_accuracy": [
+            0.7585674827812827,
+            0.7983596629624115
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.30486547433681815,
+            0.4571754476584022
+          ],
+          [
+            0.496892603215602,
+            0.5841714062518948
+          ],
+          [
+            0.5374208416906798,
+            0.6473885177821042
+          ],
+          [
+            0.615444665237409,
+            0.6643975430158147
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "anchor-crop/seed-202": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.5050127693855041,
+        "accuracy": 0.5468552664814347,
+        "top5_accuracy": 0.798686537004294,
+        "section_balanced_accuracy": 0.7323797163677622,
+        "ece_before": 0.061765799380198994,
+        "ece_after": 0.03871998576492867,
+        "temperature": 0.87,
+        "mean_confidence": 0.4887553565679263,
+        "bins": [
+          0.38005028653164336,
+          0.45371402268583105,
+          0.5450613837287168,
+          0.5914336162758618
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4833029057569672,
+            0.5346761401422901
+          ],
+          "accuracy": [
+            0.5216993533778006,
+            0.5710754096874169
+          ],
+          "top5_accuracy": [
+            0.7751897625161298,
+            0.8187924065244513
+          ],
+          "section_balanced_accuracy": [
+            0.7176297477776719,
+            0.7564275331328112
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.3343097340227199,
+            0.4612177710155918
+          ],
+          [
+            0.39698363937236597,
+            0.5083989711139434
+          ],
+          [
+            0.5072323887588686,
+            0.5818016467101617
+          ],
+          [
+            0.5704056805959168,
+            0.6120162609778654
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5528536161410625,
+        "accuracy": 0.5947712418300654,
+        "top5_accuracy": 0.8369857747020377,
+        "section_balanced_accuracy": 0.7700794621117965,
+        "ece_before": 0.08493339962122608,
+        "ece_after": 0.052494216048765474,
+        "temperature": 0.87,
+        "mean_confidence": 0.5145690820107124,
+        "bins": [
+          0.3874051069703243,
+          0.5328875463508922,
+          0.6329460371020472,
+          0.62434872349142
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5288477849882645,
+            0.5790394257416619
+          ],
+          "accuracy": [
+            0.5720397577204388,
+            0.6173918252535074
+          ],
+          "top5_accuracy": [
+            0.821456006787401,
+            0.851650178850883
+          ],
+          "section_balanced_accuracy": [
+            0.7508867108492219,
+            0.7918759022991623
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.3107515371102328,
+            0.4698147535154915
+          ],
+          [
+            0.4831285693268577,
+            0.5763873403497394
+          ],
+          [
+            0.5772525456836061,
+            0.685040057630075
+          ],
+          [
+            0.6002833248784297,
+            0.6487170569246715
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "anchor-crop/seed-303": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.5107935624597585,
+        "accuracy": 0.5559484718363223,
+        "top5_accuracy": 0.806264208133367,
+        "section_balanced_accuracy": 0.7305293704489754,
+        "ece_before": 0.05972281287169746,
+        "ece_after": 0.03260013410213994,
+        "temperature": 0.87,
+        "mean_confidence": 0.5000880032721563,
+        "bins": [
+          0.3673307133631538,
+          0.4676079251293911,
+          0.5367087070948805,
+          0.607657512832976
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.4848554455556266,
+            0.5427910215554804
+          ],
+          "accuracy": [
+            0.5293536202879199,
+            0.5819063508339699
+          ],
+          "top5_accuracy": [
+            0.7832924759238826,
+            0.8280222421066811
+          ],
+          "section_balanced_accuracy": [
+            0.709906439245155,
+            0.7566380308368478
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.3087983938228549,
+            0.46738790997680546
+          ],
+          [
+            0.3947872600415972,
+            0.5311785658131671
+          ],
+          [
+            0.49727350640061363,
+            0.5767753834890507
+          ],
+          [
+            0.5865656446903137,
+            0.6299625088957168
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5435220518624703,
+        "accuracy": 0.5855440215301807,
+        "top5_accuracy": 0.8289119569396386,
+        "section_balanced_accuracy": 0.7526357184319697,
+        "ece_before": 0.07008941084169673,
+        "ece_after": 0.050855524020716664,
+        "temperature": 0.87,
+        "mean_confidence": 0.5178576495285517,
+        "bins": [
+          0.37598343685300206,
+          0.5409222017539687,
+          0.5936013233711444,
+          0.6167324407340978
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5209931421910653,
+            0.5659911280585155
+          ],
+          "accuracy": [
+            0.5616044839540542,
+            0.6077957377022345
+          ],
+          "top5_accuracy": [
+            0.8130270984645972,
+            0.8440486875583243
+          ],
+          "section_balanced_accuracy": [
+            0.7316466500219977,
+            0.7751089421472545
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.2954147149786972,
+            0.45716009681873254
+          ],
+          [
+            0.4902492985135317,
+            0.5889138236663392
+          ],
+          [
+            0.5380578696371489,
+            0.6417971347010325
+          ],
+          [
+            0.5903513620607265,
+            0.6410471566545358
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "anchor-crop/seed-404": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.522937402717921,
+        "accuracy": 0.5615054306643091,
+        "top5_accuracy": 0.805253851982824,
+        "section_balanced_accuracy": 0.7438326218912458,
+        "ece_before": 0.05950659916593973,
+        "ece_after": 0.028804008311925127,
+        "temperature": 0.88,
+        "mean_confidence": 0.5029661356988189,
+        "bins": [
+          0.44547294530300324,
+          0.43793163010314023,
+          0.5498640376598459,
+          0.611130054140403
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5003427207462164,
+            0.5532229274532975
+          ],
+          "accuracy": [
+            0.5368912033209741,
+            0.588187810739509
+          ],
+          "top5_accuracy": [
+            0.7858676824173803,
+            0.8246981831419399
+          ],
+          "section_balanced_accuracy": [
+            0.7256335439243794,
+            0.7684046210259935
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.39395335684906985,
+            0.5427478125571885
+          ],
+          [
+            0.37198254164993955,
+            0.5038217877184409
+          ],
+          [
+            0.5107454745975976,
+            0.5891991441825387
+          ],
+          [
+            0.5902070801283948,
+            0.631662330827683
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.5475969969197222,
+        "accuracy": 0.5882352941176471,
+        "top5_accuracy": 0.8319876970396002,
+        "section_balanced_accuracy": 0.7544117275305381,
+        "ece_before": 0.07531983422021632,
+        "ece_after": 0.04723483589781635,
+        "temperature": 0.88,
+        "mean_confidence": 0.5182234769284992,
+        "bins": [
+          0.3744306418219462,
+          0.5441587156577758,
+          0.6220905986123377,
+          0.6145662067723145
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.5249068737779655,
+            0.5719627000078544
+          ],
+          "accuracy": [
+            0.5664981353814563,
+            0.6089065385228939
+          ],
+          "top5_accuracy": [
+            0.8157883354580222,
+            0.847682119205298
+          ],
+          "section_balanced_accuracy": [
+            0.733165396263285,
+            0.7785235502525457
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.2977450958132776,
+            0.45266043252435534
+          ],
+          [
+            0.49825541996806144,
+            0.5859988930639571
+          ],
+          [
+            0.5747170585625914,
+            0.6683373157271753
+          ],
+          [
+            0.591264079361607,
+            0.6378501488692517
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "shipped": {
+      "validation": {
+        "kind": "single",
+        "balanced_accuracy": 0.7638829570251822,
+        "accuracy": 0.799696893154837,
+        "top5_accuracy": 0.9565546855266481,
+        "section_balanced_accuracy": 0.9093359102350638,
+        "ece_before": 0.11070152917431242,
+        "ece_after": 0.024676809881694566,
+        "temperature": 0.74,
+        "mean_confidence": 0.6890248624629421,
+        "bins": [
+          0.6643537001727875,
+          0.7174888575386525,
+          0.7898743193059902,
+          0.8387961602264719
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7424944704086487,
+            0.7921386585605341
+          ],
+          "accuracy": [
+            0.7784742940688251,
+            0.8201629644353087
+          ],
+          "top5_accuracy": [
+            0.9475324846190559,
+            0.9651896458106758
+          ],
+          "section_balanced_accuracy": [
+            0.8957557293110137,
+            0.9283119824395722
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6154882423473975,
+            0.7634750129559781
+          ],
+          [
+            0.6604014689530917,
+            0.77548093727941
+          ],
+          [
+            0.7562366574594012,
+            0.8229587090936045
+          ],
+          [
+            0.8218943598973998,
+            0.8550024892183795
+          ]
+        ]
+      },
+      "test": {
+        "kind": "single",
+        "balanced_accuracy": 0.7750995449113366,
+        "accuracy": 0.8116109188773548,
+        "top5_accuracy": 0.962322183775471,
+        "section_balanced_accuracy": 0.9204852639061195,
+        "ece_before": 0.09991702746161468,
+        "ece_after": 0.030985964747606815,
+        "temperature": 0.74,
+        "mean_confidence": 0.7117859769778385,
+        "bins": [
+          0.6515527950310558,
+          0.744267047697499,
+          0.838914116573963,
+          0.8374813889820336
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7516673129754866,
+            0.7944446645308724
+          ],
+          "accuracy": [
+            0.7958872509086351,
+            0.826975092234981
+          ],
+          "top5_accuracy": [
+            0.9539778817949125,
+            0.9697764255951673
+          ],
+          "section_balanced_accuracy": [
+            0.9045136539863644,
+            0.9342117466825154
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5617525465390373,
+            0.7273591505113244
+          ],
+          [
+            0.6892620931845626,
+            0.7880479794532589
+          ],
+          [
+            0.7996906447286367,
+            0.8715147602255996
+          ],
+          [
+            0.8188743365029973,
+            0.8545733743841957
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "teacher/ensemble": {
+      "validation": {
+        "kind": "ensemble",
+        "members": [
+          "teacher/seed-17",
+          "teacher/seed-101",
+          "teacher/seed-202",
+          "teacher/seed-303",
+          "teacher/seed-404"
+        ],
+        "balanced_accuracy": 0.8340873693656947,
+        "accuracy": 0.8565294266228846,
+        "top5_accuracy": 0.9754988633493307,
+        "section_balanced_accuracy": 0.9462804816973441,
+        "ece_before": 0.11464586055758295,
+        "ece_after": 0.01580371096237168,
+        "temperature": 0.72,
+        "mean_confidence": 0.7419127225875854,
+        "bins": [
+          0.7619026417114989,
+          0.8081257525008573,
+          0.8687612195031832,
+          0.8768901921258047
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.814910207095493,
+            0.8548082641904534
+          ],
+          "accuracy": [
+            0.8397203636554887,
+            0.8733418913205864
+          ],
+          "top5_accuracy": [
+            0.9695914793833365,
+            0.9807260619408174
+          ],
+          "section_balanced_accuracy": [
+            0.93604930840091,
+            0.9583894614818715
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7123090389674314,
+            0.8272635748257203
+          ],
+          [
+            0.7591654462419676,
+            0.8590028542317308
+          ],
+          [
+            0.8395336617226697,
+            0.8981361093962711
+          ],
+          [
+            0.8621490039664427,
+            0.8911246250265175
+          ]
+        ]
+      },
+      "test": {
+        "kind": "ensemble",
+        "members": [
+          "teacher/seed-17",
+          "teacher/seed-101",
+          "teacher/seed-202",
+          "teacher/seed-303",
+          "teacher/seed-404"
+        ],
+        "balanced_accuracy": 0.8423741077823652,
+        "accuracy": 0.8608227604767397,
+        "top5_accuracy": 0.9734717416378316,
+        "section_balanced_accuracy": 0.9495264827511591,
+        "ece_before": 0.1066444605640474,
+        "ece_after": 0.02500321821770454,
+        "temperature": 0.72,
+        "mean_confidence": 0.7552838921546936,
+        "bins": [
+          0.7769841269841271,
+          0.8279234080455885,
+          0.8793405528827524,
+          0.8728540978843332
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.8219602526242362,
+            0.862286295029791
+          ],
+          "accuracy": [
+            0.8468156029289572,
+            0.8746301578593195
+          ],
+          "top5_accuracy": [
+            0.9664333529881032,
+            0.9797509645541869
+          ],
+          "section_balanced_accuracy": [
+            0.9362244137705013,
+            0.9622817949996954
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7144397661517227,
+            0.8422159090909092
+          ],
+          [
+            0.7713483327771669,
+            0.8681231849593891
+          ],
+          [
+            0.8433736385638655,
+            0.9083294053161985
+          ],
+          [
+            0.8566801164196782,
+            0.8883500621748462
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "teacher/seed-mean": {
+      "validation": {
+        "kind": "seed_mean",
+        "members": [
+          "teacher/seed-17",
+          "teacher/seed-101",
+          "teacher/seed-202",
+          "teacher/seed-303",
+          "teacher/seed-404"
+        ],
+        "balanced_accuracy": 0.8236235389556967,
+        "accuracy": 0.8457186158120737,
+        "top5_accuracy": 0.9683253346804749,
+        "section_balanced_accuracy": 0.9438263611515876,
+        "ece_before": 0.0954688158005931,
+        "ece_after": 0.022007263152098305,
+        "temperature": 0.762,
+        "mean_confidence": 0.7502498000114807,
+        "bins": [
+          0.7584453167045037,
+          0.7922581906050656,
+          0.853793341696133,
+          0.8680150203606413
+        ],
+        "seed_sd": 0.0017011765292735028,
+        "ci95": {
+          "balanced_accuracy": [
+            0.8028421016419862,
+            0.8446279154521383
+          ],
+          "accuracy": [
+            0.8278201328049416,
+            0.8622990751672179
+          ],
+          "top5_accuracy": [
+            0.9620979972785366,
+            0.9743334512686084
+          ],
+          "section_balanced_accuracy": [
+            0.9343680775440658,
+            0.9547094865683087
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7072470481399352,
+            0.8179308594525467
+          ],
+          [
+            0.7438998364349708,
+            0.8414673863118773
+          ],
+          [
+            0.8267310314093833,
+            0.881167400580714
+          ],
+          [
+            0.8536410797570294,
+            0.8820509063738718
+          ]
+        ]
+      },
+      "test": {
+        "kind": "seed_mean",
+        "members": [
+          "teacher/seed-17",
+          "teacher/seed-101",
+          "teacher/seed-202",
+          "teacher/seed-303",
+          "teacher/seed-404"
+        ],
+        "balanced_accuracy": 0.8312632727200416,
+        "accuracy": 0.8503652441368704,
+        "top5_accuracy": 0.9698577470203767,
+        "section_balanced_accuracy": 0.9449805423014027,
+        "ece_before": 0.08744848705235211,
+        "ece_after": 0.0265629843409545,
+        "temperature": 0.762,
+        "mean_confidence": 0.7632583500622424,
+        "bins": [
+          0.7601932367149759,
+          0.8173945644998277,
+          0.8759846460255666,
+          0.8613268753888177
+        ],
+        "seed_sd": 0.00806788215890152,
+        "ci95": {
+          "balanced_accuracy": [
+            0.8141804426794268,
+            0.8503351602531155
+          ],
+          "accuracy": [
+            0.8365482036140869,
+            0.863570390257584
+          ],
+          "top5_accuracy": [
+            0.9634582080497969,
+            0.9757703488372093
+          ],
+          "section_balanced_accuracy": [
+            0.9339032104608158,
+            0.9558377182235086
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.7056194014496443,
+            0.824726639568871
+          ],
+          [
+            0.7697544975610765,
+            0.852644064841846
+          ],
+          [
+            0.8435903309458866,
+            0.9022969246591369
+          ],
+          [
+            0.8460854338627918,
+            0.8763615085872205
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "anchor-full/seed-mean": {
+      "validation": {
+        "kind": "seed_mean",
+        "members": [
+          "anchor-full/seed-17",
+          "anchor-full/seed-101",
+          "anchor-full/seed-202",
+          "anchor-full/seed-303",
+          "anchor-full/seed-404"
+        ],
+        "balanced_accuracy": 0.4984527420896715,
+        "accuracy": 0.5444809295276585,
+        "top5_accuracy": 0.801363980803233,
+        "section_balanced_accuracy": 0.7282816402582355,
+        "ece_before": 0.05917755418500618,
+        "ece_after": 0.049893459634036255,
+        "temperature": 0.892,
+        "mean_confidence": 0.4961436650220679,
+        "bins": [
+          0.35203155532641334,
+          0.45311536878037434,
+          0.5333669420396391,
+          0.5947287504007621
+        ],
+        "seed_sd": 0.004175989918953707,
+        "ci95": {
+          "balanced_accuracy": [
+            0.48031232303137816,
+            0.5217945055426293
+          ],
+          "accuracy": [
+            0.5233308754937587,
+            0.5661712088071031
+          ],
+          "top5_accuracy": [
+            0.7800638296351659,
+            0.8210906926144463
+          ],
+          "section_balanced_accuracy": [
+            0.7104741956603939,
+            0.7495542627088246
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.3102959857530992,
+            0.4269348769335487
+          ],
+          [
+            0.4023509419726385,
+            0.5031803622896563
+          ],
+          [
+            0.5005099540267367,
+            0.5664361696068847
+          ],
+          [
+            0.5763158405105863,
+            0.612135079676789
+          ]
+        ]
+      },
+      "test": {
+        "kind": "seed_mean",
+        "members": [
+          "anchor-full/seed-17",
+          "anchor-full/seed-101",
+          "anchor-full/seed-202",
+          "anchor-full/seed-303",
+          "anchor-full/seed-404"
+        ],
+        "balanced_accuracy": 0.5221446422551936,
+        "accuracy": 0.5678585159554018,
+        "top5_accuracy": 0.827604767397155,
+        "section_balanced_accuracy": 0.7529555362467745,
+        "ece_before": 0.060803128897543246,
+        "ece_after": 0.053612009487895705,
+        "temperature": 0.892,
+        "mean_confidence": 0.5185953298345185,
+        "bins": [
+          0.33998619737750174,
+          0.5086369488907082,
+          0.6073263073953612,
+          0.596424912231614
+        ],
+        "seed_sd": 0.0037372566041794543,
+        "ci95": {
+          "balanced_accuracy": [
+            0.5033600743854986,
+            0.5401176787865497
+          ],
+          "accuracy": [
+            0.5481433013511777,
+            0.5873527537918334
+          ],
+          "top5_accuracy": [
+            0.8139850025825636,
+            0.8405144206275826
+          ],
+          "section_balanced_accuracy": [
+            0.7383313833448812,
+            0.7689486983300498
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.27491776357700276,
+            0.40292132565502126
+          ],
+          [
+            0.4730880523113922,
+            0.5401599214362165
+          ],
+          [
+            0.5612228336078621,
+            0.6467918192354701
+          ],
+          [
+            0.5738756703986869,
+            0.6174420699405595
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "anchor-crop/seed-mean": {
+      "validation": {
+        "kind": "seed_mean",
+        "members": [
+          "anchor-crop/seed-17",
+          "anchor-crop/seed-101",
+          "anchor-crop/seed-202",
+          "anchor-crop/seed-303",
+          "anchor-crop/seed-404"
+        ],
+        "balanced_accuracy": 0.5156408377402191,
+        "accuracy": 0.5565546855266481,
+        "top5_accuracy": 0.8060116190957313,
+        "section_balanced_accuracy": 0.7358408001683984,
+        "ece_before": 0.062453432744656555,
+        "ece_after": 0.03550565904921218,
+        "temperature": 0.874,
+        "mean_confidence": 0.49746568671188457,
+        "bins": [
+          0.40105684342728354,
+          0.45946499188503787,
+          0.5480321145472599,
+          0.6027290245836213
+        ],
+        "seed_sd": 0.0077274502802137076,
+        "ci95": {
+          "balanced_accuracy": [
+            0.4930122092777362,
+            0.5445330335500635
+          ],
+          "accuracy": [
+            0.5313745027295592,
+            0.5814786007540066
+          ],
+          "top5_accuracy": [
+            0.7860300867110143,
+            0.825232719256584
+          ],
+          "section_balanced_accuracy": [
+            0.7177065654631358,
+            0.7610593606695322
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.35755966242417675,
+            0.4896404487794896
+          ],
+          [
+            0.3987998241866679,
+            0.5139337316389735
+          ],
+          [
+            0.5161927938280685,
+            0.5802367051518811
+          ],
+          [
+            0.5854268842770862,
+            0.6201499728922376
+          ]
+        ]
+      },
+      "test": {
+        "kind": "seed_mean",
+        "members": [
+          "anchor-crop/seed-17",
+          "anchor-crop/seed-101",
+          "anchor-crop/seed-202",
+          "anchor-crop/seed-303",
+          "anchor-crop/seed-404"
+        ],
+        "balanced_accuracy": 0.5481351320394015,
+        "accuracy": 0.5890042291426375,
+        "top5_accuracy": 0.8338331410995771,
+        "section_balanced_accuracy": 0.7609462112067232,
+        "ece_before": 0.07604064831490494,
+        "ece_after": 0.04584723009016827,
+        "temperature": 0.874,
+        "mean_confidence": 0.51792764718308,
+        "bins": [
+          0.3900207039337474,
+          0.5334758949279627,
+          0.6059922834577565,
+          0.621076058502218
+        ],
+        "seed_sd": 0.00679953020017898,
+        "ci95": {
+          "balanced_accuracy": [
+            0.5287938744906059,
+            0.5672215052507711
+          ],
+          "accuracy": [
+            0.5692899589478893,
+            0.6074244299827876
+          ],
+          "top5_accuracy": [
+            0.8204998501429801,
+            0.8468107116654439
+          ],
+          "section_balanced_accuracy": [
+            0.7453977358878334,
+            0.7784313175488548
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.328161260405099,
+            0.45219416497824416
+          ],
+          [
+            0.49613671126371955,
+            0.5660872393382073
+          ],
+          [
+            0.5594658462752913,
+            0.64700929175739
+          ],
+          [
+            0.6001229886965228,
+            0.6415291899222482
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": true
+    },
+    "student/seed-mean": {
+      "validation": {
+        "kind": "seed_mean",
+        "members": [
+          "student/seed-17",
+          "student/seed-101",
+          "student/seed-202",
+          "student/seed-303",
+          "student/seed-404"
+        ],
+        "balanced_accuracy": 0.7683719675241547,
+        "accuracy": 0.8033341752967921,
+        "top5_accuracy": 0.95882798686537,
+        "section_balanced_accuracy": 0.9132486351041571,
+        "ece_before": 0.10111727118078609,
+        "ece_after": 0.024207214895711437,
+        "temperature": 0.758,
+        "mean_confidence": 0.702239950838523,
+        "bins": [
+          0.6767893809948596,
+          0.7191185963468598,
+          0.7915074518936274,
+          0.8419955544017027
+        ],
+        "seed_sd": 0.003169962549926278,
+        "ci95": {
+          "balanced_accuracy": [
+            0.7469056093473173,
+            0.7943440833264234
+          ],
+          "accuracy": [
+            0.7844058162648162,
+            0.8225997973741686
+          ],
+          "top5_accuracy": [
+            0.9502271868903381,
+            0.966908143866522
+          ],
+          "section_balanced_accuracy": [
+            0.9019568913733697,
+            0.9282697169186711
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6150936912721255,
+            0.7620487839130664
+          ],
+          [
+            0.6690215422958294,
+            0.7729153315729036
+          ],
+          [
+            0.7590375665915482,
+            0.8224069569160514
+          ],
+          [
+            0.8271840281697832,
+            0.8565714733399701
+          ]
+        ]
+      },
+      "test": {
+        "kind": "seed_mean",
+        "members": [
+          "student/seed-17",
+          "student/seed-101",
+          "student/seed-202",
+          "student/seed-303",
+          "student/seed-404"
+        ],
+        "balanced_accuracy": 0.783230256373815,
+        "accuracy": 0.8171472510572857,
+        "top5_accuracy": 0.9667051134179161,
+        "section_balanced_accuracy": 0.9274050502210412,
+        "ece_before": 0.09709341881619124,
+        "ece_after": 0.02562717460573895,
+        "temperature": 0.758,
+        "mean_confidence": 0.7201179178321997,
+        "bins": [
+          0.6769392684610077,
+          0.748841292375127,
+          0.8301220723957297,
+          0.8453831811734652
+        ],
+        "seed_sd": 0.0022156509209019805,
+        "ci95": {
+          "balanced_accuracy": [
+            0.7626804638908683,
+            0.8018067572790504
+          ],
+          "accuracy": [
+            0.8019389598064496,
+            0.8318572391221138
+          ],
+          "top5_accuracy": [
+            0.9589864575800242,
+            0.9731661679144161
+          ],
+          "section_balanced_accuracy": [
+            0.9122281766634328,
+            0.9398899122044745
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.605037834120301,
+            0.7461076423382865
+          ],
+          [
+            0.7010170908533508,
+            0.786005696303761
+          ],
+          [
+            0.7933075988842443,
+            0.8592393440833225
+          ],
+          [
+            0.8279260146406007,
+            0.8615932170405001
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "student/ensemble": {
+      "validation": {
+        "kind": "ensemble",
+        "members": [
+          "student/seed-17",
+          "student/seed-101",
+          "student/seed-202",
+          "student/seed-303",
+          "student/seed-404"
+        ],
+        "balanced_accuracy": 0.7797266890708463,
+        "accuracy": 0.8133367011871685,
+        "top5_accuracy": 0.9641323566557212,
+        "section_balanced_accuracy": 0.9199076565705229,
+        "ece_before": 0.11762341180965435,
+        "ece_after": 0.021622319185664554,
+        "temperature": 0.73,
+        "mean_confidence": 0.6958122253417969,
+        "bins": [
+          0.6875070919642868,
+          0.7325378556067792,
+          0.813285961924048,
+          0.8481036041170442
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7547222783469768,
+            0.8087080939347141
+          ],
+          "accuracy": [
+            0.792678504746369,
+            0.8340919847671402
+          ],
+          "top5_accuracy": [
+            0.9561369604233804,
+            0.9717041091450627
+          ],
+          "section_balanced_accuracy": [
+            0.9061278518462995,
+            0.9378609685370691
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6173501680516152,
+            0.7855890946460001
+          ],
+          [
+            0.6770664337633466,
+            0.7949732144977874
+          ],
+          [
+            0.778026426302894,
+            0.8464254129626421
+          ],
+          [
+            0.8328405297671405,
+            0.863145893941554
+          ]
+        ]
+      },
+      "test": {
+        "kind": "ensemble",
+        "members": [
+          "student/seed-17",
+          "student/seed-101",
+          "student/seed-202",
+          "student/seed-303",
+          "student/seed-404"
+        ],
+        "balanced_accuracy": 0.7960468310416445,
+        "accuracy": 0.8304498269896193,
+        "top5_accuracy": 0.9703960015378701,
+        "section_balanced_accuracy": 0.9333445443140554,
+        "ece_before": 0.11648183554319269,
+        "ece_after": 0.027883258223911737,
+        "temperature": 0.73,
+        "mean_confidence": 0.7140513062477112,
+        "bins": [
+          0.6927881297446514,
+          0.7592006442805316,
+          0.8417530466123816,
+          0.8586572523378225
+        ],
+        "ci95": {
+          "balanced_accuracy": [
+            0.7741478449463631,
+            0.8164806859250637
+          ],
+          "accuracy": [
+            0.8147990916914786,
+            0.8455786451958539
+          ],
+          "top5_accuracy": [
+            0.9625260266363047,
+            0.9775332405006091
+          ],
+          "section_balanced_accuracy": [
+            0.9157658949656263,
+            0.9468322351216969
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.6128800607604956,
+            0.7700040584415583
+          ],
+          [
+            0.7096477182679293,
+            0.8000701356765458
+          ],
+          [
+            0.8043258776334279,
+            0.8733956440088609
+          ],
+          [
+            0.8402316002659579,
+            0.876058850369983
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    },
+    "ce100c/seed-mean": {
+      "validation": {
+        "kind": "seed_mean",
+        "members": [
+          "ce100c/seed-17",
+          "ce100c/seed-101",
+          "ce100c/seed-202",
+          "ce100c/seed-303",
+          "ce100c/seed-404"
+        ],
+        "balanced_accuracy": 0.7189464425843339,
+        "accuracy": 0.7581207375599899,
+        "top5_accuracy": 0.9240212174791615,
+        "section_balanced_accuracy": 0.8803368711927628,
+        "ece_before": 0.16001124620761323,
+        "ece_after": 0.03550315103224844,
+        "temperature": 0.7159999999999999,
+        "mean_confidence": 0.5981242399430321,
+        "bins": [
+          0.6103482913864526,
+          0.6692980397442302,
+          0.7594704599789468,
+          0.7951132154739948
+        ],
+        "seed_sd": 0.005902461121456135,
+        "ci95": {
+          "balanced_accuracy": [
+            0.6972799338687675,
+            0.7444770666996612
+          ],
+          "accuracy": [
+            0.7367976623715787,
+            0.7780970596886662
+          ],
+          "top5_accuracy": [
+            0.912316680118441,
+            0.934806042913544
+          ],
+          "section_balanced_accuracy": [
+            0.8662028440437183,
+            0.8973655779019816
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.556340769066664,
+            0.6950536584331635
+          ],
+          [
+            0.6177195759595934,
+            0.7219453121053924
+          ],
+          [
+            0.7303218956862676,
+            0.7877119758183975
+          ],
+          [
+            0.7795427998929428,
+            0.8110771137105698
+          ]
+        ]
+      },
+      "test": {
+        "kind": "seed_mean",
+        "members": [
+          "ce100c/seed-17",
+          "ce100c/seed-101",
+          "ce100c/seed-202",
+          "ce100c/seed-303",
+          "ce100c/seed-404"
+        ],
+        "balanced_accuracy": 0.7403706186053555,
+        "accuracy": 0.7728565936178392,
+        "top5_accuracy": 0.9337946943483276,
+        "section_balanced_accuracy": 0.8960822366470079,
+        "ece_before": 0.15683744115715423,
+        "ece_after": 0.043341397758992053,
+        "temperature": 0.7159999999999999,
+        "mean_confidence": 0.6160191524606851,
+        "bins": [
+          0.6140648723257419,
+          0.7277695289255439,
+          0.8002192018458004,
+          0.7937143509953144
+        ],
+        "seed_sd": 0.010825179902770696,
+        "ci95": {
+          "balanced_accuracy": [
+            0.7205748886651276,
+            0.7581091796158482
+          ],
+          "accuracy": [
+            0.7563047759901883,
+            0.7890944852249201
+          ],
+          "top5_accuracy": [
+            0.9233348251845195,
+            0.9428180000494746
+          ],
+          "section_balanced_accuracy": [
+            0.8806748499290866,
+            0.9090498725750084
+          ]
+        },
+        "bins_ci95": [
+          [
+            0.5528216324738063,
+            0.6783408777213125
+          ],
+          [
+            0.682360887701756,
+            0.7642024652985056
+          ],
+          [
+            0.7633399992595101,
+            0.8330035124740217
+          ],
+          [
+            0.7760233659085793,
+            0.8104077219557193
+          ]
+        ]
+      },
+      "test_outside_validation_ci95": false
+    }
+  },
+  "student_minus_ce100c": {
+    "validation": {
+      "delta": 0.049425524939820775,
+      "ci95": [
+        0.04176589355427907,
+        0.058529180346054484
+      ],
+      "p_le_0": 0.0,
+      "per_seed": [
+        0.041407607815135195,
+        0.04353023771862852,
+        0.06167643494253694,
+        0.04684142346328091,
+        0.05367192075952243
+      ],
+      "wins": 5,
+      "bins": [
+        [
+          0.066441089608407,
+          0.04164188463396939,
+          0.09557288544521485
+        ],
+        [
+          0.04982055660262963,
+          0.03434329289666553,
+          0.0683536770391144
+        ],
+        [
+          0.03203699191468057,
+          0.015219491743106519,
+          0.048584021046516566
+        ],
+        [
+          0.04688233892770788,
+          0.038284045312915696,
+          0.055335708859665045
+        ]
+      ]
+    },
+    "test": {
+      "delta": 0.04285963776845958,
+      "ci95": [
+        0.033051665223142644,
+        0.052997433986509024
+      ],
+      "p_le_0": 0.0,
+      "per_seed": [
+        0.05983021349893991,
+        0.037824573323109956,
+        0.03467036880242358,
+        0.037882184793901374,
+        0.044090848423923745
+      ],
+      "wins": 5,
+      "bins": [
+        [
+          0.0628743961352658,
+          0.030124073527482514,
+          0.09533807244900601
+        ],
+        [
+          0.02107176344958306,
+          0.0022285688126618573,
+          0.03964441144070561
+        ],
+        [
+          0.02990287054992924,
+          0.015676842325373676,
+          0.044817042159348765
+        ],
+        [
+          0.051668830178150826,
+          0.04180732026098384,
+          0.06087877517478325
+        ]
+      ]
+    }
+  }
+}
