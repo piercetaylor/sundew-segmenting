@@ -9,9 +9,9 @@
 #SBATCH --output=logs/%x-%A_%a.out
 #SBATCH --error=logs/%x-%A_%a.out
 
-# Step 2 of docs/field-probe-return.md: does adding 30 field masks to the 144
+# Step 2 of deprecated/docs/field-probe-return.md: does adding 30 field masks to the 144
 # curated ones close any of the 0.184 IoU field gap measured in
-# reports/field-probe-evaluation.md?
+# deprecated/reports/field-probe-evaluation.md?
 #
 # Two arms, identical flags, differing only in dataset root. Paired across five
 # seeds -- the same set baseline-seed-sweep.md used -- because a three-seed run

@@ -8,7 +8,7 @@
 #SBATCH --error=logs/%x-%j.out
 
 # The scaled species corpus, authorised by both gates in
-# docs/crop-readiness-plan.md: the crop failure rate is 2.43% (below the
+# deprecated/docs/crop-readiness-plan.md: the crop failure rate is 2.43% (below the
 # pre-registered 5%) and the crop is worth +0.0246 balanced accuracy.
 #
 #   110 species with >= 50 available observations, capped at 300 each
@@ -23,7 +23,7 @@
 # should not be needed.
 #
 # This does NOT reuse sundew-species-set/. That set is CC0/CC-BY at 200 images
-# across 10 species and backs reports/species-crop-comparison.md; leaving it
+# across 10 species and backs deprecated/reports/species-crop-comparison.md; leaving it
 # untouched keeps that result reproducible, at the cost of re-downloading about
 # 1,750 photographs here.
 

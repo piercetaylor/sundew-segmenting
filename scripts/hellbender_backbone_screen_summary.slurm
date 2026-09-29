@@ -7,7 +7,7 @@
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.out
 
-# Tabulates the frozen-backbone screen into reports/species-backbone-screen/.
+# Tabulates the frozen-backbone screen into docs/reports/species-backbone-screen/.
 # Submitted with --dependency=afterok on hellbender_backbone_screen.slurm; safe
 # to rerun by hand at any time, it only reads the per-model outputs.
 

@@ -30,7 +30,7 @@ import shutil
 from collections import Counter, defaultdict
 from pathlib import Path
 
-# Named in reports/scrape-probe-50.md as confident, silent failures of the
+# Named in deprecated/reports/scrape-probe-50.md as confident, silent failures of the
 # current checkpoint. inat_329881443 was the other one; it came back rejected
 # because the plant was dead.
 PINNED_TO_EVAL = {686282548}

@@ -19,7 +19,7 @@ from sundew_segmentation.growth_forms import growth_form_for_taxon
 
 # The review lists and the manifest are committed; the images and their
 # licence metadata are not, and stay on the cluster.
-REVIEW = REPO / 'reports/crop-review'
+REVIEW = REPO / 'docs/reports/crop-review'
 BASE = pathlib.Path('/cluster/VAST/mendozacozatld-lab/PierceTaylor/sundew-crop-review')
 rows = [json.loads(l) for l in (REVIEW / 'crop-review-manifest.jsonl').read_text().splitlines() if l.strip()]
 meta = {}

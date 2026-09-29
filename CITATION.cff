@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: >-
+  If you use this software, please cite it as below, and give the commit you used.
+  If your work uses this project's training results, also include the Hellbender
+  acknowledgement verbatim: "The computation for this work was performed on the
+  high performance computing infrastructure operated by Research Support Solutions
+  in the Division of IT at the University of Missouri, Columbia MO DOI:
+  https://doi.org/10.32469/10355/97710". Attribute each source image according to
+  its own licence (see docs/licence-policy.md).
+title: "Sundew segmentation and species identification"
+type: software
+authors:
+  - family-names: Taylor
+    given-names: Pierce
+repository-code: "https://github.com/piercetaylor/sundew-segmenting"
+version: 1.0.0
+license: Apache-2.0
+date-released: 2026-09-29
+keywords:
+  - Drosera
+  - sundew
+  - image segmentation
+  - species identification
+  - knowledge distillation

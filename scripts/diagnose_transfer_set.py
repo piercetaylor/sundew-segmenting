@@ -41,7 +41,7 @@ BINS = [(0, 40, "under 40"), (40, 80, "40-79"), (80, 130, "80-129"), (130, 10**9
 SOURCES = {"a": "wild, research grade", "b": "captive", "c": "needs-ID or casual"}
 
 p = argparse.ArgumentParser()
-p.add_argument("--out-json", type=pathlib.Path, default=pathlib.Path("reports/species-distill/t-transfer-diagnostics.json"))
+p.add_argument("--out-json", type=pathlib.Path, default=pathlib.Path("docs/reports/species-distill/t-transfer-diagnostics.json"))
 p.add_argument("--out-npz", type=pathlib.Path, default=STUDENT / "transfer-diagnostics.npz")
 p.add_argument("--batch-size", type=int, default=128)
 args = p.parse_args()

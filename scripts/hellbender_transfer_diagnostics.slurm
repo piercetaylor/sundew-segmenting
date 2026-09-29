@@ -12,7 +12,7 @@
 # "Transfer set"): the teacher ensemble and student seed 17 over the 12,126 transfer
 # photos, by source and training-count bin. See scripts/diagnose_transfer_set.py.
 #   sbatch scripts/hellbender_transfer_diagnostics.slurm
-# Writes reports/species-distill/t-transfer-diagnostics.json and
+# Writes docs/reports/species-distill/t-transfer-diagnostics.json and
 # models/species-110/finetune/dinov2-s-kdw-e100-t-c576/full/seed-17/transfer-diagnostics.npz.
 # The held-out test split is not read.
 

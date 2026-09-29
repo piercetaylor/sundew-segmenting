@@ -1,4 +1,5 @@
-# Mamba environment for training the sundew segmentation baselines on Hellbender.
+# Mamba environment for the whole project on Hellbender: segmentation, the
+# species classifier (screen, fine-tune, distillation) and its ONNX export.
 #
 # Create it once, from a compute node (never the login node):
 #   module load mamba/v2.4.0
@@ -28,6 +29,11 @@ dependencies:
       - torchvision==0.20.1+cu124
       # Segformer decoder requires smp >= 0.4.0; pyproject's >=0.3.3 is too loose.
       - segmentation-models-pytorch==0.5.0
+      # Species backbones: timm (DINOv2, TinyViT, ...) and open_clip (CLIP-style
+      # models in the frozen screen). Pinned to the versions in sundew-seg that
+      # produced the reported results.
+      - timm==1.0.29
+      - open_clip_torch==3.3.0
       # int8 ONNX export and CPU inference of the shipped species student.
       - onnx==1.23.1
       - onnxruntime==1.30.0

@@ -2,7 +2,7 @@
 
 The two arms differ ONLY in which image file is read. Same architecture, same
 observer-grouped split, same augmentation, same schedule, same seed. That is the
-whole design: reports/field-compare.md showed how easily an uncontrolled flag
+whole design: docs/reports/field-compare.md showed how easily an uncontrolled flag
 (growth-form balancing, worth +0.052 on its own) can be mistaken for the effect
 under study.
 

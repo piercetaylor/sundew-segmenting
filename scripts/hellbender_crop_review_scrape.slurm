@@ -7,7 +7,7 @@
 #SBATCH --output=logs/%x-%j.out
 #SBATCH --error=logs/%x-%j.out
 
-# Step 1 of docs/crop-readiness-plan.md: 500 fresh uncurated images whose crops
+# Step 1 of deprecated/docs/crop-readiness-plan.md: 500 fresh uncurated images whose crops
 # a human reviews by eye, to pin down the crop-failure rate. The field-eval
 # estimate rests on one failing image in 17, 95% CI [1.0%, 27.0%] -- too wide to
 # decide whether a 10-20k scrape is safe.

@@ -1,0 +1,11 @@
+sundew-segmenting
+Copyright 2026 Pierce Taylor
+
+The code in this repository is licensed under the Apache License, Version 2.0
+(see LICENSE).
+
+That licence covers the code only. It does not cover the iNaturalist
+photographs, the masks, crops or other files derived from them, or any trained
+model weights. Each photograph keeps its own licence and attribution, and
+iNaturalist's terms prohibit using its data for commercial AI training. See
+docs/licence-policy.md.

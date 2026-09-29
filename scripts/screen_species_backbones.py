@@ -21,7 +21,7 @@ Arms, all read at 224:
 - crop         the segmentation crop, Resize(255) + CenterCrop(224), as trained
 - full         the full frame, same geometry as the fine-tuned full arm
 - full-square  the full frame squashed to 224x224, nothing cut away; the
-               untested control from reports/species-crop-comparison.md
+               untested control from deprecated/reports/species-crop-comparison.md
 """
 from __future__ import annotations
 

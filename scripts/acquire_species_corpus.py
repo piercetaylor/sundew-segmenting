@@ -1,7 +1,7 @@
 """Acquire the full species corpus for the crop-then-classify experiment.
 
 `acquire_species_set.py` built the ten-species, CC0/CC-BY set that answered
-whether the crop is worth anything at all (`reports/species-crop-comparison.md`).
+whether the crop is worth anything at all (`deprecated/reports/species-crop-comparison.md`).
 It is left alone so that result stays reproducible. This is the scaled version
 and differs in four ways:
 

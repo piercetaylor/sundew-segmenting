@@ -1,7 +1,7 @@
 """Score every field-compare checkpoint against field-eval, paired by image.
 
 Preprocessing matches scripts/evaluate_checkpoint.py exactly so the numbers are
-comparable to the 0.4994 baseline in reports/field-probe-evaluation.md.
+comparable to the 0.4994 baseline in deprecated/reports/field-probe-evaluation.md.
 
 Reports IoU and relative area error. Area is the project's deliverable and it
 degraded proportionally worse than IoU in step 1, so a comparison on IoU alone
