@@ -1,6 +1,6 @@
 # Sundew Segmentation
 
-This project finds the sundew (*Drosera*) in a photo and names the species (one of 110) with a 22 MB int8 model that takes about 120 ms per photo on one CPU thread. It is built on licensed iNaturalist photographs and trained on the Hellbender SLURM cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
+This project finds the sundew (*Drosera*) in a photo and names the species (one of the 110 with >40 photos from iNaturalist; there are 220+ total *Drosera* species...) with a 22 MB int8 model that takes about 120 ms per photo on one CPU thread. It is built on licensed iNaturalist photographs and trained on Mizzou's Hellbender HPC cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
 
 ![Twelve licensed sundew examples](assets/dataset-preview.jpg)
 
@@ -8,7 +8,7 @@ The preview's credits and licences are in [its attribution record](assets/datase
 
 ## Where it stands
 
-**Data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](docs/reports/dataset-freeze-v0.3.0.md)), plus 30 field masks. The species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
+**Data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](docs/reports/dataset-freeze-v0.3.0.md)), plus 30 field masks, initally assuming that the models would work better on segmented photos. The current species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
 
 **Segmentation.** SegFormer-B0 beat a U-Net on all five seeds (validation IoU 0.632 vs 0.610). Adding the field masks raised IoU on messy real-world photos from 0.552 to 0.613. Only 2.4% of uncurated photos got a crop that missed the plant.
 
