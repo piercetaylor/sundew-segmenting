@@ -99,7 +99,7 @@ deprecated/     retired docs, reports and scripts, kept for the record
 
 ## Use and citation
 
-This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and nothing else in this repository changes those terms. Cite this repository with the commit used (see [`CITATION.cff`](CITATION.cff)), and attribute each source image according to its licence.
+This is a personal, noncommercial research project. [iNaturalist's terms](https://www.inaturalist.org/pages/terms) don't allow its data to be used for commercial AI training. Each photo keeps its own licence and attribution (see [the licence policy](docs/licence-policy.md)), and nothing else in this repository changes those terms. The code is released under the Apache License 2.0 (see [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE)); that licence covers the code only, not the iNaturalist photographs, the masks derived from them, or any trained weights, which keep their own terms. Cite this repository with the commit used (see [`CITATION.cff`](CITATION.cff)), and attribute each source image according to its licence.
 
 **Computing acknowledgement.** Training ran on Hellbender. As [the Hellbender wiki](https://itrss-wiki.rnet.missouri.edu/pub/hpc/hellbender) asks, any publication using this work should include:
 

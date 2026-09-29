@@ -7,7 +7,7 @@ of binding the model weights. Decided 2026-09-21, when the corpus grew from 10
 species to 110. The 191-mask segmentation set is CC0 and CC BY only.
 
 Every image here is someone else's photograph under its own licence. The
-licence on the code, whatever it is, does not relicense them.
+code's Apache-2.0 licence (`LICENSE`, `NOTICE`) covers the code only and does not relicense them.
 iNaturalist's own terms sit above all of that: they prohibit using iNaturalist
 data for commercial AI or machine-learning training, whatever an individual
 photo permits. This is personal, noncommercial research.
@@ -112,3 +112,21 @@ and the existing tooling covers it.
 - Licence tier recorded per image so the CC0/CC-BY subset stays separable.
 - No commercial use of anything derived from the corpus.
 - Exact coordinates continue to be neither requested nor stored.
+
+## If trained weights are shared
+
+No weights are published yet. If they are:
+
+- **Species model** (DINOv2-S, distilled from DINOv2-L): the DINOv2 weights
+  are Apache-2.0 (Meta, via timm), so nothing upstream blocks release. Because
+  the training photos include CC BY-NC and iNaturalist's terms rule out
+  commercial AI training, the plan is CC BY-NC 4.0, with a model card that
+  credits DINOv2 and timm, includes the Apache-2.0 notice, and states the data
+  terms.
+- **Segmentation model**: SegFormer-B0's encoder in segmentation-models-pytorch
+  (`mit_b0`) comes from NVIDIA's SegFormer, under the NVIDIA Source Code
+  Licence for research and noncommercial use only. Any SegFormer weights must
+  carry that licence. The U-Net/ResNet-34 weights have no such restriction.
+
+Not legal advice; check the NVIDIA licence again before sharing segmentation
+weights.

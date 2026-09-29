@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,6 +9,8 @@ description = "Sundew (Drosera) segmentation and 110-species identification, tra
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Pierce Taylor" }]
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 dependencies = ["Pillow>=10", "numpy>=1.24"]
 
 [project.urls]

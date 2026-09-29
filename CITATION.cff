@@ -14,6 +14,7 @@ authors:
     given-names: Pierce
 repository-code: "https://github.com/piercetaylor/sundew-segmenting"
 version: 1.0.0
+license: Apache-2.0
 date-released: 2026-09-29
 keywords:
   - Drosera
