@@ -1,0 +1,193 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sundew species ID</title>
+<style>
+  :root { --bg: #fff; --fg: #1b1b1b; --muted: #666; --bar: #3a7d44; --line: #ddd; --warn-bg: #fff4d6; --warn-fg: #5a4300; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #151515; --fg: #eee; --muted: #aaa; --bar: #6fbf73; --line: #333; --warn-bg: #3a3014; --warn-fg: #f3dc9a; } }
+  body { background: var(--bg); color: var(--fg); font: 16px/1.45 system-ui, sans-serif; margin: 0 auto; max-width: 640px; padding: 16px; }
+  img#preview { max-width: 100%; max-height: 50vh; display: block; margin: 12px 0; }
+  .row { margin: 6px 0; }
+  .bar { height: 6px; background: var(--bar); border-radius: 3px; }
+  .muted, small { color: var(--muted); }
+  .notsure { background: var(--warn-bg); color: var(--warn-fg); border-radius: 6px; padding: 8px 12px; margin: 12px 0; }
+  input { font: inherit; }
+  footer { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>Which sundew is this?</h1>
+<p>Choose a photo of a <i>Drosera</i> plant. It is identified in your browser, on your device; the photo is never uploaded, and the site has no analytics.</p>
+<p><input type="file" id="file" accept="image/*" disabled></p>
+<p id="status" class="muted">Loading model...</p>
+<img id="preview" alt="">
+<div id="results"></div>
+<footer>
+  Model: sundew-species v1.0.0, used unmodified (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/README.md">model card</a>), weights licensed
+  <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>, trained on photos by
+  iNaturalist contributors (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/ATTRIBUTION.md">credits</a>). Code Apache-2.0
+  (<a href="https://github.com/piercetaylor/sundew-segmenting">source</a>, <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/THIRD_PARTY_NOTICES.md">third-party notices</a>).
+  It always answers with one of 110 sundew species, even for other plants; treat a low top probability as "not sure".
+</footer>
+<script type="module">
+import { loadOrt, createClassifier, classifyBlob, ORT_VERSION, MODEL_SHA256 } from './classify.js';
+
+// Copied from release/species-v1.0.0/ at build time (.github/workflows/pages.yml).
+const MODEL_DIR = './model/v1.0.0/';
+const MODEL_URL = new URL(MODEL_DIR + 'model-int8.onnx', location.href).href;
+const LABELS_URL = MODEL_DIR + 'labels.json';
+const RELEASE_URL = MODEL_DIR + 'release.json';
+const CACHE_NAME = 'sundew-model-v1.0.0';
+// onnxruntime-web 1.30.0 is self-hosted (copied from the npm package by pages.yml). The optional,
+// unverified ?backend=webgpu build is not self-hosted and still loads from jsDelivr (ORT_CDN).
+const ORT_DIR = new URL('./ort/1.30.0/', location.href).href;
+const NOT_SURE = 0.65; // validated in the abstention analysis: ~78% of photos answered, ~90% of those right
+
+const $ = (id) => document.getElementById(id);
+let clf = null;
+let previewUrl = null;
+
+// "Not sure" rule, kept in one place. Returns a message to show above the results, or null.
+// Compares the unrounded probability, so 0.646 is "not sure" although it displays as 64.6%/65%.
+function notSureMessage(top) {
+  if (top[0].prob >= NOT_SURE) return null;
+  return 'Not sure. The model is not confident about any species. This may be a Drosera outside the 110 species it knows, or not a sundew.';
+}
+
+async function fetchJson(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+  return r.json();
+}
+
+// The Cache API needs a secure context; on plain http (a LAN IP) it is missing, so every step may fail.
+async function openCache() {
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    for (const k of await caches.keys()) if (k.startsWith('sundew-model-') && k !== CACHE_NAME) await caches.delete(k);
+    return cache;
+  } catch { return null; }
+}
+
+async function download(url, onProgress) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
+  const total = Number(r.headers.get('content-length')) || 0;
+  if (!r.body) return r.blob();
+  const reader = r.body.getReader();
+  const chunks = [];
+  let got = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    got += value.length;
+    onProgress(got, total);
+  }
+  return new Blob(chunks, { type: 'application/octet-stream' });
+}
+
+// Model bytes from the Cache API if present, else the network. classify.js gets an object URL
+// and still checks the sha256 (when crypto.subtle exists), so a bad cached copy is caught.
+async function loadClassifier(ort, backend) {
+  const cache = await openCache();
+  let cached = null;
+  try { cached = cache && await cache.match(MODEL_URL); } catch { cached = null; }
+  const onProgress = (got, total) => { $('status').textContent = `Downloading model ${(got / 1e6).toFixed(1)}${total ? ' / ' + (total / 1e6).toFixed(1) : ''} MB`; };
+  for (const fromCache of cached ? [true, false] : [false]) {
+    const blob = fromCache ? await cached.blob() : await download(MODEL_URL, onProgress);
+    const url = URL.createObjectURL(blob);
+    try {
+      const c = await createClassifier({ ort, modelUrl: url, labelsUrl: LABELS_URL, backend });
+      if (!fromCache && cache) {
+        try { await cache.put(MODEL_URL, new Response(blob, { headers: { 'content-type': 'application/octet-stream' } })); } catch (e) { console.warn('model not cached:', e); }
+      }
+      c.fromCache = fromCache;
+      return c;
+    } catch (e) {
+      if (!fromCache) throw e;
+      console.warn('cached model rejected, downloading again:', e);
+      try { await cache.delete(MODEL_URL); } catch {}
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+}
+
+async function init(backend) {
+  $('file').disabled = true;
+  $('status').textContent = 'Loading model...';
+  try {
+    const release = await fetchJson(RELEASE_URL);
+    if (release.files?.['model-int8.onnx']?.sha256 !== MODEL_SHA256) throw new Error('release.json does not match this page');
+    const ort = await loadOrt(backend, backend === 'wasm' ? { cdn: ORT_DIR } : {});
+    clf = await loadClassifier(ort, backend);
+    $('status').textContent = `Ready: sundew-species ${release.version}, onnxruntime-web ${ORT_VERSION}, ${backend}, ` +
+      `${clf.ort.env.wasm.numThreads} thread(s), loaded in ${(clf.timings.total_ms / 1000).toFixed(1)} s${clf.fromCache ? ' (cached)' : ''}.`;
+    $('file').disabled = false;
+  } catch (e) {
+    console.error(e);
+    if (backend === 'webgpu') { fallBackToWasm(); return; }
+    $('status').textContent = `Could not load the model: ${e.message}`;
+  }
+}
+
+function fallBackToWasm() {
+  const q = new URLSearchParams(location.search);
+  q.delete('backend');
+  const qs = q.toString();
+  location.replace(location.pathname + (qs ? '?' + qs : ''));
+}
+
+function showResults(top) {
+  const msg = notSureMessage(top);
+  if (msg) {
+    const div = document.createElement('div');
+    div.className = 'notsure';
+    div.id = 'notsure';
+    div.textContent = msg;
+    $('results').appendChild(div);
+  }
+  for (const t of top) {
+    const div = document.createElement('div');
+    div.className = 'row';
+    div.innerHTML = `<i></i> <small></small><div class="bar"></div>`;
+    div.querySelector('i').textContent = t.label;
+    div.querySelector('small').textContent = `${(t.prob * 100).toFixed(1)}%`;
+    div.querySelector('.bar').style.width = `${Math.max(1, t.prob * 100)}%`;
+    $('results').appendChild(div);
+  }
+}
+
+$('file').addEventListener('change', async () => {
+  const f = $('file').files[0];
+  if (!f || !clf) return;
+  if (previewUrl) URL.revokeObjectURL(previewUrl);
+  previewUrl = URL.createObjectURL(f);
+  $('preview').src = previewUrl;
+  $('status').textContent = 'Identifying...';
+  $('results').innerHTML = '';
+  try {
+    const r = await classifyBlob(clf, f, { method: 'pil' });
+    $('status').textContent = `Done in ${(r.timings.preprocess_ms + r.timings.inference_ms).toFixed(0)} ms ` +
+      `(preprocess ${r.timings.preprocess_ms.toFixed(0)}, model ${r.timings.inference_ms.toFixed(0)}).`;
+    showResults(r.top);
+  } catch (e) {
+    console.error(e);
+    if (clf.backend === 'webgpu') { fallBackToWasm(); return; }
+    // createImageBitmap rejects formats the browser cannot decode (e.g. HEIC outside Safari).
+    const undecodable = e.name === 'InvalidStateError' || /decod/i.test(e.message) || /hei[cf]/i.test(f.type || f.name);
+    $('status').textContent = undecodable
+      ? 'This browser could not read that photo. Please use a JPEG (on iPhone, HEIC photos may not open: export or share the photo as JPEG).'
+      : `Failed: ${e.message}`;
+  }
+});
+
+// WebGPU is optional and unverified: ?backend=webgpu, falling back to WASM on any error.
+init(new URLSearchParams(location.search).get('backend') === 'webgpu' ? 'webgpu' : 'wasm');
+</script>
+</body>
+</html>

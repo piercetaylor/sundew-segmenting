@@ -27,9 +27,13 @@ The large DINOv2-L model is the most accurate, but it's too big to run on a phon
 
 The classifier reads the whole photo, not a crop around the plant. Cropping helped the old ResNet-18 (0.516 against 0.499), but once the DINOv2 models were fine-tuned it made no difference (DINOv2-L: -0.004 [-0.012, +0.006]), so every DINOv2 model here, including the shipped one, trains and runs on full frames ([why](docs/reports/species-finetune.md)). Segmentation stands on its own: it finds and outlines the plant, and it is not a step in species identification.
 
-**Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. Browser preprocessing and int8 behaviour in WebAssembly are not yet measured.
+**Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. In the browser (WebAssembly, one thread) it gave the same top-1 species as Python on 99.1% of 330 validation photos.
 
 How the classifier works and why it is built this way is in [the species classifier design](docs/species-classifier.md); the pre-registered rules are in [the plan](docs/species-classifier-plan.md). Every number above comes from a report in [`docs/reports/`](docs/reports/), for example [distillation](docs/reports/species-distill.md), [export](docs/reports/species-release.md) and [the held-out test](docs/reports/species-test.md).
+
+## Try it in the browser
+
+[piercetaylor.github.io/sundew-segmenting](https://piercetaylor.github.io/sundew-segmenting/) names the species in a photo on your own device; the photo is not uploaded. The page is in [`site/`](site/), and [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes it with the model from `release/species-v1.0.0/`. When no species reaches 65%, it says it is not sure.
 
 ## Running it
 

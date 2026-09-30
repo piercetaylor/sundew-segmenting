@@ -1,0 +1,4 @@
+# Copied from release/species-v1.0.0/ and the onnxruntime-web npm package by
+# .github/workflows/pages.yml at build time.
+model/
+ort/

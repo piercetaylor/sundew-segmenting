@@ -25,8 +25,12 @@ The ImageNet normalisation is inside the model, so don't apply it yourself.
 3. Probabilities are `softmax(logits / 0.74)`. The temperature was fitted on
    validation, because the raw model is under-confident.
 
-It runs in about 120 ms on one CPU thread with ONNX Runtime (Python). Browser
-speed and accuracy with onnxruntime-web have not been measured yet.
+It runs in about 120 ms on one CPU thread with ONNX Runtime (Python). In a
+browser (onnxruntime-web 1.30.0, WebAssembly, one thread, headless Chrome on one
+server core) the model takes about 525 ms, and a whole photo (decode, resize,
+model) 0.56 s at 576 px or 0.69 s for an iNaturalist original (up to 2048 px).
+On 330 validation photos the browser gave the same top-1 species as Python for
+99.1% of originals. The web page is in [`site/`](../../site/).
 
 ## How well it works
 
@@ -48,9 +52,9 @@ the 42 commonest.
   the top few answers with their probabilities, and treat a low top probability
   as "not sure".
 - **Rare species are the weak spot** (see above).
-- **Preprocessing differences are not measured.** Training photos were first
+- **Preprocessing differs slightly from training.** Training photos were first
   shrunk to a 576 px short side (LANCZOS), and EXIF orientation was ignored.
-  Browsers rotate by EXIF and resize differently.
+  The web page reproduces the bicubic resize exactly, but rotates by EXIF.
 - **int8 results vary slightly by CPU.** Two server CPUs agreed on 99.1% of
   top-1 answers.
 - It is an identification aid, not an authority. Identifications that matter,

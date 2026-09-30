@@ -1,0 +1,69 @@
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "release/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy the species model into the site
+        run: |
+          mkdir -p site/model/v1.0.0
+          cp release/species-v1.0.0/{model-int8.onnx,labels.json,release.json} site/model/v1.0.0/
+      - name: Check model checksums against release.json
+        working-directory: site/model/v1.0.0
+        run: |
+          for f in model-int8.onnx labels.json; do
+            want=$(jq -r --arg f "$f" '.files[$f].sha256' release.json)
+            got=$(sha256sum "$f" | cut -d' ' -f1)
+            echo "$f $got"
+            if [ "$want" != "$got" ]; then
+              echo "::error::$f sha256 $got does not match release.json ($want)"
+              exit 1
+            fi
+          done
+      - name: Copy onnxruntime-web into the site
+        run: |
+          npm pack onnxruntime-web@1.30.0 --silent
+          tar -xzf onnxruntime-web-1.30.0.tgz package/dist
+          mkdir -p site/ort/1.30.0
+          cd package/dist
+          cp ort.wasm.min.mjs ort-wasm-simd-threaded.mjs ort-wasm-simd-threaded.wasm ../../site/ort/1.30.0/
+          cd ../../site/ort/1.30.0
+          sha256sum -c <<'EOF'
+          219e6a1fc8a9938268d18efca3c91d310bd2f4a59bbd13744df5b2b7fc6cee3b  ort.wasm.min.mjs
+          e13f7f94fc51b4ca72b12faeb1ee95f4ace6dfbc8939bc718aabdc0a27c4299b  ort-wasm-simd-threaded.mjs
+          3398c10d07d229bd91b364548e130e0e51a8e5704b88c7c083ebbeb78842dee2  ort-wasm-simd-threaded.wasm
+          EOF
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
