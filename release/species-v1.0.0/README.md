@@ -50,7 +50,7 @@ the 42 commonest.
 - **It always names one of the 110 species.** It has no "not a sundew" or
   "unknown" answer, so a photo of another plant still gets a sundew name. Show
   the top few answers with their probabilities, and treat a low top probability
-  as "not sure".
+  as "not sure" (see the rule below).
 - **Rare species are the weak spot** (see above).
 - **Preprocessing differs slightly from training.** Training photos were first
   shrunk to a 576 px short side (LANCZOS), and EXIF orientation was ignored.
@@ -59,6 +59,28 @@ the 42 commonest.
   top-1 answers.
 - It is an identification aid, not an authority. Identifications that matter,
   for conservation or law, need an expert.
+
+## Recommended decision rule
+
+*Added 2026-09-29; the weights and `release.json` are unchanged.*
+
+Let `p` be the top-1 probability from `softmax(logits / 0.74)`. Compare the
+unrounded value.
+
+1. Always show the top 5 with whole-number percentages.
+2. Name the species only when `p >= 0.65`. On validation that answers 77.8% of
+   photos, and 90.1% of those answers are right (80.0% without the rule).
+3. Otherwise say "not sure". If the summed probability of one section's
+   species (`data/species-110-sections.json`) is at least 0.7, name the
+   section: that covers about half of the "not sure" photos, 95.5% of them
+   right.
+
+The thresholds were picked on validation, which holds only the 110 species, so
+they say nothing about photos of other plants. Species with under 40 training
+photos get fewer and less accurate answers (68.5% answered, 81.9% right). Full
+tables: [docs/reports/species-abstain.md](../../docs/reports/species-abstain.md).
+Reference code: `src/sundew_segmentation/species_decision.py` and
+`site/js/decision.js`.
 
 ## Licence and credit
 
