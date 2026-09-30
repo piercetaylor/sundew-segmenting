@@ -6,6 +6,7 @@ The code in this repository is licensed under the Apache License, Version 2.0
 
 That licence covers the code only. It does not cover the iNaturalist
 photographs, the masks, crops or other files derived from them, or any trained
-model weights. Each photograph keeps its own licence and attribution, and
+model weights. The species model weights in release/species-v1.0.0/ are
+licensed separately under CC BY-NC 4.0 (see that folder's LICENSE). Each photograph keeps its own licence and attribution, and
 iNaturalist's terms prohibit using its data for commercial AI training. See
 docs/licence-policy.md.
