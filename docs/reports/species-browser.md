@@ -54,6 +54,21 @@ the site uses the JS resize.
 - **Hosting:** the self-hosted runtime makes no third-party requests, and a
   file the browser can't decode gets a "use a JPEG" message.
 
+## Out-of-list photos
+
+On the 20 photos of other things in [the out-of-list check](species-out-of-list-check.md),
+the browser and Python ONNX Runtime differed by up to 10 points in top-1
+probability (a mug: 0.695 in Python, 0.595 in the browser, 0.757 in fp32). The
+browser's decoded pixels and 224 px input match PIL's exactly on all 20 photos,
+including two Adobe RGB JPEGs. The whole difference comes from the int8 kernels:
+the logits differ by at most 0.29, with a mean absolute difference of 0.039.
+That is the same spread as on the 330 validation photos (at most 0.43, mean
+0.040), and neither int8 build is closer to fp32. So a photo near the 0.65
+threshold can fall on either side depending on the device. Like training, the
+page reads JPEG colour values without colour management
+(`colorSpaceConversion: 'none'` = PIL `convert("RGB")`), which also holds for
+iPhone Display P3 photos, except in Safari, which is untested.
+
 ## Not yet measured
 
 - Phones (iPhone Safari, Android Chrome) and desktop Firefox and Safari.
