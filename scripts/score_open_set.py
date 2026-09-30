@@ -32,6 +32,18 @@ BOOT_REPS, BOOT_SEED = 2000, 20260930
 IN_LIST_COVERAGE = 0.778  # validation, docs/reports/species-abstain.md
 
 
+def cpu_model() -> str:
+    """CPU model name: int8 results differ slightly between CPUs, so it is recorded."""
+    try:
+        for line in open("/proc/cpuinfo"):
+            if line.startswith("model name"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        pass
+    import platform
+    return platform.processor() or "unknown"
+
+
 def _preprocess():
     spec = importlib.util.spec_from_file_location("oos", ROOT / "scripts/score_out_of_list_photos.py")
     mod = importlib.util.module_from_spec(spec)
@@ -103,7 +115,7 @@ def main() -> None:
                   for g, n in Counter(r["group"] for r in by[s]).items()} for s in ("e1",)}
     out = {"pre_registration": "docs/reports/species-open-set-prereg.md", "pass_bar": PASS_BAR, "passed": passed,
            "p_answer": P_ANSWER, "temperature": temp,
-           "model_sha256": hashlib.sha256(args.model.read_bytes()).hexdigest(),
+           "model_sha256": hashlib.sha256(args.model.read_bytes()).hexdigest(), "cpu": cpu_model(),
            "results": res, "e1_by_genus": groups["e1"], "photos": rows}
     args.out.with_suffix(".json").write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n")
 
