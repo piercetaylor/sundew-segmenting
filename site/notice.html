@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About the sundew identifier</title>
+<style>
+  :root { --bg: #fff; --fg: #1b1b1b; --muted: #666; --line: #ddd; --note: #fff7e0; --note-line: #e8c96a; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #151515; --fg: #eee; --muted: #aaa; --line: #333; --note: #2a2410; --note-line: #7a6420; } }
+  body { background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 640px; padding: 16px; }
+  a { color: inherit; }
+  h2 { font-size: 1.15em; margin-top: 1.6em; }
+  .note { background: var(--note); border: 1px solid var(--note-line); border-radius: 6px; padding: 10px 14px; }
+  .muted, small { color: var(--muted); }
+  footer { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<p><a href="./">&larr; Back to the identifier</a></p>
+<h1>About the sundew identifier</h1>
+
+<div class="note" id="disclaimer">
+  <p><strong>This is an identification aid, not an authority.</strong> It suggests which of 110 sundew
+  (<i>Drosera</i>) species a photo shows. It only knows these 110 species. It cannot tell when a photo shows
+  something else, like another plant or a sundew not on its list, and it may still suggest a sundew name,
+  sometimes with high confidence. Check any identification with an expert before using it for legal, trade or
+  conservation decisions.</p>
+</div>
+
+<h2>How to read a result</h2>
+<ul>
+  <li><strong>Best match among 110 sundew species:</strong> the model gave one species at least 65% of the
+    probability. In testing on photos of the listed species, about 9 in 10 of these answers were right.</li>
+  <li><strong>Not sure of the species. Probably section&nbsp;X:</strong> no single species was likely enough,
+    but the species of one section (a group of related sundews) together got at least 70%.</li>
+  <li><strong>Not sure:</strong> neither of the above. The possible matches still include the right species
+    most of the time, but the first one is right less than half the time.</li>
+</ul>
+<p>The five most likely species are always shown with their percentages. Percentages near the 65% line can
+differ slightly between devices, so the same photo may get an answer on one phone and "Not sure" on another.</p>
+<p>Species with few training photos are identified less reliably: in testing, about 8 in 10 of their
+confident answers were right. The full numbers are in the
+<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/docs/reports/species-abstain.md">evaluation report</a>.
+They come from photos of the 110 listed species only. How often the tool names a sundew for something else has
+not been measured.</p>
+<p>For the best result, upload a clear photo of one sundew plant, taken from above or the side, with the leaves
+in focus.</p>
+
+<h2>Your photo and your privacy</h2>
+<p>Your photo is processed in your browser and is not uploaded. The model and the code that runs it are
+downloaded once from this site, and the identification happens on your device. The site does not read the
+location stored in your photo (it uses only the orientation tag, to turn the photo upright), and has no
+analytics or tracking. As with any website, the
+host (GitHub Pages) receives your IP address when you load the page.</p>
+
+<h2>The model</h2>
+<p>sundew-species v1.0.0 by Pierce Taylor: a DINOv2-S image classifier, distilled from a larger DINOv2-L model and
+trained on 23,244 iNaturalist photos of 110 <i>Drosera</i> species. See the
+<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/README.md">model card</a>
+for how it was trained and tested.</p>
+
+<h2>Licences and credits</h2>
+<ul>
+  <li>Model weights: <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>, noncommercial
+    use only. Used here unchanged.</li>
+  <li>Training photos: by iNaturalist contributors, each under its own licence, credited in
+    <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/ATTRIBUTION.md">ATTRIBUTION.md</a>.</li>
+  <li>Built on <a href="https://github.com/facebookresearch/dinov2">DINOv2</a> (Meta AI, Apache-2.0).</li>
+  <li>Site code: Apache-2.0, <a href="https://github.com/piercetaylor/sundew-segmenting">source on GitHub</a>.
+    Third-party software is listed in <a href="THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</li>
+</ul>
+
+<footer>
+  sundew-species v1.0.0 &middot; weights CC BY-NC 4.0 &middot; code Apache-2.0
+</footer>
+</body>
+</html>
