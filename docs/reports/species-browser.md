@@ -53,6 +53,18 @@ the site uses the JS resize.
   upright. Top-1 matches Python on the `exif_transpose`d image for all 30.
 - **Hosting:** the self-hosted runtime makes no third-party requests, and a
   file the browser can't decode gets a "use a JPEG" message.
+- **Web Worker:** the model loads and runs in a module worker
+  (`site/js/worker.js`), so the page keeps responding while a photo is
+  identified. On a 20 MP photo, the longest main-thread gap was 107 ms with the
+  worker and 923 ms without it (`?worker=0`). Both paths gave the same top-5,
+  and warm timings per photo are the same. Browsers without module workers or
+  a 2D `OffscreenCanvas` (Safari before 16.4) run the model in the page as
+  before. Over plain http on a LAN IP (no Cache API, no `crypto.subtle`), the
+  worker still loads the model and names the photo.
+- **Before every deploy:** `pages.yml` loads the built site in Chrome, runs a
+  synthetic photo through it and runs `site/test/privacy-check.mjs`: a result
+  with five names, and only same-origin GETs made before the photo was chosen
+  (worker requests included).
 
 ## Out-of-list photos
 

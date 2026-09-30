@@ -50,6 +50,19 @@ jobs:
           e13f7f94fc51b4ca72b12faeb1ee95f4ace6dfbc8939bc718aabdc0a27c4299b  ort-wasm-simd-threaded.mjs
           3398c10d07d229bd91b364548e130e0e51a8e5704b88c7c083ebbeb78842dee2  ort-wasm-simd-threaded.wasm
           EOF
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      # The built site in Chrome (preinstalled on the runner): the model loads in its worker, a synthetic
+      # photo gets a result, and every request is a same-origin GET made before the photo was chosen.
+      - name: Check the built site in Chrome
+        run: |
+          npm i --no-save --prefix "$RUNNER_TEMP/pptr" puppeteer-core@25.12.0
+          node site/test/synthetic-photo.mjs "$RUNNER_TEMP/synthetic.png"
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory site > "$RUNNER_TEMP/http.log" 2>&1 &
+          for i in $(seq 20); do curl -sf -o /dev/null http://127.0.0.1:8765/ && break; sleep 0.5; done
+          PUPPETEER_CORE="$RUNNER_TEMP/pptr/node_modules/puppeteer-core" \
+            node site/test/privacy-check.mjs "$(command -v google-chrome)" http://127.0.0.1:8765/ "$RUNNER_TEMP/synthetic.png"
       - name: Leave the tests out of the site
         run: rm -rf site/test
       - uses: actions/configure-pages@v5
