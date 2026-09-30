@@ -1,6 +1,6 @@
 # Sundew Segmentation
 
-This project does two separate jobs on photos of sundews (*Drosera*). A SegFormer-B0 model outlines the plant, and a 22 MB int8 DINOv2-S model names the species in about 120 ms per photo on one CPU thread. It knows 110 species: those with at least 50 research-grade, wild, openly licensed observations on iNaturalist, out of the 220+ *Drosera* species. The species model reads the whole photo, so it does not need the segmenter. It is built on licensed iNaturalist photographs and trained on Mizzou's Hellbender HPC cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
+This project does two separate jobs on photos of sundews (*Drosera*). A SegFormer-B0 model outlines the plant, and a 22 MB int8 DINOv2-S model names the species in about 120 ms per photo on one CPU thread. It knows 110 species: those with at least 50 research-grade, wild, openly licensed observations on iNaturalist, out of the 250+ *Drosera* species. The species model reads the whole photo, so it does not need the segmenter. It is built on licensed iNaturalist photographs and trained on Mizzou's Hellbender HPC cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
 
 ![Twelve licensed sundew examples](assets/dataset-preview.jpg)
 
