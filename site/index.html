@@ -51,6 +51,7 @@ const ORT_DIR = new URL('./ort/1.30.0/', location.href).href;
 const $ = (id) => document.getElementById(id);
 let clf = null;
 let previewUrl = null;
+let run = 0; // the latest photo; results of an earlier photo that finish later are dropped
 $('hint').textContent = COPY.uploadHint;
 
 async function fetchJson(url) {
@@ -104,7 +105,8 @@ async function loadClassifier(ort, backend) {
       c.fromCache = fromCache;
       return c;
     } catch (e) {
-      if (!fromCache) throw e;
+      // Only a failed sha256 check means the cached copy is bad; other errors (offline, labels) are rethrown.
+      if (!fromCache || !/sha256/.test(e.message)) throw e;
       console.warn('cached model rejected, downloading again:', e);
       try { await cache.delete(MODEL_URL); } catch {}
     } finally {
@@ -183,13 +185,16 @@ $('file').addEventListener('change', async () => {
   $('preview').src = previewUrl;
   $('status').textContent = 'Identifying...';
   $('results').innerHTML = '';
+  const mine = ++run;
   try {
     const r = await classifyBlob(clf, f, { method: 'pil' });
+    if (mine !== run) return;
     $('status').textContent = `Done in ${(r.timings.preprocess_ms + r.timings.inference_ms).toFixed(0)} ms ` +
       `(preprocess ${r.timings.preprocess_ms.toFixed(0)}, model ${r.timings.inference_ms.toFixed(0)}).`;
     showResults(r);
   } catch (e) {
     console.error(e);
+    if (mine !== run) return;
     if (clf.backend === 'webgpu') { fallBackToWasm(); return; }
     // createImageBitmap rejects formats the browser cannot decode (e.g. HEIC outside Safari).
     const undecodable = e.name === 'InvalidStateError' || /decod/i.test(e.message) || /hei[cf]/i.test(f.type || f.name);

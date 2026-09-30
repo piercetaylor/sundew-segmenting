@@ -1,6 +1,6 @@
 # Third-party notices
 
-The code of this site (`index.html`, `classify.js`, `pilresize.js`) is
+The code of this site (`index.html`, `notice.html`, `classify.js`, `pilresize.js`, `js/decision.js`) is
 licensed under the Apache License, Version 2.0 (see the repository's
 `LICENSE` and `NOTICE`). The model weights it downloads
 (`model/v1.0.0/model-int8.onnx`) are licensed under CC BY-NC 4.0; see
@@ -49,9 +49,10 @@ PERFORMANCE OF THIS SOFTWARE.
 
 ## ONNX Runtime Web (MIT licence)
 
-The page loads `onnxruntime-web` 1.30.0 from jsDelivr
-(<https://www.npmjs.com/package/onnxruntime-web>) to run the model. It is not
-copied into this repository.
+The site serves three files of `onnxruntime-web` 1.30.0
+(<https://www.npmjs.com/package/onnxruntime-web>) from `ort/1.30.0/`, copied
+unmodified from the npm package when the site is built. Only the optional
+`?backend=webgpu` mode loads its WebGPU build from jsDelivr instead.
 
 ```text
 MIT License

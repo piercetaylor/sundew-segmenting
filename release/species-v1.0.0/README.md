@@ -30,7 +30,7 @@ browser (onnxruntime-web 1.30.0, WebAssembly, one thread, headless Chrome on one
 server core) the model takes about 525 ms, and a whole photo (decode, resize,
 model) 0.56 s at 576 px or 0.69 s for an iNaturalist original (up to 2048 px).
 On 330 validation photos the browser gave the same top-1 species as Python for
-99.1% of originals. The web page is in [`site/`](../../site/).
+99.1% of originals ([details](../../docs/reports/species-browser.md)). The web page is in [`site/`](../../site/).
 
 ## How well it works
 
