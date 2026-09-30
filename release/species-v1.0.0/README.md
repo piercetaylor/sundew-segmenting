@@ -25,8 +25,12 @@ The ImageNet normalisation is inside the model, so don't apply it yourself.
 3. Probabilities are `softmax(logits / 0.74)`. The temperature was fitted on
    validation, because the raw model is under-confident.
 
-It runs in about 120 ms on one CPU thread with ONNX Runtime (Python). Browser
-speed and accuracy with onnxruntime-web have not been measured yet.
+It runs in about 120 ms on one CPU thread with ONNX Runtime (Python). In a
+browser (onnxruntime-web 1.30.0, WebAssembly, one thread, headless Chrome on one
+server core) the model takes about 525 ms, and a whole photo (decode, resize,
+model) 0.56 s at 576 px or 0.69 s for an iNaturalist original (up to 2048 px).
+On 330 validation photos the browser gave the same top-1 species as Python for
+99.1% of originals ([details](../../docs/reports/species-browser.md)). The web page is in [`site/`](../../site/).
 
 ## How well it works
 
@@ -46,15 +50,37 @@ the 42 commonest.
 - **It always names one of the 110 species.** It has no "not a sundew" or
   "unknown" answer, so a photo of another plant still gets a sundew name. Show
   the top few answers with their probabilities, and treat a low top probability
-  as "not sure".
+  as "not sure" (see the rule below).
 - **Rare species are the weak spot** (see above).
-- **Preprocessing differences are not measured.** Training photos were first
+- **Preprocessing differs slightly from training.** Training photos were first
   shrunk to a 576 px short side (LANCZOS), and EXIF orientation was ignored.
-  Browsers rotate by EXIF and resize differently.
+  The web page reproduces the bicubic resize exactly, but rotates by EXIF.
 - **int8 results vary slightly by CPU.** Two server CPUs agreed on 99.1% of
   top-1 answers.
 - It is an identification aid, not an authority. Identifications that matter,
   for conservation or law, need an expert.
+
+## Recommended decision rule
+
+*Added 2026-09-29; the weights and `release.json` are unchanged.*
+
+Let `p` be the top-1 probability from `softmax(logits / 0.74)`. Compare the
+unrounded value.
+
+1. Always show the top 5 with whole-number percentages.
+2. Name the species only when `p >= 0.65`. On validation that answers 77.8% of
+   photos, and 90.1% of those answers are right (80.0% without the rule).
+3. Otherwise say "not sure". If the summed probability of one section's
+   species (`data/species-110-sections.json`) is at least 0.7, name the
+   section: that covers about half of the "not sure" photos, 95.5% of them
+   right.
+
+The thresholds were picked on validation, which holds only the 110 species, so
+they say nothing about photos of other plants. Species with under 40 training
+photos get fewer and less accurate answers (68.5% answered, 81.9% right). Full
+tables: [docs/reports/species-abstain.md](../../docs/reports/species-abstain.md).
+Reference code: `src/sundew_segmentation/species_decision.py` and
+`site/js/decision.js`.
 
 ## Licence and credit
 

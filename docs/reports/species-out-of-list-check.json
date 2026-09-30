@@ -1,0 +1,708 @@
+{
+ "photos": 20,
+ "confident_species_name": 4,
+ "p_answer": 0.65,
+ "model_sha256": "d7ee150eaf5d1c7ddae00a2a94e66ddcfd48b55166b940f4dfa35f0e3cc8af16",
+ "rows": [
+  {
+   "category": "other carnivorous plant",
+   "title": "File:Pinguicula Moranensis (15057446518).jpg",
+   "licence": "CC BY 2.0",
+   "author": "incidencematrix",
+   "page": "https://commons.wikimedia.org/wiki/File:Pinguicula_Moranensis_(15057446518).jpg",
+   "sha256": "f5d2d47d449b3cae946b490919b11fdea439058500cdbbec0d7686d7b55863fd",
+   "state": "not-sure",
+   "top1": "Drosera praefolia",
+   "p": 0.0961,
+   "section": null,
+   "section_p": 0.2223,
+   "top5": [
+    [
+     "Drosera praefolia",
+     0.0961
+    ],
+    [
+     "Drosera rotundifolia",
+     0.0933
+    ],
+    [
+     "Drosera squamosa",
+     0.0494
+    ],
+    [
+     "Drosera modesta",
+     0.0428
+    ],
+    [
+     "Drosera subhirtella",
+     0.0356
+    ]
+   ]
+  },
+  {
+   "category": "other carnivorous plant",
+   "title": "File:Byblis Overflow (13552295935).jpg",
+   "licence": "CC BY 2.0",
+   "author": "incidencematrix",
+   "page": "https://commons.wikimedia.org/wiki/File:Byblis_Overflow_(13552295935).jpg",
+   "sha256": "7ac2432ac70142899381d5d0ba71cfe549160b149942a7d3eb37e002054b942c",
+   "state": "not-sure",
+   "top1": "Drosera finlaysonii",
+   "p": 0.2142,
+   "section": null,
+   "section_p": 0.4018,
+   "top5": [
+    [
+     "Drosera finlaysonii",
+     0.2142
+    ],
+    [
+     "Drosera indica",
+     0.0829
+    ],
+    [
+     "Drosera serpens",
+     0.064
+    ],
+    [
+     "Drosera glabripes",
+     0.0456
+    ],
+    [
+     "Drosera pallida",
+     0.0419
+    ]
+   ]
+  },
+  {
+   "category": "other carnivorous plant",
+   "title": "File:Roridula gorgonias (2944506542).jpg",
+   "licence": "CC BY 2.0",
+   "author": "Alex Lomas",
+   "page": "https://commons.wikimedia.org/wiki/File:Roridula_gorgonias_(2944506542).jpg",
+   "sha256": "b6a30625cb278fc7ce6325a573b5c7b2c4a0775e17765d8596721199e53e8970",
+   "state": "not-sure",
+   "top1": "Drosera floridana",
+   "p": 0.286,
+   "section": null,
+   "section_p": 0.3738,
+   "top5": [
+    [
+     "Drosera floridana",
+     0.286
+    ],
+    [
+     "Drosera aquatica",
+     0.133
+    ],
+    [
+     "Drosera monticola",
+     0.0336
+    ],
+    [
+     "Drosera tracyi",
+     0.0307
+    ],
+    [
+     "Drosera zonaria",
+     0.0284
+    ]
+   ]
+  },
+  {
+   "category": "other carnivorous plant",
+   "title": "File:Drosophyllum lusitanicum Habitat 2011-4-21 SierraMadrona.jpg",
+   "licence": "Public domain",
+   "author": "Javier martin",
+   "page": "https://commons.wikimedia.org/wiki/File:Drosophyllum_lusitanicum_Habitat_2011-4-21_SierraMadrona.jpg",
+   "sha256": "0229f4e3b7252bc4fc1afba35d928e479ef26a3a9731f943143c3d169a24b388",
+   "state": "answer",
+   "top1": "Drosera filiformis",
+   "p": 0.9542,
+   "section": null,
+   "section_p": null,
+   "top5": [
+    [
+     "Drosera filiformis",
+     0.9542
+    ],
+    [
+     "Drosera floridana",
+     0.0057
+    ],
+    [
+     "Drosera tracyi",
+     0.0043
+    ],
+    [
+     "Drosera monticola",
+     0.0021
+    ],
+    [
+     "Drosera binata",
+     0.0018
+    ]
+   ]
+  },
+  {
+   "category": "other carnivorous plant",
+   "title": "File:Venus flytrap (Dionaea muscipula) Zagreb Botanical Garden 1060.jpg",
+   "licence": "CC BY 4.0",
+   "author": "ImagePerson",
+   "page": "https://commons.wikimedia.org/wiki/File:Venus_flytrap_(Dionaea_muscipula)_Zagreb_Botanical_Garden_1060.jpg",
+   "sha256": "c05c0e236c169b7648978bdd007c7458a4b5965d9f9e5ffccf678e56549530d6",
+   "state": "not-sure",
+   "top1": "Drosera bulbosa",
+   "p": 0.5128,
+   "section": null,
+   "section_p": 0.6777,
+   "top5": [
+    [
+     "Drosera bulbosa",
+     0.5128
+    ],
+    [
+     "Drosera whittakeri",
+     0.126
+    ],
+    [
+     "Drosera arcturi",
+     0.0491
+    ],
+    [
+     "Drosera rupicola",
+     0.0329
+    ],
+    [
+     "Drosera fulva",
+     0.015
+    ]
+   ]
+  },
+  {
+   "category": "other carnivorous plant",
+   "title": "File:Nepenthes rafflesiana ant.jpg",
+   "licence": "CC BY 2.5",
+   "author": "en:User:NepGrower",
+   "page": "https://commons.wikimedia.org/wiki/File:Nepenthes_rafflesiana_ant.jpg",
+   "sha256": "f6f365f9ff5374e16c1edafb8bd0682c5dbb44318d619a596ab45a881343401d",
+   "state": "not-sure",
+   "top1": "Drosera murfetii",
+   "p": 0.1823,
+   "section": null,
+   "section_p": 0.2679,
+   "top5": [
+    [
+     "Drosera murfetii",
+     0.1823
+    ],
+    [
+     "Drosera arcturi",
+     0.0856
+    ],
+    [
+     "Drosera androsacea",
+     0.0545
+    ],
+    [
+     "Drosera capensis",
+     0.0511
+    ],
+    [
+     "Drosera magna",
+     0.0477
+    ]
+   ]
+  },
+  {
+   "category": "Drosera not in the 110",
+   "title": "File:Drosera regia - Botanischer Garten Braunschweig - Braunschweig, Germany - DSC04338.JPG",
+   "licence": "CC0",
+   "author": "Daderot",
+   "page": "https://commons.wikimedia.org/wiki/File:Drosera_regia_-_Botanischer_Garten_Braunschweig_-_Braunschweig,_Germany_-_DSC04338.JPG",
+   "sha256": "22a7255a570d59e9968fdd1b7425cc05505496bb430c9daa019587265d3d0954",
+   "state": "answer",
+   "top1": "Drosera tracyi",
+   "p": 0.6757,
+   "section": null,
+   "section_p": null,
+   "top5": [
+    [
+     "Drosera tracyi",
+     0.6757
+    ],
+    [
+     "Drosera ordensis",
+     0.0297
+    ],
+    [
+     "Drosera dilatatopetiolaris",
+     0.0227
+    ],
+    [
+     "Drosera capensis",
+     0.0171
+    ],
+    [
+     "Drosera monticola",
+     0.0145
+    ]
+   ]
+  },
+  {
+   "category": "Drosera not in the 110",
+   "title": "File:Drosera adelae Exhibition of Carnivorous Plants Prague 2016 1.jpg",
+   "licence": "Public domain",
+   "author": "Karelj",
+   "page": "https://commons.wikimedia.org/wiki/File:Drosera_adelae_Exhibition_of_Carnivorous_Plants_Prague_2016_1.jpg",
+   "sha256": "6378d39b7f331e9abfecf002e39692d7971b56953e119bc594aa48bdc56acf10",
+   "state": "not-sure",
+   "top1": "Drosera latifolia",
+   "p": 0.2852,
+   "section": null,
+   "section_p": 0.2889,
+   "top5": [
+    [
+     "Drosera latifolia",
+     0.2852
+    ],
+    [
+     "Drosera dilatatopetiolaris",
+     0.1798
+    ],
+    [
+     "Drosera hilaris",
+     0.0653
+    ],
+    [
+     "Drosera ericgreenii",
+     0.0481
+    ],
+    [
+     "Drosera fulva",
+     0.0442
+    ]
+   ]
+  },
+  {
+   "category": "Drosera not in the 110",
+   "title": "File:Drosera paradoxa (2).JPG",
+   "licence": "CC BY 3.0",
+   "author": "Philipp Weigell",
+   "page": "https://commons.wikimedia.org/wiki/File:Drosera_paradoxa_(2).JPG",
+   "sha256": "6a187cbb0e602749e455aab33d7796ba5964bf9118276d70360da4ec876b8d45",
+   "state": "not-sure",
+   "top1": "Drosera rotundifolia",
+   "p": 0.4371,
+   "section": null,
+   "section_p": 0.4927,
+   "top5": [
+    [
+     "Drosera rotundifolia",
+     0.4371
+    ],
+    [
+     "Drosera petiolaris",
+     0.0939
+    ],
+    [
+     "Drosera purpurascens",
+     0.0542
+    ],
+    [
+     "Drosera dilatatopetiolaris",
+     0.0443
+    ],
+    [
+     "Drosera fulva",
+     0.0391
+    ]
+   ]
+  },
+  {
+   "category": "Drosera not in the 110",
+   "title": "File:Drosera schizandra ne.jpg",
+   "licence": "Public domain",
+   "author": "No machine-readable author provided. NoahElhardt assumed (based on copyright claims).",
+   "page": "https://commons.wikimedia.org/wiki/File:Drosera_schizandra_ne.jpg",
+   "sha256": "59d5763dbfe202a1d59d9fc317c180829ad320fffd7135be2f7f38714df2047c",
+   "state": "not-sure",
+   "top1": "Drosera collina",
+   "p": 0.2541,
+   "section": null,
+   "section_p": 0.5855,
+   "top5": [
+    [
+     "Drosera collina",
+     0.2541
+    ],
+    [
+     "Drosera erythrorhiza",
+     0.1481
+    ],
+    [
+     "Drosera tubaestylis",
+     0.0659
+    ],
+    [
+     "Drosera bulbosa",
+     0.0436
+    ],
+    [
+     "Drosera magna",
+     0.0292
+    ]
+   ]
+  },
+  {
+   "category": "generic plant",
+   "title": "File:Macroscopic picture of Monstera Deliciosa.jpg",
+   "licence": "CC BY 4.0",
+   "author": "Iva508",
+   "page": "https://commons.wikimedia.org/wiki/File:Macroscopic_picture_of_Monstera_Deliciosa.jpg",
+   "sha256": "4a2aa6823e5319ad80a92c135921b404724f23e9a951ac9b45217ca3133e3ecb",
+   "state": "not-sure",
+   "top1": "Drosera tracyi",
+   "p": 0.3793,
+   "section": null,
+   "section_p": 0.4429,
+   "top5": [
+    [
+     "Drosera tracyi",
+     0.3793
+    ],
+    [
+     "Drosera fulva",
+     0.1285
+    ],
+    [
+     "Drosera capensis",
+     0.0382
+    ],
+    [
+     "Drosera burmanni",
+     0.0308
+    ],
+    [
+     "Drosera lunata",
+     0.0304
+    ]
+   ]
+  },
+  {
+   "category": "generic plant",
+   "title": "File:Bryum canariense (Canary bryum moss) (5575457993).jpg",
+   "licence": "CC BY 2.0",
+   "author": "John Game",
+   "page": "https://commons.wikimedia.org/wiki/File:Bryum_canariense_(Canary_bryum_moss)_(5575457993).jpg",
+   "sha256": "f94607ea82126cf8a72191f7eb6bff135d04743101bf7642172de63e434cd03b",
+   "state": "not-sure",
+   "top1": "Drosera rotundifolia",
+   "p": 0.1905,
+   "section": null,
+   "section_p": 0.4985,
+   "top5": [
+    [
+     "Drosera rotundifolia",
+     0.1905
+    ],
+    [
+     "Drosera spatulata",
+     0.1862
+    ],
+    [
+     "Drosera modesta",
+     0.1314
+    ],
+    [
+     "Drosera anglica",
+     0.1045
+    ],
+    [
+     "Drosera admirabilis",
+     0.0415
+    ]
+   ]
+  },
+  {
+   "category": "generic plant",
+   "title": "File:Poa annua plant (7398667406).jpg",
+   "licence": "CC BY 2.0",
+   "author": "Harry Rose from South West Rocks, Australia",
+   "page": "https://commons.wikimedia.org/wiki/File:Poa_annua_plant_(7398667406).jpg",
+   "sha256": "d40a033bb991d7c765b9170455d6cee60b1ca64739852d2ac7bdc899e7ab6b05",
+   "state": "answer",
+   "top1": "Drosera finlaysonii",
+   "p": 0.7224,
+   "section": null,
+   "section_p": null,
+   "top5": [
+    [
+     "Drosera finlaysonii",
+     0.7224
+    ],
+    [
+     "Drosera pallida",
+     0.0799
+    ],
+    [
+     "Drosera tracyi",
+     0.032
+    ],
+    [
+     "Drosera dilatatopetiolaris",
+     0.03
+    ],
+    [
+     "Drosera fulva",
+     0.0181
+    ]
+   ]
+  },
+  {
+   "category": "generic plant",
+   "title": "File:Echeveria strictiflora.jpg",
+   "licence": "CC BY 4.0",
+   "author": "Alison Northup",
+   "page": "https://commons.wikimedia.org/wiki/File:Echeveria_strictiflora.jpg",
+   "sha256": "a63998b23c89311a5ece830789affe4ba8747c0df223075c74ed7b9a9f8db3f4",
+   "state": "not-sure",
+   "top1": "Drosera gigantea",
+   "p": 0.412,
+   "section": null,
+   "section_p": 0.4191,
+   "top5": [
+    [
+     "Drosera gigantea",
+     0.412
+    ],
+    [
+     "Drosera collina",
+     0.2868
+    ],
+    [
+     "Drosera ordensis",
+     0.115
+    ],
+    [
+     "Drosera magna",
+     0.0482
+    ],
+    [
+     "Drosera hilaris",
+     0.0137
+    ]
+   ]
+  },
+  {
+   "category": "not a plant",
+   "title": "File:Two hands are open and facing upwards, showcasing a vibrant rainbow reflection on their palms.jpg",
+   "licence": "CC BY 2.0",
+   "author": "Shixart1985",
+   "page": "https://commons.wikimedia.org/wiki/File:Two_hands_are_open_and_facing_upwards,_showcasing_a_vibrant_rainbow_reflection_on_their_palms.jpg",
+   "sha256": "c43636c78969038b33c1e6c40b7ed9ea0fe3966c0a33608ef8bf11a2a4456fc7",
+   "state": "not-sure",
+   "top1": "Drosera cuneifolia",
+   "p": 0.1538,
+   "section": null,
+   "section_p": 0.435,
+   "top5": [
+    [
+     "Drosera cuneifolia",
+     0.1538
+    ],
+    [
+     "Drosera squamosa",
+     0.1282
+    ],
+    [
+     "Drosera binata",
+     0.1065
+    ],
+    [
+     "Drosera esterhuyseniae",
+     0.0601
+    ],
+    [
+     "Drosera cistiflora",
+     0.059
+    ]
+   ]
+  },
+  {
+   "category": "not a plant",
+   "title": "File:White textured coat finish clean seamless building wall texture.jpg",
+   "licence": "CC0",
+   "author": "Sisters.seamless",
+   "page": "https://commons.wikimedia.org/wiki/File:White_textured_coat_finish_clean_seamless_building_wall_texture.jpg",
+   "sha256": "20d798072b5e6f6d8d2a640e6ab140c69cc7ab599905430ec043145312623cd2",
+   "state": "not-sure",
+   "top1": "Drosera eneabba",
+   "p": 0.3587,
+   "section": null,
+   "section_p": 0.5876,
+   "top5": [
+    [
+     "Drosera eneabba",
+     0.3587
+    ],
+    [
+     "Drosera minutiflora",
+     0.0928
+    ],
+    [
+     "Drosera floridana",
+     0.0845
+    ],
+    [
+     "Drosera micrantha",
+     0.0402
+    ],
+    [
+     "Drosera pygmaea",
+     0.0392
+    ]
+   ]
+  },
+  {
+   "category": "not a plant",
+   "title": "File:Coffee mugs cups.jpg",
+   "licence": "Public domain",
+   "author": "Jon Sullivan",
+   "page": "https://commons.wikimedia.org/wiki/File:Coffee_mugs_cups.jpg",
+   "sha256": "6ac1aa27138e01113eca20d34158435341efb41a37f28bb3f400a3197af85361",
+   "state": "answer",
+   "top1": "Drosera binata",
+   "p": 0.6954,
+   "section": null,
+   "section_p": null,
+   "top5": [
+    [
+     "Drosera binata",
+     0.6954
+    ],
+    [
+     "Drosera serpens",
+     0.1149
+    ],
+    [
+     "Drosera modesta",
+     0.0764
+    ],
+    [
+     "Drosera floridana",
+     0.0197
+    ],
+    [
+     "Drosera humilis",
+     0.0124
+    ]
+   ]
+  },
+  {
+   "category": "not a plant",
+   "title": "File:Domestic cat 2011 G02.jpg",
+   "licence": "Public domain",
+   "author": "George Chernilevsky",
+   "page": "https://commons.wikimedia.org/wiki/File:Domestic_cat_2011_G02.jpg",
+   "sha256": "618720250541e49b5d8f0e4d13edefa3c3b20391edcb5af774d8bf2f53d09cc7",
+   "state": "not-sure",
+   "top1": "Drosera bulbosa",
+   "p": 0.0978,
+   "section": null,
+   "section_p": 0.2733,
+   "top5": [
+    [
+     "Drosera bulbosa",
+     0.0978
+    ],
+    [
+     "Drosera slackii",
+     0.0804
+    ],
+    [
+     "Drosera collina",
+     0.0673
+    ],
+    [
+     "Drosera macrophylla",
+     0.0516
+    ],
+    [
+     "Drosera rupicola",
+     0.0468
+    ]
+   ]
+  },
+  {
+   "category": "hard look-alike",
+   "title": "File:Grass at a lawn with morning dew 02.jpg",
+   "licence": "CC0",
+   "author": "Leonhard Lenz",
+   "page": "https://commons.wikimedia.org/wiki/File:Grass_at_a_lawn_with_morning_dew_02.jpg",
+   "sha256": "ac2cb61df4e8dd336070216afa232715e86f1ad27afc5408b73c222c53079a3e",
+   "state": "not-sure",
+   "top1": "Drosera modesta",
+   "p": 0.3099,
+   "section": null,
+   "section_p": 0.3223,
+   "top5": [
+    [
+     "Drosera modesta",
+     0.3099
+    ],
+    [
+     "Drosera indica",
+     0.1992
+    ],
+    [
+     "Drosera finlaysonii",
+     0.088
+    ],
+    [
+     "Drosera arcturi",
+     0.0325
+    ],
+    [
+     "Drosera serpens",
+     0.029
+    ]
+   ]
+  },
+  {
+   "category": "hard look-alike",
+   "title": "File:Hypochaeris radicata rosette4 (14609597536).jpg",
+   "licence": "CC BY 2.0",
+   "author": "Harry Rose from South West Rocks, Australia",
+   "page": "https://commons.wikimedia.org/wiki/File:Hypochaeris_radicata_rosette4_(14609597536).jpg",
+   "sha256": "106f581b394fc1bbaede8df653a36e71297e05989d72349e6ff6ded12a2bbfa5",
+   "state": "not-sure",
+   "top1": "Drosera finlaysonii",
+   "p": 0.2321,
+   "section": null,
+   "section_p": 0.2532,
+   "top5": [
+    [
+     "Drosera finlaysonii",
+     0.2321
+    ],
+    [
+     "Drosera hilaris",
+     0.1708
+    ],
+    [
+     "Drosera fulva",
+     0.0597
+    ],
+    [
+     "Drosera collina",
+     0.0584
+    ],
+    [
+     "Drosera ordensis",
+     0.0389
+    ]
+   ]
+  }
+ ]
+}
