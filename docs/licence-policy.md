@@ -123,8 +123,11 @@ and the existing tooling covers it.
   `ATTRIBUTION.md` for all 23,244 training photos.
 - **Segmentation model**: SegFormer-B0's encoder in segmentation-models-pytorch
   (`mit_b0`) comes from NVIDIA's SegFormer, under the NVIDIA Source Code
-  Licence for research and noncommercial use only. Any SegFormer weights must
-  carry that licence. The U-Net/ResNet-34 weights have no such restriction.
+  Licence, whose section 3.3 allows non-commercial use only and defines it as
+  "for research or evaluation purposes only". Any SegFormer weights must carry
+  that licence, and they are not used on the public site
+  ([segmentation-site.md](reports/segmentation-site.md)). The U-Net/ResNet-34
+  weights have no such restriction.
 
 Not legal advice; check the NVIDIA licence again before sharing segmentation
 weights.
