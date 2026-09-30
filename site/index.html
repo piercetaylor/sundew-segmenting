@@ -35,110 +35,33 @@
   <a href="notice.html">About this tool and its limits</a>.
 </footer>
 <script type="module">
-import { loadOrt, createClassifier, classifyBlob, softmaxT, ORT_VERSION, MODEL_SHA256 } from './classify.js';
-import { decide, COPY, MODEL_SHA256 as DECISION_SHA256 } from './js/decision.js';
-
-// Copied from release/species-v1.0.0/ at build time (.github/workflows/pages.yml).
-const MODEL_DIR = './model/v1.0.0/';
-const MODEL_URL = new URL(MODEL_DIR + 'model-int8.onnx', location.href).href;
-const LABELS_URL = MODEL_DIR + 'labels.json';
-const RELEASE_URL = MODEL_DIR + 'release.json';
-const CACHE_NAME = 'sundew-model-v1.0.0';
-// onnxruntime-web 1.30.0 is self-hosted (copied from the npm package by pages.yml). The optional,
-// unverified ?backend=webgpu build is not self-hosted and still loads from jsDelivr (ORT_CDN).
-const ORT_DIR = new URL('./ort/1.30.0/', location.href).href;
+import { softmaxT } from './classify.js';
+import { decide, COPY } from './js/decision.js';
+import { createEngine } from './js/engine.js';
 
 const $ = (id) => document.getElementById(id);
-let clf = null;
+const params = new URLSearchParams(location.search);
+let engine = null;
 let previewUrl = null;
 let run = 0; // the latest photo; results of an earlier photo that finish later are dropped
 $('hint').textContent = COPY.uploadHint;
 
-async function fetchJson(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  return r.json();
-}
-
-// The Cache API needs a secure context; on plain http (a LAN IP) it is missing, so every step may fail.
-async function openCache() {
-  try {
-    const cache = await caches.open(CACHE_NAME);
-    for (const k of await caches.keys()) if (k.startsWith('sundew-model-') && k !== CACHE_NAME) await caches.delete(k);
-    return cache;
-  } catch { return null; }
-}
-
-async function download(url, onProgress) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  const total = Number(r.headers.get('content-length')) || 0;
-  if (!r.body) return r.blob();
-  const reader = r.body.getReader();
-  const chunks = [];
-  let got = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    chunks.push(value);
-    got += value.length;
-    onProgress(got, total);
-  }
-  return new Blob(chunks, { type: 'application/octet-stream' });
-}
-
-// Model bytes from the Cache API if present, else the network. classify.js gets an object URL
-// and still checks the sha256 (when crypto.subtle exists), so a bad cached copy is caught.
-async function loadClassifier(ort, backend) {
-  const cache = await openCache();
-  let cached = null;
-  try { cached = cache && await cache.match(MODEL_URL); } catch { cached = null; }
-  const onProgress = (got, total) => { $('status').textContent = `Downloading model ${(got / 1e6).toFixed(1)}${total ? ' / ' + (total / 1e6).toFixed(1) : ''} MB`; };
-  for (const fromCache of cached ? [true, false] : [false]) {
-    const blob = fromCache ? await cached.blob() : await download(MODEL_URL, onProgress);
-    const url = URL.createObjectURL(blob);
-    try {
-      const c = await createClassifier({ ort, modelUrl: url, labelsUrl: LABELS_URL, backend });
-      if (!fromCache && cache) {
-        try { await cache.put(MODEL_URL, new Response(blob, { headers: { 'content-type': 'application/octet-stream' } })); } catch (e) { console.warn('model not cached:', e); }
-      }
-      c.fromCache = fromCache;
-      return c;
-    } catch (e) {
-      // Only a failed sha256 check means the cached copy is bad; other errors (offline, labels) are rethrown.
-      if (!fromCache || !/sha256/.test(e.message)) throw e;
-      console.warn('cached model rejected, downloading again:', e);
-      try { await cache.delete(MODEL_URL); } catch {}
-    } finally {
-      URL.revokeObjectURL(url);
-    }
-  }
-}
-
-async function init(backend) {
+// The model loads and runs in a worker (js/worker.js) so the page stays responsive; ?worker=0 runs it
+// in the page, as browsers without module workers or a 2D OffscreenCanvas do anyway.
+async function init() {
   $('file').disabled = true;
   $('status').textContent = 'Loading model...';
+  const onProgress = (got, total) => { $('status').textContent = `Downloading model ${(got / 1e6).toFixed(1)}${total ? ' / ' + (total / 1e6).toFixed(1) : ''} MB`; };
   try {
-    const release = await fetchJson(RELEASE_URL);
-    const sha = release.files?.['model-int8.onnx']?.sha256;
-    if (sha !== MODEL_SHA256 || sha !== DECISION_SHA256) throw new Error('release.json does not match this page');
-    const ort = await loadOrt(backend, backend === 'wasm' ? { cdn: ORT_DIR } : {});
-    clf = await loadClassifier(ort, backend);
-    $('status').textContent = `Ready: sundew-species ${release.version}, onnxruntime-web ${ORT_VERSION}, ${backend}, ` +
-      `${clf.ort.env.wasm.numThreads} thread(s), loaded in ${(clf.timings.total_ms / 1000).toFixed(1)} s${clf.fromCache ? ' (cached)' : ''}.`;
+    engine = await createEngine(onProgress, { worker: params.get('worker') !== '0' });
+    const i = engine.info;
+    $('status').textContent = `Ready: sundew-species ${i.version}, onnxruntime-web ${i.ort}, ${i.backend}, ` +
+      `${i.threads} thread(s), ${engine.inWorker ? 'in a worker' : 'in the page'}, loaded in ${(i.loadMs / 1000).toFixed(1)} s${i.fromCache ? ' (cached)' : ''}.`;
     $('file').disabled = false;
   } catch (e) {
     console.error(e);
-    if (backend === 'webgpu') { fallBackToWasm(); return; }
     $('status').textContent = `Could not load the model: ${e.message}`;
   }
-}
-
-function fallBackToWasm() {
-  const q = new URLSearchParams(location.search);
-  q.delete('backend');
-  const qs = q.toString();
-  location.replace(location.pathname + (qs ? '?' + qs : ''));
 }
 
 function add(tag, className, text) {
@@ -152,7 +75,7 @@ function add(tag, className, text) {
 // The decision rule (species at p >= 0.65, else a section at >= 0.7, else "not sure") lives in
 // js/decision.js; it compares unrounded probabilities.
 function showResults(r) {
-  const d = decide(softmaxT(r.logits), clf.labels);
+  const d = decide(softmaxT(r.logits), engine.labels);
   if (d.state === 'answer') {
     add('h2', '', COPY.answer);
     const best = add('p');
@@ -179,7 +102,7 @@ function showResults(r) {
 
 $('file').addEventListener('change', async () => {
   const f = $('file').files[0];
-  if (!f || !clf) return;
+  if (!f || !engine) return;
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = URL.createObjectURL(f);
   $('preview').src = previewUrl;
@@ -187,7 +110,7 @@ $('file').addEventListener('change', async () => {
   $('results').innerHTML = '';
   const mine = ++run;
   try {
-    const r = await classifyBlob(clf, f, { method: 'pil' });
+    const r = await engine.classify(f);
     if (mine !== run) return;
     $('status').textContent = `Done in ${(r.timings.preprocess_ms + r.timings.inference_ms).toFixed(0)} ms ` +
       `(preprocess ${r.timings.preprocess_ms.toFixed(0)}, model ${r.timings.inference_ms.toFixed(0)}).`;
@@ -195,7 +118,6 @@ $('file').addEventListener('change', async () => {
   } catch (e) {
     console.error(e);
     if (mine !== run) return;
-    if (clf.backend === 'webgpu') { fallBackToWasm(); return; }
     // createImageBitmap rejects formats the browser cannot decode (e.g. HEIC outside Safari).
     const undecodable = e.name === 'InvalidStateError' || /decod/i.test(e.message) || /hei[cf]/i.test(f.type || f.name);
     $('status').textContent = undecodable
@@ -204,8 +126,7 @@ $('file').addEventListener('change', async () => {
   }
 });
 
-// WebGPU is optional and unverified: ?backend=webgpu, falling back to WASM on any error.
-init(new URLSearchParams(location.search).get('backend') === 'webgpu' ? 'webgpu' : 'wasm');
+init();
 </script>
 </body>
 </html>
