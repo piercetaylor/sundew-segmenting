@@ -13,6 +13,7 @@
   .row { margin: 6px 0; }
   .bar { height: 6px; background: var(--bar); border-radius: 3px; }
   .muted, small { color: var(--muted); }
+  .caveat { font-size: 14px; color: var(--muted); }
   .notsure { background: var(--warn-bg); color: var(--warn-fg); border-radius: 6px; padding: 8px 12px; margin: 12px 0; }
   input { font: inherit; }
   footer { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--muted); }
@@ -21,6 +22,7 @@
 <body>
 <h1>Which sundew is this?</h1>
 <p>Choose a photo of a <i>Drosera</i> plant. It is identified in your browser, on your device; the photo is never uploaded, and the site has no analytics.</p>
+<p id="hint"></p>
 <p><input type="file" id="file" accept="image/*" disabled></p>
 <p id="status" class="muted">Loading model...</p>
 <img id="preview" alt="">
@@ -30,10 +32,11 @@
   <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>, trained on photos by
   iNaturalist contributors (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/ATTRIBUTION.md">credits</a>). Code Apache-2.0
   (<a href="https://github.com/piercetaylor/sundew-segmenting">source</a>, <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/THIRD_PARTY_NOTICES.md">third-party notices</a>).
-  It always answers with one of 110 sundew species, even for other plants; treat a low top probability as "not sure".
+  <a href="notice.html">About this tool and its limits</a>.
 </footer>
 <script type="module">
-import { loadOrt, createClassifier, classifyBlob, ORT_VERSION, MODEL_SHA256 } from './classify.js';
+import { loadOrt, createClassifier, classifyBlob, softmaxT, ORT_VERSION, MODEL_SHA256 } from './classify.js';
+import { decide, COPY, MODEL_SHA256 as DECISION_SHA256 } from './js/decision.js';
 
 // Copied from release/species-v1.0.0/ at build time (.github/workflows/pages.yml).
 const MODEL_DIR = './model/v1.0.0/';
@@ -44,18 +47,11 @@ const CACHE_NAME = 'sundew-model-v1.0.0';
 // onnxruntime-web 1.30.0 is self-hosted (copied from the npm package by pages.yml). The optional,
 // unverified ?backend=webgpu build is not self-hosted and still loads from jsDelivr (ORT_CDN).
 const ORT_DIR = new URL('./ort/1.30.0/', location.href).href;
-const NOT_SURE = 0.65; // validated in the abstention analysis: ~78% of photos answered, ~90% of those right
 
 const $ = (id) => document.getElementById(id);
 let clf = null;
 let previewUrl = null;
-
-// "Not sure" rule, kept in one place. Returns a message to show above the results, or null.
-// Compares the unrounded probability, so 0.646 is "not sure" although it displays as 64.6%/65%.
-function notSureMessage(top) {
-  if (top[0].prob >= NOT_SURE) return null;
-  return 'Not sure. The model is not confident about any species. This may be a Drosera outside the 110 species it knows, or not a sundew.';
-}
+$('hint').textContent = COPY.uploadHint;
 
 async function fetchJson(url) {
   const r = await fetch(url);
@@ -122,7 +118,8 @@ async function init(backend) {
   $('status').textContent = 'Loading model...';
   try {
     const release = await fetchJson(RELEASE_URL);
-    if (release.files?.['model-int8.onnx']?.sha256 !== MODEL_SHA256) throw new Error('release.json does not match this page');
+    const sha = release.files?.['model-int8.onnx']?.sha256;
+    if (sha !== MODEL_SHA256 || sha !== DECISION_SHA256) throw new Error('release.json does not match this page');
     const ort = await loadOrt(backend, backend === 'wasm' ? { cdn: ORT_DIR } : {});
     clf = await loadClassifier(ort, backend);
     $('status').textContent = `Ready: sundew-species ${release.version}, onnxruntime-web ${ORT_VERSION}, ${backend}, ` +
@@ -142,24 +139,40 @@ function fallBackToWasm() {
   location.replace(location.pathname + (qs ? '?' + qs : ''));
 }
 
-function showResults(top) {
-  const msg = notSureMessage(top);
-  if (msg) {
-    const div = document.createElement('div');
-    div.className = 'notsure';
-    div.id = 'notsure';
-    div.textContent = msg;
-    $('results').appendChild(div);
+function add(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text) el.textContent = text;
+  $('results').appendChild(el);
+  return el;
+}
+
+// The decision rule (species at p >= 0.65, else a section at >= 0.7, else "not sure") lives in
+// js/decision.js; it compares unrounded probabilities.
+function showResults(r) {
+  const d = decide(softmaxT(r.logits), clf.labels);
+  if (d.state === 'answer') {
+    add('h2', '', COPY.answer);
+    const best = add('p');
+    best.id = 'best';
+    best.innerHTML = '<b><i></i></b> ';
+    best.querySelector('i').textContent = d.label;
+    best.append(d.top[0].pct);
+  } else {
+    const box = add('div', 'notsure', d.state === 'section' ? COPY.section(d.section) : COPY.notSure);
+    box.id = 'notsure';
   }
-  for (const t of top) {
-    const div = document.createElement('div');
-    div.className = 'row';
+  add('h3', '', d.state === 'answer' ? COPY.otherMatches : COPY.possibleMatches);
+  for (const t of d.state === 'answer' ? d.top.slice(1) : d.top) {
+    const div = add('div', 'row');
     div.innerHTML = `<i></i> <small></small><div class="bar"></div>`;
     div.querySelector('i').textContent = t.label;
-    div.querySelector('small').textContent = `${(t.prob * 100).toFixed(1)}%`;
-    div.querySelector('.bar').style.width = `${Math.max(1, t.prob * 100)}%`;
-    $('results').appendChild(div);
+    div.querySelector('small').textContent = t.pct;
+    div.querySelector('.bar').style.width = `${Math.max(1, t.p * 100)}%`;
   }
+  add('p', 'caveat', COPY.caveat);
+  add('p', 'caveat', COPY.accuracy);
+  add('p', 'caveat').innerHTML = '<a href="notice.html">About this tool and its limits</a>';
 }
 
 $('file').addEventListener('change', async () => {
@@ -174,7 +187,7 @@ $('file').addEventListener('change', async () => {
     const r = await classifyBlob(clf, f, { method: 'pil' });
     $('status').textContent = `Done in ${(r.timings.preprocess_ms + r.timings.inference_ms).toFixed(0)} ms ` +
       `(preprocess ${r.timings.preprocess_ms.toFixed(0)}, model ${r.timings.inference_ms.toFixed(0)}).`;
-    showResults(r.top);
+    showResults(r);
   } catch (e) {
     console.error(e);
     if (clf.backend === 'webgpu') { fallBackToWasm(); return; }
