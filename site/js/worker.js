@@ -5,7 +5,7 @@
 // responsive while the model runs (about 0.5-3 s per photo on one thread).
 // Started by js/engine.js; the same code runs in the page if workers can't be used.
 //
-// Messages in:  {type: 'init', backend} | {type: 'classify', id, file}
+// Messages in:  {type: 'init'} | {type: 'classify', id, file}
 // Messages out: {type: 'hello', ok, reason?} | {type: 'progress', got, total}
 //               | {type: 'ready', labels, info} | {type: 'result', id, logits, timings}
 //               | {type: 'error', id?, name, message}
@@ -28,7 +28,7 @@ const errorMessage = (e, id) => ({ type: 'error', id, name: e?.name ?? 'Error', 
 self.onmessage = async ({ data }) => {
   if (data.type === 'init') {
     try {
-      clf = await loadModel(data.backend, (got, total) => self.postMessage({ type: 'progress', got, total }));
+      clf = await loadModel((got, total) => self.postMessage({ type: 'progress', got, total }));
       self.postMessage({ type: 'ready', labels: clf.labels, info: clf.info });
     } catch (e) {
       console.error(e);

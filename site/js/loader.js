@@ -17,8 +17,9 @@ export const MODEL_URL = new URL('model-int8.onnx', MODEL_DIR).href;
 const LABELS_URL = new URL('labels.json', MODEL_DIR).href;
 const RELEASE_URL = new URL('release.json', MODEL_DIR).href;
 export const CACHE_NAME = 'sundew-model-v1.0.0';
-// onnxruntime-web 1.30.0 is self-hosted (copied from the npm package by pages.yml). The optional,
-// unverified ?backend=webgpu build is not self-hosted and still loads from jsDelivr (ORT_CDN).
+// onnxruntime-web 1.30.0 (WASM build) is self-hosted, copied from the npm package by pages.yml.
+// WebGPU is not offered: this int8 model has no WebGPU kernels for DynamicQuantizeLinear /
+// MatMulInteger / ConvInteger, so it ran 1.85x slower than WASM on an H100 (docs/reports/species-browser.md).
 const ORT_DIR = new URL('../ort/1.30.0/', import.meta.url).href;
 
 async function fetchJson(url) {
@@ -56,7 +57,7 @@ async function download(url, onProgress) {
 
 // Model bytes from the Cache API if present, else the network. classify.js gets an object URL
 // and still checks the sha256 (when crypto.subtle exists), so a bad cached copy is caught.
-async function loadClassifier(ort, backend, onProgress) {
+async function loadClassifier(ort, onProgress) {
   const cache = await openCache();
   let cached = null;
   try { cached = cache && await cache.match(MODEL_URL); } catch { cached = null; }
@@ -64,7 +65,7 @@ async function loadClassifier(ort, backend, onProgress) {
     const blob = fromCache ? await cached.blob() : await download(MODEL_URL, onProgress);
     const url = URL.createObjectURL(blob);
     try {
-      const c = await createClassifier({ ort, modelUrl: url, labelsUrl: LABELS_URL, backend });
+      const c = await createClassifier({ ort, modelUrl: url, labelsUrl: LABELS_URL, backend: 'wasm' });
       if (!fromCache && cache) {
         try { await cache.put(MODEL_URL, new Response(blob, { headers: { 'content-type': 'application/octet-stream' } })); } catch (e) { console.warn('model not cached:', e); }
       }
@@ -86,14 +87,14 @@ async function loadClassifier(ort, backend, onProgress) {
  * onProgress(got, total) is called while the model downloads.
  * Returns the classifier from classify.js plus { fromCache, info } (info is plain data for the status line).
  */
-export async function loadModel(backend, onProgress = () => {}) {
+export async function loadModel(onProgress = () => {}) {
   const release = await fetchJson(RELEASE_URL);
   const sha = release.files?.['model-int8.onnx']?.sha256;
   if (sha !== MODEL_SHA256 || sha !== DECISION_SHA256) throw new Error('release.json does not match this page');
-  const ort = await loadOrt(backend, backend === 'wasm' ? { cdn: ORT_DIR } : {});
-  const clf = await loadClassifier(ort, backend, onProgress);
+  const ort = await loadOrt('wasm', { cdn: ORT_DIR });
+  const clf = await loadClassifier(ort, onProgress);
   clf.info = {
-    version: release.version, ort: ORT_VERSION, backend, threads: ort.env.wasm.numThreads,
+    version: release.version, ort: ORT_VERSION, backend: 'wasm', threads: ort.env.wasm.numThreads,
     loadMs: clf.timings.total_ms, fromCache: clf.fromCache,
   };
   return clf;

@@ -43,6 +43,25 @@ the site uses the JS resize.
 - Two WASM threads (needs COOP/COEP headers, which GitHub Pages does not send):
   model 285 ms.
 
+## WebGPU (not offered)
+
+Measured on an NVIDIA H100 NVL in headless Chrome 154 (Vulkan through ANGLE):
+110 validation photos, the `pil` resize, compared with 1-thread WASM on the
+same node.
+
+| | WebGPU | WASM |
+| --- | ---: | ---: |
+| Model alone, median | 465 ms | 251 ms |
+| Whole photo, median (s576 / original) | 484 / 546 ms | 270 / 327 ms |
+| Top-1 agreement with Python (s576 / original) | 0.973 / 0.991 | 0.982 / 1.000 |
+| Largest logit difference from Node WASM (s576) | 0.43 | 5e-6 |
+
+onnxruntime-web has no WebGPU kernels for the int8 ops of this model
+(`DynamicQuantizeLinear`, `MatMulInteger`, `ConvInteger`). They run on the
+WASM fallback, with about 150 copies between CPU and GPU per photo. WebGPU was
+therefore 1.85x slower than WASM and less exact, so the site offers WASM only.
+It could only help an fp32 export, which has not been measured.
+
 ## Site checks (headless Chrome 154)
 
 - **Large photos:** 30 originals upscaled to 20 MP JPEGs take the pre-shrink
@@ -55,8 +74,8 @@ the site uses the JS resize.
   file the browser can't decode gets a "use a JPEG" message.
 - **Web Worker:** the model loads and runs in a module worker
   (`site/js/worker.js`), so the page keeps responding while a photo is
-  identified. On a 20 MP photo, the longest main-thread gap was 107 ms with the
-  worker and 923 ms without it (`?worker=0`). Both paths gave the same top-5,
+  identified. On a 20 MP photo, the longest main-thread gap was 36-107 ms with the
+  worker and 844-923 ms without it (`?worker=0`, two runs each). Both paths gave the same top-5,
   and warm timings per photo are the same. Browsers without module workers or
   a 2D `OffscreenCanvas` (Safari before 16.4) run the model in the page as
   before. Over plain http on a LAN IP (no Cache API, no `crypto.subtle`), the
@@ -85,4 +104,3 @@ iPhone Display P3 photos, except in Safari, which is untested.
 
 - Phones (iPhone Safari, Android Chrome) and desktop Firefox and Safari.
 - Real HEIC photos.
-- WebGPU.

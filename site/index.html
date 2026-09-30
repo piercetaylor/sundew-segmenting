@@ -42,8 +42,6 @@ import { createEngine } from './js/engine.js';
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 let engine = null;
-// WebGPU is optional and unverified: ?backend=webgpu, falling back to WASM on any error.
-const backend = params.get('backend') === 'webgpu' ? 'webgpu' : 'wasm';
 let previewUrl = null;
 let run = 0; // the latest photo; results of an earlier photo that finish later are dropped
 $('hint').textContent = COPY.uploadHint;
@@ -55,23 +53,15 @@ async function init() {
   $('status').textContent = 'Loading model...';
   const onProgress = (got, total) => { $('status').textContent = `Downloading model ${(got / 1e6).toFixed(1)}${total ? ' / ' + (total / 1e6).toFixed(1) : ''} MB`; };
   try {
-    engine = await createEngine(backend, onProgress, { worker: params.get('worker') !== '0' });
+    engine = await createEngine(onProgress, { worker: params.get('worker') !== '0' });
     const i = engine.info;
     $('status').textContent = `Ready: sundew-species ${i.version}, onnxruntime-web ${i.ort}, ${i.backend}, ` +
       `${i.threads} thread(s), ${engine.inWorker ? 'in a worker' : 'in the page'}, loaded in ${(i.loadMs / 1000).toFixed(1)} s${i.fromCache ? ' (cached)' : ''}.`;
     $('file').disabled = false;
   } catch (e) {
     console.error(e);
-    if (backend === 'webgpu') { fallBackToWasm(); return; }
     $('status').textContent = `Could not load the model: ${e.message}`;
   }
-}
-
-function fallBackToWasm() {
-  const q = new URLSearchParams(location.search);
-  q.delete('backend');
-  const qs = q.toString();
-  location.replace(location.pathname + (qs ? '?' + qs : ''));
 }
 
 function add(tag, className, text) {
@@ -128,7 +118,6 @@ $('file').addEventListener('change', async () => {
   } catch (e) {
     console.error(e);
     if (mine !== run) return;
-    if (backend === 'webgpu') { fallBackToWasm(); return; }
     // createImageBitmap rejects formats the browser cannot decode (e.g. HEIC outside Safari).
     const undecodable = e.name === 'InvalidStateError' || /decod/i.test(e.message) || /hei[cf]/i.test(f.type || f.name);
     $('status').textContent = undecodable

@@ -4,7 +4,7 @@
 // The model for index.html: in a module worker (js/worker.js) when the browser
 // can decode photos there, otherwise in the page. Same classify.js either way.
 //
-//   const engine = await createEngine('wasm', (got, total) => ...);
+//   const engine = await createEngine((got, total) => ...);
 //   engine.labels, engine.info, engine.inWorker
 //   const { logits, timings } = await engine.classify(file);
 
@@ -41,7 +41,7 @@ function startWorker() {
   });
 }
 
-async function workerEngine(w, backend, onProgress) {
+async function workerEngine(w, onProgress) {
   const pending = new Map();
   let nextId = 0;
   let dead = null;
@@ -65,7 +65,7 @@ async function workerEngine(w, backend, onProgress) {
       pending.clear();
     };
   });
-  w.postMessage({ type: 'init', backend });
+  w.postMessage({ type: 'init' });
   const { labels, info } = await ready;
   return {
     labels, info, inWorker: true,
@@ -80,8 +80,8 @@ async function workerEngine(w, backend, onProgress) {
   };
 }
 
-async function pageEngine(backend, onProgress) {
-  const clf = await loadModel(backend, onProgress);
+async function pageEngine(onProgress) {
+  const clf = await loadModel(onProgress);
   return {
     labels: clf.labels, info: clf.info, inWorker: false,
     async classify(file) {
@@ -92,7 +92,7 @@ async function pageEngine(backend, onProgress) {
 }
 
 /** Load the model; `?worker=0` (read by index.html) forces the in-page path. */
-export async function createEngine(backend, onProgress, { worker = true } = {}) {
+export async function createEngine(onProgress, { worker = true } = {}) {
   const w = worker ? await startWorker() : null;
-  return w ? workerEngine(w, backend, onProgress) : pageEngine(backend, onProgress);
+  return w ? workerEngine(w, onProgress) : pageEngine(onProgress);
 }
