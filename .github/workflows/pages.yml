@@ -7,13 +7,19 @@ on:
       - "site/**"
       - "release/**"
       - ".github/workflows/pages.yml"
+  # Pull requests build and check the site but do not deploy it.
+  pull_request:
+    paths:
+      - "site/**"
+      - "release/**"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: pages
+  group: ${{ github.event_name == 'pull_request' && format('pages-pr-{0}', github.ref) || 'pages' }}
   cancel-in-progress: false
 
 jobs:
@@ -65,12 +71,15 @@ jobs:
             node site/test/privacy-check.mjs "$(command -v google-chrome)" http://127.0.0.1:8765/ "$RUNNER_TEMP/synthetic.png"
       - name: Leave the tests out of the site
         run: rm -rf site/test
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:
