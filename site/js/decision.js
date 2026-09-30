@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Pierce Taylor
+//
 // What the site says for one photo: a species, a section, or "not sure".
 //
 // Browser copy of src/sundew_segmentation/species_decision.py for the species

@@ -1,4 +1,7 @@
-// Run from the repo root: node --test site/test/
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 Pierce Taylor
+//
+// Run from the repo root: node --test "site/test/*.test.mjs"
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
