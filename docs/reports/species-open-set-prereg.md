@@ -63,5 +63,20 @@ same photos):
 2. A small "sundew / not a sundew" gate on the DINOv2-S embedding, trained on
    a separate open-set pull and the train split.
 
+**Addendum (2026-09-30, after the primary result failed at 20.3%, before any
+fallback was computed).** Step 1 in detail:
+
+- Scores from the same int8 logits: top-1 probability (the current rule), max
+  logit, and negative energy `T * logsumexp(logits / T)`; higher means
+  "answer". Each score's threshold is set on validation so that in-list
+  coverage stays 77.8% (the current rule's), so users with listed sundews see
+  no change.
+- e is split in two by observer (seed 20260930). The score with the lowest
+  false-accept rate on half A is chosen; its rate on half B, next to the
+  current rule's rate on half B, is the result. It passes if half B is below
+  20%. d is reported, no bar.
+- If no score beats the current rule on half A, step 1 fails and the rule
+  stays.
+
 Until one passes, the site keeps the disclaimer that it may name a sundew for
 other plants, sometimes with high confidence.
