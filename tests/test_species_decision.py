@@ -6,7 +6,7 @@ import unittest
 import numpy as np
 
 from sundew_segmentation.species_decision import (
-    P_ANSWER, P_SECTION, TEMPERATURE, decide, load_sections, section_probs, softmax_t,
+    E_ANSWER, P_ANSWER, P_SECTION, TEMPERATURE, decide, load_sections, neg_energy, section_probs, softmax_t,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +27,11 @@ def with_top(p, i=0):
     return probs
 
 
+def logits_for(probs, energy):
+    """Logits with softmax(logits / T) == probs and T * logsumexp(logits / T) == energy."""
+    return TEMPERATURE * np.log(probs) + energy
+
+
 class SpeciesDecisionTests(unittest.TestCase):
     def test_constants_match_release(self):
         release = json.loads((ROOT / "release/species-v1.0.0/release.json").read_text())
@@ -37,19 +42,28 @@ class SpeciesDecisionTests(unittest.TestCase):
         e = np.exp(z / TEMPERATURE)
         np.testing.assert_allclose(softmax_t(z), e / e.sum())
 
-    def test_answer_threshold_is_inclusive_and_unrounded(self):
-        self.assertEqual(decide(with_top(P_ANSWER), LABELS, SECTIONS)["state"], "answer")
-        self.assertEqual(decide(with_top(0.646), LABELS, SECTIONS)["state"], "not-sure")
+    def test_logits_for_round_trips(self):
+        l = logits_for(with_top(0.7), 6.2)
+        np.testing.assert_allclose(softmax_t(l), with_top(0.7))
+        self.assertAlmostEqual(float(neg_energy(l)), 6.2)
+
+    def test_species_needs_both_p_and_energy(self):
+        name = lambda p, e, **kw: decide(logits_for(with_top(p), e), LABELS, None, **kw)["state"]
+        self.assertEqual(name(0.9, E_ANSWER + 0.01), "answer")
+        self.assertEqual(name(0.9, E_ANSWER - 0.01), "not-sure")
+        self.assertEqual(name(0.66, 8.0), "answer")
+        self.assertEqual(name(0.646, 8.0), "not-sure")  # unrounded: shows as 65%
+        self.assertEqual(name(0.9, E_ANSWER - 0.01, energy_threshold=None), "answer")  # earlier p-only rule
 
     def test_section_fallback(self):
         members = [LABELS.index(n) for n in LABELS if SECTIONS[n] == "Ptycnostigma"][:2]
         probs = np.full(len(LABELS), 0.2 / (len(LABELS) - 2))
         probs[members] = [0.45, 0.35]
-        d = decide(probs, LABELS, SECTIONS)
+        d = decide(logits_for(probs, 8.0), LABELS, SECTIONS)
         self.assertEqual((d["state"], d["section"]), ("section", "Ptycnostigma"))
         self.assertGreaterEqual(d["section_p"], P_SECTION)
         self.assertEqual(len(d["top"]), 5)
-        self.assertEqual(decide(probs, LABELS, None)["state"], "not-sure")
+        self.assertEqual(decide(logits_for(probs, 8.0), LABELS, None)["state"], "not-sure")
         self.assertAlmostEqual(sum(section_probs(probs, LABELS, SECTIONS).values()), 1.0)
 
     def test_rejects_wrong_length(self):

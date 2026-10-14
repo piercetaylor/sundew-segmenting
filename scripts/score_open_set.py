@@ -23,7 +23,7 @@ from pathlib import Path
 
 import numpy as np
 
-from sundew_segmentation.species_decision import P_ANSWER, decide, load_sections, softmax_t
+from sundew_segmentation.species_decision import P_ANSWER, decide, load_sections
 
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE = ROOT / "release/species-v1.0.0"
@@ -88,7 +88,7 @@ def main() -> None:
     rows = []
     for i, r in enumerate(records):
         logits = sess.run(None, {"pixels": preprocess(Path(r["local_path"]))})[0][0]
-        d = decide(softmax_t(logits, temp), labels, sections)
+        d = decide(logits, labels, sections, energy_threshold=None)  # the pre-registered p-only rule
         rows.append({"source": r["source"], "group": r["group"], "taxon_name": r["taxon_name"],
                      "observation_id": r["observation_id"], "photo_id": r["photo_id"],
                      "observer_login": r["observer_login"], "license_code": r["license_code"],

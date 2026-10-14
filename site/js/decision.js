@@ -4,22 +4,29 @@
 // What the site says for one photo: a species, a section, or "not sure".
 //
 // Browser copy of src/sundew_segmentation/species_decision.py for the species
-// model v1.0.0; site/test/decision.test.mjs checks the two agree. The numbers
-// behind the thresholds are in docs/reports/species-abstain.md (validation,
-// 110 listed species only): at p >= 0.65, 77.8% of photos get a species name
-// and 90.1% of those names are right.
+// model v1.0.0; site/test/decision.test.mjs checks the two agree.
 //
-// Usage, with probs = softmaxT(logits) from classify.js (T = 0.74 applied):
-//   const d = decide(probs, clf.labels);
+// A species is named only when BOTH hold (since 2026-09-30):
+//   p = top-1 of softmax(logits / 0.74) >= 0.65   (the percentage shown), and
+//   energy = 0.74 * logsumexp(logits / 0.74) >= 5.955
+//           (how strongly the photo matches any listed species at all).
+// On validation (110 listed species) that names 71.6% of photos, 91.5% of them
+// right (docs/reports/species-abstain.md). With p alone about 1 in 5 photos of
+// other plants got a confident sundew name; with both, about 1 in 10
+// (docs/reports/species-open-set-fallback.md).
+//
+// Usage, with the raw logits from classify.js's classifyBlob:
+//   const d = decide(r.logits, clf.labels);
 //   d.state: 'answer' | 'section' | 'not-sure'; d.label, d.section, d.top[].pct
 //
-// Thresholds compare the unrounded probabilities: p = 0.646 shows as "65%"
-// but is still "not sure".
+// Thresholds compare unrounded values: p = 0.646 shows as "65%" but is still
+// "not sure".
 
 export const MODEL_VERSION = '1.0.0';
 export const MODEL_SHA256 = 'd7ee150eaf5d1c7ddae00a2a94e66ddcfd48b55166b940f4dfa35f0e3cc8af16';
 export const TEMPERATURE = 0.74;
 export const P_ANSWER = 0.65;
+export const E_ANSWER = 5.955;
 export const P_SECTION = 0.7;
 export const TOP_K = 5;
 
@@ -144,6 +151,15 @@ export function formatPct(p) {
   return `${Math.round(p * 100)}%`;
 }
 
+/** softmax(logits / T) in float64, and the negative energy T * logsumexp(logits / T). */
+export function probsAndEnergy(logits, t = TEMPERATURE) {
+  const z = Array.from(logits, (v) => v / t);
+  const m = Math.max(...z);
+  const e = z.map((v) => Math.exp(v - m));
+  const sum = e.reduce((a, b) => a + b, 0);
+  return { probs: e.map((v) => v / sum), energy: t * (m + Math.log(sum)) };
+}
+
 /** Summed probability per section, sections in sorted order. */
 export function sectionProbs(probs, labels) {
   const out = new Map([...new Set(labels.map((n) => SECTIONS[n]))].sort().map((s) => [s, 0]));
@@ -153,19 +169,20 @@ export function sectionProbs(probs, labels) {
 
 /**
  * Decision for one photo.
- * @param {ArrayLike<number>} probs  110 probabilities in label order (softmax(logits / 0.74)).
- * @param {string[]} labels          the 110 labels in model output order.
- * @param {{sections?: boolean}} opts  sections: false turns the section fallback off.
+ * @param {ArrayLike<number>} logits  the model's 110 raw logits, in label order.
+ * @param {string[]} labels           the 110 labels in model output order.
+ * @param {{sections?: boolean}} opts sections: false turns the section fallback off.
  */
-export function decide(probs, labels, { sections = true } = {}) {
-  if (probs.length !== labels.length) throw new Error(`expected ${labels.length} probabilities, got ${probs.length}`);
+export function decide(logits, labels, { sections = true } = {}) {
+  if (logits.length !== labels.length) throw new Error(`expected ${labels.length} logits, got ${logits.length}`);
   const missing = labels.filter((n) => !(n in SECTIONS));
   if (missing.length) throw new Error(`no section for ${missing.join(', ')}; decision.js is for model ${MODEL_VERSION}`);
+  const { probs, energy } = probsAndEnergy(logits);
   const order = [...labels.keys()].sort((a, b) => probs[b] - probs[a] || a - b);
   const top = order.slice(0, TOP_K).map((i) => ({ label: labels[i], p: probs[i], pct: formatPct(probs[i]) }));
   const p = top[0].p;
-  const out = { state: 'not-sure', label: null, p, section: null, sectionP: null, top };
-  if (p >= P_ANSWER) return { ...out, state: 'answer', label: top[0].label };
+  const out = { state: 'not-sure', label: null, p, energy, section: null, sectionP: null, top };
+  if (p >= P_ANSWER && energy >= E_ANSWER) return { ...out, state: 'answer', label: top[0].label };
   if (!sections) return out;
   let best = null;
   for (const [s, sp] of sectionProbs(probs, labels)) if (best === null || sp > best[1]) best = [s, sp];

@@ -38,3 +38,21 @@ moves by up to 0.11 on these out-of-list photos, where the model is least
 decided. The int8 kernels differ by CPU (as between the site's WASM and x86).
 Both runs fail the bar; the comparison above uses one set of logits for every
 score. The scoring scripts now record the CPU.
+
+## Adopted rule: p >= 0.65 and energy >= 5.955
+
+Owner decision, 2026-09-30, after seeing the table above: name a species only
+when **both** the current rule and the energy rule agree. It answers a subset
+of what energy alone answers, so its false-accept rate on half B can't exceed
+energy's 14.8%; it passes the bar without any threshold being picked on e.
+
+| Rule | e half A | e half B | e (all) | e1 | e2 | d (no bar) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| p >= 0.65 (before) | 19.4% | 23.2% | 21.3% | 30.7% | 12.0% | 41.3% |
+| **p >= 0.65 and energy >= 5.955** | 5.6% | **13.8%** | 9.8% | 15.1% | 4.5% | 33.0% |
+
+On validation ([species-abstain.md](species-abstain.md)) it names 71.6% of
+photos (77.8% before), 91.5% of them right (90.1% before); rare species 66.2%
+named, 82.2% right (68.5% and 81.9% before). About 6 more in 100 photos of
+listed sundews get "Not sure" or a section instead of a name. Same CPU and
+logits as above.

@@ -44,5 +44,23 @@
    "e2": 0.045,
    "d": 0.4391304347826087
   }
+ },
+ "adopted": {
+  "rule": "p >= 0.65 and negative energy >= 5.955",
+  "decided": "2026-09-30, project owner",
+  "false_accept": {
+   "e half A": 0.0561,
+   "e half B": 0.1379,
+   "e (all)": 0.0977,
+   "e1": 0.1508,
+   "e2": 0.045,
+   "d": 0.3304
+  },
+  "validation": {
+   "coverage": 0.716,
+   "acc_answered": 0.915,
+   "rare_coverage": 0.662,
+   "rare_acc_answered": 0.822
+  }
  }
 }
