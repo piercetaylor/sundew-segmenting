@@ -27,7 +27,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageOps
 
-from sundew_segmentation.species_decision import P_ANSWER, decide, load_sections, softmax_t
+from sundew_segmentation.species_decision import P_ANSWER, decide, load_sections
 
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE = ROOT / "release/species-v1.0.0"
@@ -66,7 +66,6 @@ def main() -> None:
     import onnxruntime as ort
 
     labels = json.loads((RELEASE / "labels.json").read_text())
-    release = json.loads((RELEASE / "release.json").read_text())
     sections = load_sections(ROOT / "data/species-110-sections.json", labels)
     so = ort.SessionOptions()
     so.intra_op_num_threads = 1
@@ -79,7 +78,7 @@ def main() -> None:
         dest = args.cache / f"{i:02d}.jpg"
         fetch(ph["url"], dest)
         logits = sess.run(None, {"pixels": preprocess(dest)})[0][0]
-        d = decide(softmax_t(logits, release["temperature"]), labels, sections)
+        d = decide(logits, labels, sections, energy_threshold=None)  # the rule the site had at the time
         rows.append({**{k: ph[k] for k in ("category", "title", "licence", "author", "page")},
                      "sha256": hashlib.sha256(dest.read_bytes()).hexdigest(),
                      "state": d["state"], "top1": d["top"][0]["label"], "p": round(d["p"], 4),

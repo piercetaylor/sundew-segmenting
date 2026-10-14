@@ -6,7 +6,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  decide, formatPct, sectionProbs, SECTIONS, MODEL_SHA256, TEMPERATURE, P_ANSWER, P_SECTION,
+  decide, formatPct, probsAndEnergy, sectionProbs, SECTIONS, MODEL_SHA256, TEMPERATURE,
+  P_ANSWER, E_ANSWER, P_SECTION,
 } from '../js/decision.js';
 
 const read = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url), 'utf8'));
@@ -15,13 +16,9 @@ const release = read('../../release/species-v1.0.0/release.json');
 const sectionData = read('../../data/species-110-sections.json').species;
 const vectors = read('./fixtures/decision-vectors.json');
 
-const softmaxT = (logits, t) => {
-  const z = logits.map((v) => v / t);
-  const m = Math.max(...z);
-  const e = z.map((v) => Math.exp(v - m));
-  const s = e.reduce((a, b) => a + b, 0);
-  return e.map((v) => v / s);
-};
+// Logits whose softmax(logits / T) is exactly `probs` and whose energy is `energy`:
+// logit_i = T * ln(q_i) + E gives T * logsumexp(logits / T) = E because sum(q) = 1.
+const logitsFor = (probs, energy) => probs.map((q) => TEMPERATURE * Math.log(q) + energy);
 
 // probs with top-1 = p, the rest spread so no section reaches P_SECTION.
 function withTop(p, i = 0) {
@@ -30,11 +27,12 @@ function withTop(p, i = 0) {
   return probs;
 }
 
-test('constants match release.json', () => {
+test('constants match release.json and the vectors', () => {
   assert.equal(MODEL_SHA256, release.files['model-int8.onnx'].sha256);
   assert.equal(TEMPERATURE, release.temperature);
   assert.equal(vectors.temperature, TEMPERATURE);
   assert.equal(vectors.p_answer, P_ANSWER);
+  assert.equal(vectors.e_answer, E_ANSWER);
   assert.equal(vectors.p_section, P_SECTION);
 });
 
@@ -46,8 +44,9 @@ test('sections cover exactly the model labels, as in data/species-110-sections.j
 
 test(`agrees with the Python reference on ${vectors.cases.length} validation photos`, () => {
   const states = new Set();
+  let energyDecided = 0;
   for (const c of vectors.cases) {
-    const d = decide(softmaxT(c.logits, TEMPERATURE), labels);
+    const d = decide(c.logits, labels);
     const e = c.expected;
     const where = `val_index ${c.val_index}`;
     assert.equal(d.state, e.state, where);
@@ -55,17 +54,30 @@ test(`agrees with the Python reference on ${vectors.cases.length} validation pho
     assert.equal(d.section, e.section, where);
     assert.deepEqual(d.top.map((t) => t.label), e.top, where);
     assert.ok(Math.abs(d.p - e.p) < 1e-9, where);
+    assert.ok(Math.abs(d.energy - e.energy) < 1e-9, where);
     if (e.section_p === null) assert.equal(d.sectionP, null, where);
     else assert.ok(Math.abs(d.sectionP - e.section_p) < 1e-9, where);
     states.add(d.state);
+    if (d.p >= P_ANSWER && d.state !== 'answer') energyDecided += 1;
   }
   assert.deepEqual([...states].sort(), ['answer', 'not-sure', 'section']);
+  assert.ok(energyDecided > 0, 'no vector where the energy condition decides');
 });
 
-test('threshold uses the unrounded probability', () => {
-  assert.equal(decide(withTop(P_ANSWER), labels).state, 'answer');
-  const d = decide(withTop(0.646), labels);
-  assert.equal(d.state, 'not-sure');
+test('probsAndEnergy inverts logitsFor', () => {
+  const q = withTop(0.7);
+  const { probs, energy } = probsAndEnergy(logitsFor(q, 6.2));
+  assert.ok(Math.abs(energy - 6.2) < 1e-9);
+  q.forEach((v, i) => assert.ok(Math.abs(probs[i] - v) < 1e-12));
+});
+
+test('a species is named only when p and energy both clear their thresholds', () => {
+  assert.equal(decide(logitsFor(withTop(0.9), E_ANSWER + 0.01), labels).state, 'answer');
+  assert.equal(decide(logitsFor(withTop(0.9), E_ANSWER - 0.01), labels, { sections: false }).state, 'not-sure');
+  assert.equal(decide(logitsFor(withTop(0.9), E_ANSWER - 0.01), labels).state, 'section'); // its section still clears 0.7
+  assert.equal(decide(logitsFor(withTop(0.66), 8), labels).state, 'answer');
+  const d = decide(logitsFor(withTop(0.646), 8), labels);
+  assert.equal(d.state, 'not-sure'); // p is unrounded: 0.646 shows as "65%" but is not enough
   assert.equal(d.top[0].pct, '65%');
 });
 
@@ -75,17 +87,17 @@ test('section fallback, and turning it off', () => {
   const probs = labels.map(() => 0.2 / (labels.length - 2));
   probs[a] = 0.45;
   probs[b] = 0.35;
-  const d = decide(probs, labels);
+  const d = decide(logitsFor(probs, 8), labels);
   assert.equal(d.state, 'section');
   assert.equal(d.section, 'Ptycnostigma');
   assert.ok(d.sectionP >= P_SECTION);
   assert.equal(d.top.length, 5);
-  assert.equal(decide(probs, labels, { sections: false }).state, 'not-sure');
+  assert.equal(decide(logitsFor(probs, 8), labels, { sections: false }).state, 'not-sure');
   const total = [...sectionProbs(probs, labels).values()].reduce((x, y) => x + y, 0);
   assert.ok(Math.abs(total - 1) < 1e-9);
 });
 
-test('rejects probabilities of the wrong length or unknown labels', () => {
+test('rejects logits of the wrong length or unknown labels', () => {
   assert.throws(() => decide([1], labels), /expected 110/);
   assert.throws(() => decide([1], ['Drosera nonexistens']), /no section/);
 });

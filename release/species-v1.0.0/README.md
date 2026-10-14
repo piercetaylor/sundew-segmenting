@@ -62,22 +62,28 @@ the 42 commonest.
 
 ## Recommended decision rule
 
-*Added 2026-09-29; the weights and `release.json` are unchanged.*
+*Added 2026-09-29, changed 2026-09-30 after an open-set test; the weights and
+`release.json` are unchanged.*
 
-Let `p` be the top-1 probability from `softmax(logits / 0.74)`. Compare the
-unrounded value.
+From the logits, with T = 0.74: `p` is the top-1 of `softmax(logits / T)`,
+and the energy is `T * logsumexp(logits / T)` (how strongly the photo matches
+any of the 110 species). Compare unrounded values.
 
-1. Always show the top 5 with whole-number percentages.
-2. Name the species only when `p >= 0.65`. On validation that answers 77.8% of
-   photos, and 90.1% of those answers are right (80.0% without the rule).
+1. Always show the top 5 with whole-number percentages (`p` and the rest).
+2. Name the species only when `p >= 0.65` **and** energy `>= 5.955`. On
+   validation that answers 71.6% of photos, 91.5% of them right (80.0% right
+   without a rule).
 3. Otherwise say "not sure". If the summed probability of one section's
    species (`data/species-110-sections.json`) is at least 0.7, name the
-   section: that covers about half of the "not sure" photos, 95.5% of them
-   right.
+   section: that covers 58.8% of the "not sure" photos, 93.6% of them right.
 
-The thresholds were picked on validation, which holds only the 110 species, so
-they say nothing about photos of other plants. Species with under 40 training
-photos get fewer and less accurate answers (68.5% answered, 81.9% right). Full
+The energy condition was added because `p >= 0.65` alone gave a confident
+sundew name to about 1 in 5 photos of other plants (research-grade
+iNaturalist photos of other carnivorous genera and other plants); with both
+conditions it is about 1 in 10, and about 1 in 3 for *Drosera* species outside
+the 110 ([open-set test](../../docs/reports/species-open-set.md),
+[rule change](../../docs/reports/species-open-set-fallback.md)). Species with
+under 40 training photos get fewer answers (66.2%, 82.2% of them right). Full
 tables: [docs/reports/species-abstain.md](../../docs/reports/species-abstain.md).
 Reference code: `src/sundew_segmentation/species_decision.py` and
 `site/js/decision.js`.
