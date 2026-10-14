@@ -15,6 +15,14 @@ Rule stated in the script before it was first run: the smallest top-1 probabilit
 - **Section fallback** (section threshold 0.7 is a judgement call from the table below, not a pre-stated rule): when the species abstains and the summed section probability is >= 0.7, name the section. That answers 48.5% of abstained photos at 95.5% section accuracy (95% 93.3%-97.4%); 11.4% of all photos get no species and no section.
 - **Rare species:** coverage 68.5% at 81.9% right, against 78.6% at 90.7% for the rest. Rare species get both fewer answers and less accurate ones; the site should not imply the 90% figure holds for every species.
 
+## The site's rule since 2026-09-30: p >= 0.65 and energy >= 5.955
+
+After the open-set test ([species-open-set.md](species-open-set.md)) found that about 1 in 5 photos of other plants got a confident sundew name with p alone, the site also requires the negative energy `T * logsumexp(logits / T)` (how strongly the photo matches any listed species) to reach 5.955, the value that alone would answer 77.8% of validation. With both, about 1 in 10 photos of other plants gets a name ([species-open-set-fallback.md](species-open-set-fallback.md)). The tables below this section are for p alone. On validation:
+
+- **Species named:** 71.6% of photos, 91.5% of them right (balanced 87.6%; 6.1 wrong answers per 100 photos, against 7.7 for p alone).
+- **Rare species:** 66.2% named, 82.2% right.
+- **Not named:** the true species is in the top 5 for 87.3%; the section fallback (section p >= 0.7) answers 58.8% of them, 93.6% right; 11.7% of all photos get neither.
+
 ## Accuracy vs coverage: top-1 probability
 
 No threshold: every photo answered, 80.0% right, 20.0 wrong answers per 100 photos.

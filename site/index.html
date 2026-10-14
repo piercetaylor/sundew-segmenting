@@ -35,7 +35,6 @@
   <a href="notice.html">About this tool and its limits</a>.
 </footer>
 <script type="module">
-import { softmaxT } from './classify.js';
 import { decide, COPY } from './js/decision.js';
 import { createEngine } from './js/engine.js';
 
@@ -72,10 +71,10 @@ function add(tag, className, text) {
   return el;
 }
 
-// The decision rule (species at p >= 0.65, else a section at >= 0.7, else "not sure") lives in
-// js/decision.js; it compares unrounded probabilities.
+// The decision rule (species at p >= 0.65 and energy >= 5.955, else a section at >= 0.7, else "not sure") lives in
+// js/decision.js; it takes the raw logits and compares unrounded values.
 function showResults(r) {
-  const d = decide(softmaxT(r.logits), engine.labels);
+  const d = decide(r.logits, engine.labels);
   if (d.state === 'answer') {
     add('h2', '', COPY.answer);
     const best = add('p');

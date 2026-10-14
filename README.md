@@ -1,18 +1,22 @@
 # Sundew Segmentation
 
-This project does two separate jobs on photos of sundews (*Drosera*). A SegFormer-B0 model outlines the plant, and a 22 MB int8 DINOv2-S model names the species in about 120 ms per photo on one CPU thread. It knows 110 species: those with at least 50 research-grade, wild, openly licensed observations on iNaturalist, out of the 220+ *Drosera* species. The species model reads the whole photo, so it does not need the segmenter. It is built on licensed iNaturalist photographs and trained on Mizzou's Hellbender HPC cluster. Every comparison uses five paired seeds, with its decision rule written down before the run.
+This project does two separate jobs on photos of sundews (*Drosera*). A SegFormer-B0 model outlines the plant, and a 22 MB int8 DINOv2-S model names the species in about 120 ms per photo on one CPU thread. It knows 110 species: those with at least 50 research-grade, wild, openly licensed observations on iNaturalist, out of the 250+ *Drosera* species. The species model reads the whole photo, so it does not need the segmenter. It is built on licensed iNaturalist photographs and trained on Mizzou's Hellbender HPC cluster. 
 
 ![Twelve licensed sundew examples](assets/dataset-preview.jpg)
 
 The preview's credits and licences are in [its attribution record](assets/dataset-preview-attribution.md).
 
 ## Where it stands
-
-**Data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](docs/reports/dataset-freeze-v0.3.0.md)), plus 30 field masks, initially assuming that the models would work better on segmented photos. The current species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
-
 **Segmentation.** SegFormer-B0 beat a U-Net on all five seeds (validation IoU 0.632 vs 0.610). Adding the field masks raised IoU on messy real-world photos from 0.552 to 0.613. Only 2.4% of uncurated photos got a crop that missed the plant.
 
-**Species classifier.** Balanced accuracy over 110 species:
+**Segmentation data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](docs/reports/dataset-freeze-v0.3.0.md)), plus 30 field masks, initially assuming that the models would work better on segmented photos. 
+
+
+**Species classifier data.** The current species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
+
+
+
+**Species classifier.**
 
 | Model | Validation | Test |
 | --- | ---: | ---: |
@@ -25,15 +29,15 @@ The preview's credits and licences are in [its attribution record](assets/datase
 
 The large DINOv2-L model is the most accurate, but it's too big to run on a phone, so it teaches the small DINOv2-S instead. Weighting that teaching by species keeps the rare species from being crowded out, and adding 12,126 unlabelled photos for the teacher to label gave the largest single gain (+0.033). The shipped model is 22 MB, runs in about 120 ms on one CPU thread, and clears the release floor (0.75, top-5 0.95). The test set was scored once, after everything else was fixed.
 
-The classifier reads the whole photo, not a crop around the plant. Cropping helped the old ResNet-18 (0.516 against 0.499), but once the DINOv2 models were fine-tuned it made no difference (DINOv2-L: -0.004 [-0.012, +0.006]), so every DINOv2 model here, including the shipped one, trains and runs on full frames ([why](docs/reports/species-finetune.md)). Segmentation stands on its own: it finds and outlines the plant, and it is not a step in species identification.
+The classifier reads the whole photo. Cropping helped the old ResNet-18 (0.516 against 0.499), but once the DINOv2 models were fine-tuned it made no difference (DINOv2-L: -0.004 [-0.012, +0.006]), so every DINOv2 model here, including the shipped one, trains and runs on full frames ([why](docs/reports/species-finetune.md)). Segmentation stands on its own: it finds and outlines the plant, and it is not a step in species identification.
 
-**Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. To keep wrong answers down, name a species only when its probability is at least 0.65, and otherwise say "not sure": on validation that answers 78% of photos, and 90% of those answers are right ([the rule](docs/reports/species-abstain.md)). In the browser (WebAssembly, one thread) it gave the same top-1 species as Python on 99.1% of 330 validation originals ([browser check](docs/reports/species-browser.md)).
+**Known limits.** Species with under 40 training photos are the weak spot (0.65 on test, against 0.84 for common ones). The model always names one of the 110 species, so it has no answer yet for other *Drosera* or other plants. To keep wrong answers down, name a species only when its probability is at least 0.65 and the photo matches the 110 species strongly overall (an energy score from the same outputs), and otherwise say "not sure": on validation that answers 72% of photos, and 92% of those answers are right ([the rule](docs/reports/species-abstain.md)). On photos of other plants it still names a sundew about 1 time in 10, and about 1 in 3 for *Drosera* outside the list ([open-set test](docs/reports/species-open-set-fallback.md)). In the browser (WebAssembly, one thread) it gave the same top-1 species as Python on 99.1% of 330 validation originals ([browser check](docs/reports/species-browser.md)).
 
 How the classifier works and why it is built this way is in [the species classifier design](docs/species-classifier.md); the pre-registered rules are in [the plan](docs/species-classifier-plan.md). Every number above comes from a report in [`docs/reports/`](docs/reports/), for example [distillation](docs/reports/species-distill.md), [export](docs/reports/species-release.md) and [the held-out test](docs/reports/species-test.md).
 
 ## Try it in the browser
 
-[piercetaylor.github.io/sundew-segmenting](https://piercetaylor.github.io/sundew-segmenting/) names the species in a photo on your own device; the photo is not uploaded. The page is in [`site/`](site/), and [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes it with the model from `release/species-v1.0.0/`. When no species reaches 65%, it says it is not sure.
+[piercetaylor.github.io/sundew-segmenting](https://piercetaylor.github.io/sundew-segmenting/) names the species in a photo on your own device; the photo is not uploaded. The page is in [`site/`](site/), and [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes it with the model from `release/species-v1.0.0/`. When no species reaches 65%, or the photo doesn't match the 110 species strongly enough, it says it is not sure.
 
 ## Running it
 

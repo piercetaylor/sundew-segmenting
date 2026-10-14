@@ -30,19 +30,23 @@
 <h2>How to read a result</h2>
 <ul>
   <li><strong>Best match among 110 sundew species:</strong> the model gave one species at least 65% of the
-    probability. In testing on photos of the listed species, about 9 in 10 of these answers were right.</li>
+    probability, and the photo matched its 110 species strongly overall. In testing on photos of the listed
+    species, about 9 in 10 of these answers were right.</li>
   <li><strong>Not sure of the species. Probably section&nbsp;X:</strong> no single species was likely enough,
     but the species of one section (a group of related sundews) together got at least 70%.</li>
   <li><strong>Not sure:</strong> neither of the above. The possible matches still include the right species
-    most of the time, but the first one is right less than half the time.</li>
+    most of the time, but the first one is right only about half the time.</li>
 </ul>
 <p>The five most likely species are always shown with their percentages. Percentages near the 65% line can
-differ slightly between devices, so the same photo may get an answer on one phone and "Not sure" on another.</p>
+differ slightly between devices, so the same photo may get an answer on one phone and "Not sure" on another. "Not sure" can also come with a
+high first percentage: that happens when the photo doesn't look much like any of the 110 species overall, which
+is typical of photos of other plants.</p>
 <p>Species with few training photos are identified less reliably: in testing, about 8 in 10 of their
 confident answers were right. The full numbers are in the
 <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/docs/reports/species-abstain.md">evaluation report</a>.
-They come from photos of the 110 listed species only. How often the tool names a sundew for something else has
-not been measured.</p>
+They come from photos of the 110 listed species. In a separate test with photos of other plants, the tool still
+named a sundew for about 1 in 10 of them, and for about 1 in 3 photos of sundew species outside its list
+(<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/docs/reports/species-open-set-fallback.md">open-set test</a>).</p>
 <p>For the best result, upload a clear photo of one sundew plant, taken from above or the side, with the leaves
 in focus.</p>
 
