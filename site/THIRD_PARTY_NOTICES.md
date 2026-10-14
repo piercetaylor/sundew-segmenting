@@ -1,6 +1,6 @@
 # Third-party notices
 
-The code of this site (`index.html`, `notice.html`, `classify.js`, `pilresize.js`, `js/decision.js`) is
+The code of this site (`index.html`, `notice.html`, `classify.js`, `pilresize.js`, and the files in `js/`) is
 licensed under the Apache License, Version 2.0 (see the repository's
 `LICENSE` and `NOTICE`). The model weights it downloads
 (`model/v1.0.0/model-int8.onnx`) are licensed under CC BY-NC 4.0; see

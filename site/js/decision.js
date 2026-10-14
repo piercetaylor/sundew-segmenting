@@ -16,7 +16,7 @@
 // (docs/reports/species-open-set-fallback.md).
 //
 // Usage, with the raw logits from classify.js's classifyBlob:
-//   const d = decide(r.logits, clf.labels);
+//   const d = decide(r.logits, engine.labels);
 //   d.state: 'answer' | 'section' | 'not-sure'; d.label, d.section, d.top[].pct
 //
 // Thresholds compare unrounded values: p = 0.646 shows as "65%" but is still

@@ -10,7 +10,8 @@
 // must all be loaded before that). Run it on the site as it will ship, before
 // saying "your photo is processed in your browser".
 //
-// Not part of `node --test`: it needs Chrome and a running server.
+// Not part of `node --test`: it needs Chrome and a running server. .github/workflows/pages.yml
+// runs it on the built site before every deploy, with a photo from synthetic-photo.mjs.
 //   npm i puppeteer-core && npx @puppeteer/browsers install chrome-headless-shell@stable
 //   python -m http.server 8765 --bind 127.0.0.1        # from the repo root
 //   PUPPETEER_CORE=<path to puppeteer-core> node site/test/privacy-check.mjs \
@@ -46,11 +47,15 @@ await input.uploadFile(photo);
 await page.waitForFunction(() => document.getElementById('results').children.length > 0, { timeout: 120000 });
 await new Promise((r) => setTimeout(r, 2000)); // catch anything sent just after the result
 const result = await page.$eval('#results', (e) => e.innerText.slice(0, 300));
+const status = await page.$eval('#status', (e) => e.textContent);
+const names = await page.$$eval('#best i, #results .row i', (els) => els.length);
 const workers = page.workers().length;
 await browser.close();
 
 const sameOrigin = (u) => u.startsWith('blob:') || u.startsWith('data:') || new URL(u).origin === origin;
 const problems = [];
+// The page must also have worked: a result with five names (CI runs this on the built site).
+if (!/^Done/.test(status) || names !== 5) problems.push(`no result: status ${JSON.stringify(status)}, ${names} names shown`);
 for (const r of log) {
   if (!sameOrigin(r.url)) problems.push(`other origin: ${r.url}`);
   if (!['GET', 'HEAD'].includes(r.method)) problems.push(`${r.method}: ${r.url}`);
@@ -59,10 +64,15 @@ for (const r of log) {
     problems.push(`network request after the photo was chosen: ${r.url}`);
   }
 }
-if (workers) problems.push(`${workers} worker(s) running: their requests are not captured here`);
+// The model runs in a dedicated worker (js/worker.js). Puppeteer reports a dedicated worker's requests
+// as the page's; the worker is what fetches the model, so no .onnx request means they were missed.
+if (workers && !log.some((r) => /\.onnx(\?|$)/.test(r.url))) {
+  problems.push(`${workers} worker(s) running but no model request was captured: worker requests are not being logged`);
+}
 
 console.log(`${log.length} requests (${log.filter((r) => r.phase === 'load').length} before the photo):`);
 for (const r of log) console.log(`  [${r.phase}] ${r.method} ${r.type} ${r.url.startsWith('data:') ? r.url.slice(0, 40) + '...' : r.url}`);
+console.log(`status: ${status}`);
 console.log(`result shown: ${JSON.stringify(result)}`);
 if (problems.length) {
   console.log(`FAIL:\n  ${problems.join('\n  ')}`);

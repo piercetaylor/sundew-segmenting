@@ -12,7 +12,7 @@ The preview's credits and licences are in [its attribution record](assets/datase
 **Segmentation data.** 500 hand-screened iNaturalist photos became 191 reviewed plant masks (frozen as [v0.3.0](docs/reports/dataset-freeze-v0.3.0.md)), plus 30 field masks, initially assuming that the models would work better on segmented photos. 
 
 
-**Species classifier data.**The current species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
+**Species classifier data.** The current species corpus is larger: 17,678 photos of 110 species, split by photographer, with 2,601 held back as a test set. A further 12,126 unlabelled photos form a transfer set for distillation. Exact coordinates are never stored. Provenance, splits and limitations are in the [dataset card](docs/reports/dataset-card.md).
 
 
 
