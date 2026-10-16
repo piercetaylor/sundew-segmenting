@@ -3,20 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>About the sundew identifier</title>
-<style>
-  :root { --bg: #fff; --fg: #1b1b1b; --muted: #666; --line: #ddd; --note: #fff7e0; --note-line: #e8c96a; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #151515; --fg: #eee; --muted: #aaa; --line: #333; --note: #2a2410; --note-line: #7a6420; } }
-  body { background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 640px; padding: 16px; }
-  a { color: inherit; }
-  h2 { font-size: 1.15em; margin-top: 1.6em; }
-  .note { background: var(--note); border: 1px solid var(--note-line); border-radius: 6px; padding: 10px 14px; }
-  .muted, small { color: var(--muted); }
-  footer { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--muted); }
-</style>
+<title>About · Sundew ID</title>
+<link rel="preload" href="fonts/source-serif-4-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/site.css">
 </head>
 <body>
-<p><a href="./">&larr; Back to the identifier</a></p>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 31V19" stroke="var(--fern)" stroke-width="2" stroke-linecap="round"/><g stroke="var(--fern)" stroke-width="1.6" stroke-linecap="round"><path d="M16 12 16 4M16 12l5.7-5.7M16 12h8M16 12l5.7 5.7M16 12l-5.7 5.7M16 12H8M16 12l-5.7-5.7"/></g><circle cx="16" cy="12" r="4.2" fill="var(--fern)"/><g fill="var(--dew)"><circle cx="16" cy="3.6" r="1.8"/><circle cx="22" cy="6" r="1.8"/><circle cx="24.4" cy="12" r="1.8"/><circle cx="22" cy="18" r="1.8"/><circle cx="10" cy="18" r="1.8"/><circle cx="7.6" cy="12" r="1.8"/><circle cx="10" cy="6" r="1.8"/></g></svg>
+      Sundew ID
+    </a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="./">Identify</a>
+      <a href="notice.html" aria-current="page">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="prose">
 <h1>About the sundew identifier</h1>
 
 <div class="note" id="disclaimer">
@@ -74,8 +79,11 @@ for how it was trained and tested.</p>
     Third-party software is listed in <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</li>
 </ul>
 
-<footer>
-  sundew-species v1.0.0 &middot; weights CC BY-NC 4.0 &middot; code Apache-2.0
+<p><a class="btn" href="./">Identify a sundew</a></p>
+</main>
+
+<footer class="site-footer">
+  <div class="inner"><p>sundew-species v1.0.0 &middot; weights CC BY-NC 4.0 &middot; code Apache-2.0</p></div>
 </footer>
 </body>
 </html>
