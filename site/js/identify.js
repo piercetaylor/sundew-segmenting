@@ -73,11 +73,16 @@ function el(parent, tag, className, text) {
   return e;
 }
 
+// species/<slug>.html, written by scripts/build_site_pages.py. A link only: nothing is fetched until it is followed.
+const speciesPage = (label) => `species/${label.toLowerCase().replace(/ /g, '-')}.html`;
+
 function matchList(parent, items) {
   const ul = el(parent, 'ul', 'matches');
   for (const t of items) {
     const li = el(ul, 'li', 'row');
-    el(li, 'i', '', t.label);
+    const a = el(li, 'a');
+    a.href = speciesPage(t.label);
+    el(a, 'i', '', t.label);
     el(li, 'small', '', t.pct);
     const track = el(li, 'div', 'track');
     track.setAttribute('aria-hidden', 'true');
@@ -100,11 +105,8 @@ function showResults(r) {
     const meter = el(box, 'div', 'meter');
     meter.setAttribute('aria-hidden', 'true');
     el(meter, 'span').style.width = `${d.top[0].p * 100}%`;
-    const look = el(box, 'p', 'caveat');
-    look.append('Look it up: ');
-    const a = el(look, 'a', '', 'iNaturalist');
-    a.href = `https://www.inaturalist.org/taxa/search?q=${encodeURIComponent(d.label)}`;
-    a.rel = 'noopener';
+    const more = el(box, 'p', 'caveat');
+    el(more, 'a', '', 'Photos and facts about this species').href = speciesPage(d.label);
     box.setAttribute('aria-labelledby', 'result-title');
   } else {
     el(box, 'p', 'note', d.state === 'section' ? COPY.section(d.section) : COPY.notSure).id = 'notsure';

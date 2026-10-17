@@ -31,3 +31,11 @@ jobs:
           node-version: "22"
       - name: Run site tests
         run: node --test "site/test/*.test.mjs"
+      # The species pages are generated from data/site/ by scripts/build_site_pages.py and committed.
+      - name: Check the species pages are up to date
+        run: python3 scripts/build_site_pages.py --check
+      - name: Keep the site's photos under 12 MB
+        run: |
+          bytes=$(du -sb site/img | cut -f1)
+          echo "site/img: $bytes bytes"
+          [ "$bytes" -le 12000000 ] || { echo "::error::site/img is $bytes bytes, over 12 MB"; exit 1; }

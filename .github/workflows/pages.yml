@@ -6,12 +6,16 @@ on:
     paths:
       - "site/**"
       - "release/**"
+      - "data/site/**"
+      - "scripts/build_site_pages.py"
       - ".github/workflows/pages.yml"
   # Pull requests build and check the site but do not deploy it.
   pull_request:
     paths:
       - "site/**"
       - "release/**"
+      - "data/site/**"
+      - "scripts/build_site_pages.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -27,6 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check the species pages are up to date
+        run: python3 scripts/build_site_pages.py --check
       - name: Copy the species model into the site
         run: |
           mkdir -p site/model/v1.0.0
