@@ -52,7 +52,18 @@
   </section>
 
   <section class="result" id="result" hidden aria-label="Result">
-    <figure class="photo"><img id="preview" alt="Your photo"><figcaption id="photo-credit" hidden></figcaption></figure>
+    <figure class="photo">
+      <div class="photo-frame">
+        <img id="preview" alt="Your photo">
+        <!-- Reserved for the plant outline; off while js/features.js has OUTLINE = false. -->
+        <canvas id="outline" hidden aria-hidden="true"></canvas>
+      </div>
+      <div class="outline-controls" id="outline-controls" hidden>
+        <label><input type="checkbox" id="outline-toggle"> Show plant outline</label>
+        <span id="outline-area" class="muted"></span>
+      </div>
+      <figcaption id="photo-credit" hidden></figcaption>
+    </figure>
     <div class="card answer" id="results" tabindex="-1"></div>
   </section>
 

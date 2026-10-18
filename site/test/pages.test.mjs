@@ -117,3 +117,10 @@ test('notice.html, the old About page, redirects to about.html', () => {
   assert.match(html, /<meta http-equiv="refresh" content="0; url=about\.html">/);
   assert.match(html, /<a href="about\.html">/);
 });
+
+test('the plant outline stays off and hidden until it is switched on', () => {
+  assert.match(read('js/features.js'), /^export const OUTLINE = false;$/m);
+  const html = read('index.html');
+  assert.match(html, /<canvas id="outline" hidden/);
+  assert.match(html, /<div class="outline-controls" id="outline-controls" hidden>/);
+});

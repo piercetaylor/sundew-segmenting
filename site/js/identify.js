@@ -11,6 +11,7 @@
 
 import { decide, COPY } from './decision.js';
 import { createEngine } from './engine.js';
+import { OUTLINE } from './features.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -135,6 +136,7 @@ async function handleFile(f, source, example = null) {
   $('preview').src = previewUrl;
   $('preview').alt = example ? `Example photo of ${example.species}` : 'Your photo';
   showCredit(example);
+  resetOutline();
   $('result').hidden = false;
   $('results').replaceChildren();
   status('Identifying...');
@@ -164,6 +166,20 @@ async function handleFile(f, source, example = null) {
     $('result').hidden = true;
     setState('error');
   }
+}
+
+// The plant outline (js/features.js). With OUTLINE false these do nothing and the controls stay hidden.
+function resetOutline() {
+  if (!OUTLINE) return;
+  const c = $('outline');
+  c.getContext('2d')?.clearRect(0, 0, c.width, c.height);
+  c.hidden = !$('outline-toggle').checked;
+  $('outline-area').textContent = '';
+  $('outline-controls').hidden = false;
+}
+
+if (OUTLINE) {
+  $('outline-toggle').addEventListener('change', (e) => { $('outline').hidden = !e.target.checked; });
 }
 
 // "Try an example": photos in img/examples/ (scripts/build_site_examples.py). A user's own photo never

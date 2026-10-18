@@ -219,3 +219,9 @@ main.prose { max-width: calc(42em + 32px); }
 .example:disabled { opacity: 0.5; cursor: not-allowed; }
 .photo figcaption { font-size: 0.8rem; color: var(--muted); padding: 8px 12px; line-height: 1.45; overflow-wrap: anywhere; }
 .photo figcaption a { color: inherit; }
+
+/* Plant outline (off while js/features.js has OUTLINE = false) */
+.photo-frame { position: relative; }
+#outline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.outline-controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 12px; font-size: 0.9rem; }
+.outline-controls input { accent-color: var(--moss); width: 18px; height: 18px; vertical-align: -3px; }
