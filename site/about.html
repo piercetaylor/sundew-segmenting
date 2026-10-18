@@ -1,0 +1,145 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Sundew ID</title>
+<meta name="description" content="How the sundew identifier works, how to read its results, its limits, privacy, the model, and credits.">
+<link rel="preload" href="fonts/source-serif-4-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 31V19" stroke="var(--fern)" stroke-width="2" stroke-linecap="round"/><g stroke="var(--fern)" stroke-width="1.6" stroke-linecap="round"><path d="M16 12 16 4M16 12l5.7-5.7M16 12h8M16 12l5.7 5.7M16 12l-5.7 5.7M16 12H8M16 12l-5.7-5.7"/></g><circle cx="16" cy="12" r="4.2" fill="var(--fern)"/><g fill="var(--dew)"><circle cx="16" cy="3.6" r="1.8"/><circle cx="22" cy="6" r="1.8"/><circle cx="24.4" cy="12" r="1.8"/><circle cx="22" cy="18" r="1.8"/><circle cx="10" cy="18" r="1.8"/><circle cx="7.6" cy="12" r="1.8"/><circle cx="10" cy="6" r="1.8"/></g></svg>
+      Sundew ID
+    </a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="./">Identify</a>
+      <a href="species/">Species</a>
+      <a href="about.html" aria-current="page">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="prose">
+<h1>About the sundew identifier</h1>
+
+<div class="note" id="disclaimer">
+  <p><strong>This is an identification aid, not an authority.</strong> It suggests which of 110 sundew
+  (<i>Drosera</i>) species a photo shows. It only knows these 110 species. It cannot tell when a photo shows
+  something else, like another plant or a sundew not on its list, and it may still suggest a sundew name,
+  sometimes with high confidence. Check any identification with an expert before using it for legal, trade or
+  conservation decisions.</p>
+</div>
+
+<nav class="toc" aria-label="On this page">On this page:
+  <a href="#how">How it works</a> · <a href="#reading">Reading a result</a> · <a href="#photos">Taking a good photo</a> ·
+  <a href="#privacy">Privacy</a> · <a href="#model">The model</a> · <a href="#species">Species pages</a> ·
+  <a href="#credits">Licences and credits</a></nav>
+
+<h2 id="how">How it works</h2>
+<ol>
+  <li>The first time you open the identifier, your browser downloads the model (about 22 MB) and the code that
+    runs it, and keeps them for next time.</li>
+  <li>When you choose a photo, your browser turns it upright, shrinks it to 255 pixels on the short side and
+    takes the 224 &times; 224 centre, exactly as the photos were prepared when the model was trained.</li>
+  <li>The model scores the photo against each of the 110 species it knows. The scores become percentages that add
+    up to 100%.</li>
+  <li>A fixed rule decides what to say: a species, a section, or "not sure". It is described below, and it is the
+    same rule for every photo.</li>
+</ol>
+<p>All of this happens on your device. Nothing about the photo, or the result, is sent anywhere.</p>
+
+<h2 id="reading">How to read a result</h2>
+<ul>
+  <li><strong>Best match among 110 sundew species:</strong> the model gave one species at least 65% of the
+    probability, and the photo matched its 110 species strongly overall. In testing on photos of the listed
+    species, about 9 in 10 of these answers were right.</li>
+  <li><strong>Not sure of the species. Probably section&nbsp;X:</strong> no single species was likely enough,
+    but the species of one section (a group of related sundews) together got at least 70%.</li>
+  <li><strong>Not sure:</strong> neither of the above. The possible matches still include the right species
+    most of the time, but the first one is right only about half the time.</li>
+</ul>
+<p>The five most likely species are always shown with their percentages. Percentages near the 65% line can
+differ slightly between devices, so the same photo may get an answer on one phone and "Not sure" on another. "Not sure" can also come with a
+high first percentage: that happens when the photo doesn't look much like any of the 110 species overall, which
+is typical of photos of other plants.</p>
+<p>Species with few training photos are identified less reliably: in testing, about 8 in 10 of their
+confident answers were right. The full numbers are in the
+<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/docs/reports/species-abstain.md">evaluation report</a>.
+They come from photos of the 110 listed species. In a separate test with photos of other plants, the tool still
+named a sundew for about 1 in 10 of them, and for about 1 in 3 photos of sundew species outside its list
+(<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/docs/reports/species-open-set-fallback.md">open-set test</a>).</p>
+
+
+<h2 id="photos">Taking a good photo</h2>
+<ul>
+  <li>One plant, filling most of the frame. The identifier looks only at the centre square of the photo, so keep the
+    plant there.</li>
+  <li>A clear photo with the leaves in focus, taken from above or the side.</li>
+  <li>Its labelled training photos are iNaturalist observations of wild plants (cultivated plants were left out), so photos of potted
+    plants, for example under grow lights, may be less like what it has seen.</li>
+  <li>A JPEG. Some browsers cannot open HEIC photos from iPhones; share or export them as JPEG first.</li>
+</ul>
+
+<h2 id="privacy">Your photo and your privacy</h2>
+<p>Your photo is processed in your browser and is not uploaded. The model and the code that runs it are
+downloaded once from this site, and the identification happens on your device. The site does not read the
+location stored in your photo (it uses only the orientation tag, to turn the photo upright), and has no
+analytics, cookies or tracking. Everything the page loads (the model, the code, the fonts and the photos) comes
+from this site; links to other sites, such as iNaturalist, are only followed if you click them. An example photo is
+downloaded from this site when you press it, like any other image on the site. As with any website, the
+host (GitHub Pages) receives your IP address when you load the page.</p>
+
+
+<h2 id="model">The model</h2>
+<p>sundew-species v1.0.0 by Pierce Taylor: a DINOv2-S image classifier, distilled from a larger DINOv2-L model and
+trained on 23,244 iNaturalist photos of 110 <i>Drosera</i> species. See the
+<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/README.md">model card</a>
+for how it was trained and tested.</p>
+
+<p>On validation photos it had never trained on, the site's rule gave a confident answer for 71.6% of photos, and
+91.5% of those answers were right
+(<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/docs/reports/species-abstain.md">evaluation report</a>).</p>
+
+<h2 id="species">Species pages</h2>
+<p>Each of the <a href="species/">110 species</a> has a page with photos, its section, where it was first
+described, and how well the identifier recognises it on validation photos, including the species it is most often
+mistaken for. The original publication of each name comes from the International Plant Names Index (IPNI). For a
+species that was first described under another name, the page cites both that first description and the
+publication that gave it its current name. When the Biodiversity Heritage Library has scanned the page, there is a
+link to read it.</p>
+
+<h2 id="credits">Licences and credits</h2>
+<ul>
+  <li>Model weights: <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>, noncommercial
+    use only. Used here unchanged.</li>
+  <li>Training photos: by iNaturalist contributors, each under its own licence, credited in
+    <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/ATTRIBUTION.md">ATTRIBUTION.md</a>.</li>
+  <li>Photos on the species pages and the example photos: by iNaturalist observers under CC0, CC BY or CC BY-NC,
+    each credited where it is shown and in <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/img/ATTRIBUTION.md">ATTRIBUTION.md</a>
+    (examples: <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/img/examples/ATTRIBUTION.md">examples/ATTRIBUTION.md</a>).</li>
+  <li>Plant names and original publications: the <a href="https://www.ipni.org/">International Plant Names Index</a>,
+    with scans from the <a href="https://www.biodiversitylibrary.org/">Biodiversity Heritage Library</a>.</li>
+  <li>Built on <a href="https://github.com/facebookresearch/dinov2">DINOv2</a> (Meta AI, Apache-2.0).</li>
+  <li>Site code: Apache-2.0, <a href="https://github.com/piercetaylor/sundew-segmenting">source on GitHub</a>.
+    The headings use <a href="https://github.com/adobe-fonts/source-serif">Source Serif 4</a> (Adobe, SIL Open Font
+    License). Third-party software is listed in <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</li>
+</ul>
+
+<p><strong>Noncommercial.</strong> The model weights and most of the photos are licensed for noncommercial use only,
+and iNaturalist's terms do not allow commercial use of its photos for machine learning. This site has no ads, paid
+features or sponsorship, and anything that reuses the model or the photos must stay noncommercial too. (The
+site's code is Apache-2.0.)</p>
+
+<p><a class="btn" href="./">Identify a sundew</a></p>
+</main>
+
+<footer class="site-footer">
+  <div class="inner"><p>sundew-species v1.0.0 &middot; weights CC BY-NC 4.0 &middot; code Apache-2.0</p></div>
+</footer>
+</body>
+</html>

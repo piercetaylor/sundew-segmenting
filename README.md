@@ -37,7 +37,11 @@ How the classifier works and why it is built this way is in [the species classif
 
 ## Try it in the browser
 
-[piercetaylor.github.io/sundew-segmenting](https://piercetaylor.github.io/sundew-segmenting/) names the species in a photo on your own device; the photo is not uploaded. The page is in [`site/`](site/), and [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes it with the model from `release/species-v1.0.0/`. When no species reaches 65%, or the photo doesn't match the 110 species strongly enough, it says it is not sure.
+[piercetaylor.github.io/sundew-segmenting](https://piercetaylor.github.io/sundew-segmenting/) names the species in a photo on your own device; the photo is not uploaded. Choose or take a photo, drop or paste one, or try one of the example photos. When no species reaches 65%, or the photo doesn't match the 110 species strongly enough, it says it is not sure, or names the likely section.
+
+The site also has a page for each of the 110 species, with credited photos, where the species was first described (from IPNI), and how well the model recognises it, plus an [About page](https://piercetaylor.github.io/sundew-segmenting/about.html) on how it works, its limits and privacy.
+
+The site is in [`site/`](site/) (plain HTML, CSS and JavaScript, no build step), and [`.github/workflows/pages.yml`](.github/workflows/pages.yml) publishes it with the model from `release/species-v1.0.0/` after checking in Chrome that nothing leaves the browser. The species pages are generated: `scripts/fetch_species_references.py` (IPNI citations), `scripts/build_site_data.py` and `scripts/build_site_examples.py` (photos and numbers; need the corpus), then `python3 scripts/build_site_pages.py`.
 
 ## Running it
 

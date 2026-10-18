@@ -10,6 +10,11 @@
 // must all be loaded before that). Run it on the site as it will ship, before
 // saying "your photo is processed in your browser".
 //
+// With --examples in place of the photo, it instead presses every "try an example" button. After
+// each press the only request allowed is a same-origin GET of that example's own JPEG
+// (img/examples/<file>), and the result must match what the Python reference expects for it
+// (img/examples/examples.json: state, and the species or section named).
+//
 // Not part of `node --test`: it needs Chrome and a running server. .github/workflows/pages.yml
 // runs it on the built site before every deploy, with a photo from synthetic-photo.mjs.
 //   npm i puppeteer-core && npx @puppeteer/browsers install chrome-headless-shell@stable
@@ -21,7 +26,7 @@ import { resolve } from 'node:path';
 
 const [exe, url, photo] = process.argv.slice(2);
 if (!exe || !url || !photo) {
-  console.error('usage: node site/test/privacy-check.mjs <chrome> <site url> <photo.jpg>');
+  console.error('usage: node site/test/privacy-check.mjs <chrome> <site url> <photo.jpg | --examples>');
   process.exit(2);
 }
 const pptr = process.env.PUPPETEER_CORE
@@ -41,28 +46,53 @@ page.on('request', (r) => {
 
 await page.goto(url, { waitUntil: 'networkidle0', timeout: 120000 });
 await page.waitForFunction(() => !document.getElementById('file').disabled, { timeout: 120000 });
-phase = 'after-photo';
-const input = await page.$('#file');
-await input.uploadFile(photo);
-await page.waitForFunction(() => document.getElementById('results').children.length > 0, { timeout: 120000 });
+const problems = [];
+const shown = () => page.evaluate(() => ({
+  status: document.getElementById('status').textContent,
+  result: document.getElementById('results').innerText.slice(0, 300),
+  names: document.querySelectorAll('#best i, #results .row i').length,
+  best: document.querySelector('#best i')?.textContent ?? null,
+  notsure: document.getElementById('notsure')?.textContent ?? null,
+}));
+let last;
+if (photo === '--examples') {
+  const examples = await page.evaluate(() => fetch('img/examples/examples.json').then((r) => r.json()).then((d) => d.examples));
+  for (const ex of examples) {
+    phase = `example:${ex.file}`;
+    await page.evaluate(() => { document.body.dataset.state = 'pressed'; });
+    await page.click(`button.example[data-file="${ex.file}"]`);
+    await page.waitForFunction(() => ['done', 'error'].includes(document.body.dataset.state), { timeout: 120000 });
+    last = await shown();
+    const want = ex.expected;
+    const got = last.best ? `answer ${last.best}` : last.notsure === 'Not sure' ? 'not-sure' : `section ${last.notsure}`;
+    const ok = want.state === 'answer' ? last.best === want.label
+      : want.state === 'section' ? (last.notsure ?? '').endsWith(`section ${want.section}`)
+        : last.notsure === 'Not sure';
+    console.log(`${ok ? 'ok  ' : 'BAD '} ${ex.file} (${ex.species}): expected ${want.state} ${want.label ?? want.section ?? ''}, shown ${got}`);
+    if (!ok) problems.push(`${ex.file}: expected ${want.state} ${want.label ?? want.section ?? ''}, shown ${got}`);
+  }
+  if (!examples.length) problems.push('no examples on the page');
+} else {
+  phase = 'after-photo';
+  await (await page.$('#file')).uploadFile(photo);
+  await page.waitForFunction(() => document.getElementById('results').children.length > 0, { timeout: 120000 });
+}
 await new Promise((r) => setTimeout(r, 2000)); // catch anything sent just after the result
-const result = await page.$eval('#results', (e) => e.innerText.slice(0, 300));
-const status = await page.$eval('#status', (e) => e.textContent);
-const names = await page.$$eval('#best i, #results .row i', (els) => els.length);
+last = await shown();
+const { status, result, names } = last;
 const workers = page.workers().length;
 await browser.close();
 
 const sameOrigin = (u) => u.startsWith('blob:') || u.startsWith('data:') || new URL(u).origin === origin;
-const problems = [];
 // The page must also have worked: a result with five names (CI runs this on the built site).
 if (!/^Done/.test(status) || names !== 5) problems.push(`no result: status ${JSON.stringify(status)}, ${names} names shown`);
 for (const r of log) {
   if (!sameOrigin(r.url)) problems.push(`other origin: ${r.url}`);
   if (!['GET', 'HEAD'].includes(r.method)) problems.push(`${r.method}: ${r.url}`);
   if (r.body) problems.push(`request body (${r.body} bytes): ${r.url}`);
-  if (r.phase === 'after-photo' && !r.url.startsWith('blob:') && !r.url.startsWith('data:')) {
-    problems.push(`network request after the photo was chosen: ${r.url}`);
-  }
+  if (r.phase === 'load' || r.url.startsWith('blob:') || r.url.startsWith('data:')) continue;
+  const allowed = r.phase.startsWith('example:') && new URL(r.url).pathname.endsWith(`/img/examples/${r.phase.slice(8)}`);
+  if (!allowed) problems.push(`network request after a photo was chosen (${r.phase}): ${r.url}`);
 }
 // The model runs in a dedicated worker (js/worker.js). Puppeteer reports a dedicated worker's requests
 // as the page's; the worker is what fetches the model, so no .onnx request means they were missed.
@@ -78,4 +108,6 @@ if (problems.length) {
   console.log(`FAIL:\n  ${problems.join('\n  ')}`);
   process.exit(1);
 }
-console.log('PASS: every request is a same-origin GET without a body, and none happened after the photo was chosen.');
+console.log(photo === '--examples'
+  ? 'PASS: every request is a same-origin GET without a body; after each example was pressed, only that example was fetched, and every example shows the expected result.'
+  : 'PASS: every request is a same-origin GET without a body, and none happened after the photo was chosen.');

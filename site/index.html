@@ -4,128 +4,85 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sundew species ID</title>
-<style>
-  :root { --bg: #fff; --fg: #1b1b1b; --muted: #666; --bar: #3a7d44; --line: #ddd; --warn-bg: #fff4d6; --warn-fg: #5a4300; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #151515; --fg: #eee; --muted: #aaa; --bar: #6fbf73; --line: #333; --warn-bg: #3a3014; --warn-fg: #f3dc9a; } }
-  body { background: var(--bg); color: var(--fg); font: 16px/1.45 system-ui, sans-serif; margin: 0 auto; max-width: 640px; padding: 16px; }
-  img#preview { max-width: 100%; max-height: 50vh; display: block; margin: 12px 0; }
-  .row { margin: 6px 0; }
-  .bar { height: 6px; background: var(--bar); border-radius: 3px; }
-  .muted, small { color: var(--muted); }
-  .caveat { font-size: 14px; color: var(--muted); }
-  .notsure { background: var(--warn-bg); color: var(--warn-fg); border-radius: 6px; padding: 8px 12px; margin: 12px 0; }
-  input { font: inherit; }
-  footer { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; font-size: 13px; color: var(--muted); }
-</style>
+<title>Which sundew is this? · Sundew ID</title>
+<meta name="description" content="Identify 110 sundew (Drosera) species from a photo, in your browser. The photo is never uploaded.">
+<link rel="preload" href="fonts/source-serif-4-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<!-- The italic is used only for a named species; load it with the page, or fetching it later would tell the
+     host that a photo got an answer (site/test/privacy-check.mjs). -->
+<link rel="preload" href="fonts/source-serif-4-latin-600-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/site.css">
 </head>
-<body>
-<h1>Which sundew is this?</h1>
-<p>Choose a photo of a <i>Drosera</i> plant. It is identified in your browser, on your device; the photo is never uploaded, and the site has no analytics.</p>
-<p id="hint"></p>
-<p><input type="file" id="file" accept="image/*" disabled></p>
-<p id="status" class="muted">Loading model...</p>
-<img id="preview" alt="">
-<div id="results"></div>
-<footer>
-  Model: sundew-species v1.0.0, used unmodified (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/README.md">model card</a>), weights licensed
-  <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>, trained on photos by
-  iNaturalist contributors (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/ATTRIBUTION.md">credits</a>). Code Apache-2.0
-  (<a href="https://github.com/piercetaylor/sundew-segmenting">source</a>, <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/THIRD_PARTY_NOTICES.md">third-party notices</a>).
-  <a href="notice.html">About this tool and its limits</a>.
+<body data-state="loading">
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 31V19" stroke="var(--fern)" stroke-width="2" stroke-linecap="round"/><g stroke="var(--fern)" stroke-width="1.6" stroke-linecap="round"><path d="M16 12 16 4M16 12l5.7-5.7M16 12h8M16 12l5.7 5.7M16 12l-5.7 5.7M16 12H8M16 12l-5.7-5.7"/></g><circle cx="16" cy="12" r="4.2" fill="var(--fern)"/><g fill="var(--dew)"><circle cx="16" cy="3.6" r="1.8"/><circle cx="22" cy="6" r="1.8"/><circle cx="24.4" cy="12" r="1.8"/><circle cx="22" cy="18" r="1.8"/><circle cx="10" cy="18" r="1.8"/><circle cx="7.6" cy="12" r="1.8"/><circle cx="10" cy="6" r="1.8"/></g></svg>
+      Sundew ID
+    </a>
+    <nav class="site-nav" aria-label="Site">
+      <a href="./" aria-current="page">Identify</a>
+      <a href="species/">Species</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <h1>Which sundew is this?</h1>
+  <p class="lede">Choose a photo of a <i>Drosera</i> plant and get the closest of 110 species.</p>
+  <p><span class="pill"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 2.5 3.5v4c0 3.3 2.3 6 5.5 7 3.2-1 5.5-3.7 5.5-7v-4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m5.5 8 1.8 1.8L10.8 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Runs on your device. Your photo is never uploaded.</span></p>
+
+  <section class="card picker" id="picker" aria-labelledby="picker-title">
+    <h2 class="visually-hidden" id="picker-title">Choose a photo</h2>
+    <div class="actions">
+      <input class="file-input" type="file" id="file" accept="image/*" disabled>
+      <label class="btn" for="file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z M4 16l5-5 4 4 3-3 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"/></svg>Choose a photo</label>
+      <input class="file-input" type="file" id="camera" accept="image/*" capture="environment" disabled>
+      <label class="btn secondary" for="camera" id="camera-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>Take a photo</label>
+    </div>
+    <p class="or" id="drop-hint">or drag a photo here, or paste one</p>
+    <p class="hint" id="hint"></p>
+    <div class="progress" id="progress" role="progressbar" aria-label="Downloading the identifier" aria-valuemin="0" aria-valuemax="100"><span></span></div>
+    <p class="message" id="message" role="status" aria-live="polite">Getting the identifier ready…</p>
+  </section>
+
+  <section class="examples" id="examples" hidden aria-labelledby="examples-title">
+    <h2 id="examples-title">No photo handy? Try an example</h2>
+    <ul class="example-list" id="example-list"></ul>
+  </section>
+
+  <section class="result" id="result" hidden aria-label="Result">
+    <figure class="photo">
+      <div class="photo-frame">
+        <img id="preview" alt="Your photo">
+        <!-- Reserved for the plant outline; off while js/features.js has OUTLINE = false. -->
+        <canvas id="outline" hidden aria-hidden="true"></canvas>
+      </div>
+      <div class="outline-controls" id="outline-controls" hidden>
+        <label><input type="checkbox" id="outline-toggle"> Show plant outline</label>
+        <span id="outline-area" class="muted"></span>
+      </div>
+      <figcaption id="photo-credit" hidden></figcaption>
+    </figure>
+    <div class="card answer" id="results" tabindex="-1"></div>
+  </section>
+
+  <details class="tech">
+    <summary>Technical details</summary>
+    <p id="status">Loading model...</p>
+  </details>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <p>Model: sundew-species v1.0.0, used unmodified (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/README.md">model card</a>), weights licensed
+      <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>, trained on photos by
+      iNaturalist contributors (<a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/release/species-v1.0.0/ATTRIBUTION.md">credits</a>).</p>
+    <p>Code Apache-2.0 (<a href="https://github.com/piercetaylor/sundew-segmenting">source</a>,
+      <a href="https://github.com/piercetaylor/sundew-segmenting/blob/main/site/THIRD_PARTY_NOTICES.md">third-party notices</a>).
+      <a href="about.html">About this tool and its limits</a>.</p>
+  </div>
 </footer>
-<script type="module">
-import { decide, COPY } from './js/decision.js';
-import { createEngine } from './js/engine.js';
-
-const $ = (id) => document.getElementById(id);
-const params = new URLSearchParams(location.search);
-let engine = null;
-let previewUrl = null;
-let run = 0; // the latest photo; results of an earlier photo that finish later are dropped
-$('hint').textContent = COPY.uploadHint;
-
-// The model loads and runs in a worker (js/worker.js) so the page stays responsive; ?worker=0 runs it
-// in the page, as browsers without module workers or a 2D OffscreenCanvas do anyway.
-async function init() {
-  $('file').disabled = true;
-  $('status').textContent = 'Loading model...';
-  const onProgress = (got, total) => { $('status').textContent = `Downloading model ${(got / 1e6).toFixed(1)}${total ? ' / ' + (total / 1e6).toFixed(1) : ''} MB`; };
-  try {
-    engine = await createEngine(onProgress, { worker: params.get('worker') !== '0' });
-    const i = engine.info;
-    $('status').textContent = `Ready: sundew-species ${i.version}, onnxruntime-web ${i.ort}, ${i.backend}, ` +
-      `${i.threads} thread(s), ${engine.inWorker ? 'in a worker' : 'in the page'}, loaded in ${(i.loadMs / 1000).toFixed(1)} s${i.fromCache ? ' (cached)' : ''}.`;
-    $('file').disabled = false;
-  } catch (e) {
-    console.error(e);
-    $('status').textContent = `Could not load the model: ${e.message}`;
-  }
-}
-
-function add(tag, className, text) {
-  const el = document.createElement(tag);
-  if (className) el.className = className;
-  if (text) el.textContent = text;
-  $('results').appendChild(el);
-  return el;
-}
-
-// The decision rule (species at p >= 0.65 and energy >= 5.955, else a section at >= 0.7, else "not sure") lives in
-// js/decision.js; it takes the raw logits and compares unrounded values.
-function showResults(r) {
-  const d = decide(r.logits, engine.labels);
-  if (d.state === 'answer') {
-    add('h2', '', COPY.answer);
-    const best = add('p');
-    best.id = 'best';
-    best.innerHTML = '<b><i></i></b> ';
-    best.querySelector('i').textContent = d.label;
-    best.append(d.top[0].pct);
-  } else {
-    const box = add('div', 'notsure', d.state === 'section' ? COPY.section(d.section) : COPY.notSure);
-    box.id = 'notsure';
-  }
-  add('h3', '', d.state === 'answer' ? COPY.otherMatches : COPY.possibleMatches);
-  for (const t of d.state === 'answer' ? d.top.slice(1) : d.top) {
-    const div = add('div', 'row');
-    div.innerHTML = `<i></i> <small></small><div class="bar"></div>`;
-    div.querySelector('i').textContent = t.label;
-    div.querySelector('small').textContent = t.pct;
-    div.querySelector('.bar').style.width = `${Math.max(1, t.p * 100)}%`;
-  }
-  add('p', 'caveat', COPY.caveat);
-  add('p', 'caveat', COPY.accuracy);
-  add('p', 'caveat').innerHTML = '<a href="notice.html">About this tool and its limits</a>';
-}
-
-$('file').addEventListener('change', async () => {
-  const f = $('file').files[0];
-  if (!f || !engine) return;
-  if (previewUrl) URL.revokeObjectURL(previewUrl);
-  previewUrl = URL.createObjectURL(f);
-  $('preview').src = previewUrl;
-  $('status').textContent = 'Identifying...';
-  $('results').innerHTML = '';
-  const mine = ++run;
-  try {
-    const r = await engine.classify(f);
-    if (mine !== run) return;
-    $('status').textContent = `Done in ${(r.timings.preprocess_ms + r.timings.inference_ms).toFixed(0)} ms ` +
-      `(preprocess ${r.timings.preprocess_ms.toFixed(0)}, model ${r.timings.inference_ms.toFixed(0)}).`;
-    showResults(r);
-  } catch (e) {
-    console.error(e);
-    if (mine !== run) return;
-    // createImageBitmap rejects formats the browser cannot decode (e.g. HEIC outside Safari).
-    const undecodable = e.name === 'InvalidStateError' || /decod/i.test(e.message) || /hei[cf]/i.test(f.type || f.name);
-    $('status').textContent = undecodable
-      ? 'This browser could not read that photo. Please use a JPEG (on iPhone, HEIC photos may not open: export or share the photo as JPEG).'
-      : `Failed: ${e.message}`;
-  }
-});
-
-init();
-</script>
+<script type="module" src="js/identify.js"></script>
 </body>
 </html>

@@ -1,0 +1,227 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+/* Copyright 2026 Pierce Taylor */
+/* The site's look: field-guide greens on parchment, a light/dark pair of tokens, shared by every page. */
+
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("../fonts/source-serif-4-latin-600-normal.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("../fonts/source-serif-4-latin-600-italic.woff2") format("woff2");
+  font-weight: 600; font-style: italic; font-display: swap;
+}
+
+:root {
+  color-scheme: light dark;
+  --bg: #f6f2e7;          /* parchment */
+  --surface: #fffdf7;
+  --surface-2: #efe9da;
+  --ink: #1e2a1e;
+  --muted: #545f51;
+  --line: #d9d0bc;
+  --moss: #2f5d2a;        /* links, buttons */
+  --on-moss: #ffffff;
+  --fern: #4f7d38;        /* bars, meters */
+  --track: #e3dccb;
+  --dew: #b0412f;         /* the sundew's red glands; decoration only */
+  --warn-bg: #fbeccb;
+  --warn-fg: #4f3b00;
+  --warn-line: #dcb357;
+  --focus: #1f6fd1;
+  --shadow: 0 1px 2px rgb(60 50 30 / 0.08), 0 4px 16px rgb(60 50 30 / 0.06);
+
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --gap: 16px;
+  --measure: 960px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121812;
+    --surface: #1a221a;
+    --surface-2: #222c21;
+    --ink: #e7eadf;
+    --muted: #a5af9e;
+    --line: #2f3b2e;
+    --moss: #9fcf84;
+    --on-moss: #10200c;
+    --fern: #7fb069;
+    --track: #2c372b;
+    --dew: #e0715e;
+    --warn-bg: #352b10;
+    --warn-fg: #f3dc9a;
+    --warn-line: #7a6420;
+    --focus: #7db4ff;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.55 var(--sans);
+  min-height: 100vh; display: flex; flex-direction: column;
+}
+main { flex: 1; width: 100%; max-width: var(--measure); margin: 0 auto; padding: 8px 16px 48px; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.2; letter-spacing: -0.005em; }
+h1 { font-size: clamp(1.9rem, 1.4rem + 2.2vw, 2.75rem); margin: 0.6em 0 0.25em; }
+h2 { font-size: 1.35rem; margin: 1.6em 0 0.5em; }
+h3 { font-size: 1.1rem; margin: 1.4em 0 0.4em; }
+a { color: var(--moss); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+.muted, small { color: var(--muted); }
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+[hidden] { display: none !important; }
+
+/* Header and footer */
+.site-header { border-bottom: 1px solid var(--line); background: var(--surface); }
+.site-header .inner {
+  max-width: var(--measure); margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; font-family: var(--serif); font-weight: 600; font-size: 1.15rem; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.site-nav { display: flex; gap: 4px; }
+.site-nav a { color: var(--ink); text-decoration: none; padding: 6px 10px; border-radius: 999px; font-size: 0.95rem; }
+.site-nav a:hover { background: var(--surface-2); }
+.site-nav a[aria-current="page"] { background: var(--surface-2); font-weight: 600; }
+.site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+.site-footer .inner { max-width: var(--measure); margin: 0 auto; padding: 16px; }
+.site-footer p { margin: 0.4em 0; }
+.site-footer a { color: inherit; }
+
+/* Building blocks */
+.lede { font-size: 1.1rem; color: var(--muted); max-width: 40em; margin: 0 0 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px;
+  background: var(--surface-2); color: var(--ink); font-size: 0.85rem;
+}
+.pill svg { width: 14px; height: 14px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 10px 18px; border-radius: 999px; border: 1px solid var(--moss);
+  background: var(--moss); color: var(--on-moss); font: 600 1rem/1.2 var(--sans); cursor: pointer; text-decoration: none;
+}
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn.secondary { background: transparent; color: var(--moss); }
+.btn:hover { filter: brightness(1.08); }
+.btn[aria-disabled="true"], .btn:disabled { opacity: 0.5; cursor: not-allowed; filter: none; }
+.note { background: var(--warn-bg); color: var(--warn-fg); border: 1px solid var(--warn-line); border-radius: var(--radius-sm); padding: 12px 16px; }
+.note p { margin: 0.4em 0; }
+
+/* Identifier: the photo picker */
+.picker { display: grid; gap: 14px; justify-items: center; text-align: center; padding: 28px 20px; border: 2px dashed var(--line); background: var(--surface); }
+.picker.dragging { border-color: var(--moss); background: var(--surface-2); }
+.picker .actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.picker .or { margin: 0; color: var(--muted); font-size: 0.9rem; }
+.picker .hint { margin: 0; font-size: 0.95rem; }
+/* The real inputs stay focusable for keyboards and for the checks; their labels are the visible buttons. */
+.file-input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.file-input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 2px; }
+.file-input:disabled + label { opacity: 0.5; cursor: not-allowed; }
+.progress { width: min(320px, 100%); height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.progress > span { display: block; height: 100%; width: 0; background: var(--fern); transition: width 0.2s; }
+.message { margin: 0; min-height: 1.5em; font-weight: 500; }
+
+/* Identifier: the result */
+.result { display: grid; gap: var(--gap); margin-top: 20px; }
+@media (min-width: 760px) { .result { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: start; } }
+.photo { margin: 0; background: var(--surface-2); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+.photo img { display: block; width: 100%; max-height: 60vh; object-fit: contain; }
+.answer .kicker { margin: 0; color: var(--muted); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.02em; }
+#best { font-family: var(--serif); font-weight: 600; font-size: clamp(1.6rem, 1.3rem + 1.4vw, 2.2rem); line-height: 1.15; margin: 4px 0 10px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+#best i { font-style: italic; }
+#best .pct { font-family: var(--sans); font-size: 1.05rem; font-weight: 600; color: var(--muted); }
+#best .pct::before { content: "· "; }
+.meter { height: 10px; border-radius: 5px; background: var(--track); overflow: hidden; margin: 0 0 14px; }
+.meter > span { display: block; height: 100%; background: var(--fern); border-radius: 5px; }
+#notsure { font-size: 1.05rem; font-weight: 600; margin: 0 0 6px; }
+.matches { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.row { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: baseline; }
+.row i { font-style: italic; }
+.row small { font-variant-numeric: tabular-nums; }
+.row .track { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--track); }
+.row .bar { height: 100%; border-radius: 3px; background: var(--fern); min-width: 2px; }
+.caveat { font-size: 0.9rem; color: var(--muted); margin: 0.6em 0; }
+.matches + .caveat { margin-top: 18px; }
+/* Focus moves to the result so screen readers read it; it is not a control, so no ring. */
+#results:focus { outline: none; }
+.result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+details.tech { margin-top: 24px; font-size: 0.85rem; color: var(--muted); }
+details.tech summary { cursor: pointer; width: fit-content; }
+details.tech p { margin: 6px 0 0; word-break: break-word; }
+
+/* Prose pages */
+main.prose { max-width: calc(42em + 32px); }
+.prose li { margin: 0.4em 0; }
+
+/* "Take a photo" only where there is a camera to point; dragging only where there is a mouse. */
+@media (hover: hover) and (pointer: fine) { #camera, #camera-label { display: none; } }
+@media (hover: none), (pointer: coarse) { #drop-hint { display: none; } }
+
+/* Species pages */
+.crumbs { font-size: 0.9rem; color: var(--muted); margin-top: 16px; }
+.crumbs a { color: inherit; }
+.species-title { margin-bottom: 0.1em; }
+.species-title .authors { font-family: var(--sans); font-weight: 400; font-size: 1rem; color: var(--muted); letter-spacing: 0; }
+.species-layout { display: grid; gap: 24px; margin-top: 16px; }
+@media (min-width: 760px) { .species-layout { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); align-items: start; } }
+.gallery-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gallery-photos figure { margin: 0; }
+.gallery-photos .hero { grid-column: 1 / -1; }
+.gallery-photos img { display: block; width: 100%; height: auto; border-radius: var(--radius-sm); background: var(--surface-2); }
+.gallery-photos .hero img { max-height: 70vh; object-fit: contain; }
+.gallery-photos .thumb img { aspect-ratio: 4 / 3; object-fit: cover; }
+.gallery-photos figcaption { font-size: 0.75rem; color: var(--muted); margin-top: 4px; line-height: 1.4; overflow-wrap: anywhere; }
+.gallery-photos figcaption a { color: inherit; }
+.facts { margin: 0; display: grid; gap: 6px; }
+.facts div { display: grid; grid-template-columns: 7em 1fr; gap: 8px; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+.species-facts h2 { margin-top: 1.2em; }
+.citation { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--fern); border-radius: var(--radius-sm); padding: 10px 14px; margin: 6px 0 4px; }
+.citation abbr { text-decoration: none; border-bottom: 1px dotted var(--muted); }
+.cite-links { font-size: 0.9rem; margin: 0 0 14px; }
+.confusions, .links { padding-left: 1.2em; }
+.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 32px 0 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+/* Species gallery */
+.toc { font-size: 0.95rem; line-height: 1.9; }
+.filter { display: grid; gap: 6px; max-width: 420px; margin: 8px 0 16px; }
+.filter label { font-weight: 600; }
+.filter input { font: inherit; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.filter p { margin: 0; min-height: 1.4em; font-size: 0.9rem; }
+.sp-section h2 small { font-family: var(--sans); font-weight: 400; font-size: 0.85rem; color: var(--muted); margin-left: 6px; }
+.sp-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.sp-card a { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; color: var(--ink); text-decoration: none; height: 100%; }
+.sp-card a:hover { border-color: var(--fern); }
+.sp-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: var(--surface-2); }
+.sp-card span { display: grid; padding: 8px 10px; gap: 2px; font-size: 0.95rem; line-height: 1.3; }
+.sp-card small { font-size: 0.8rem; }
+
+/* Identifier: example photos */
+.examples { margin-top: 20px; }
+.examples h2 { font-size: 1.05rem; margin: 0 0 10px; }
+.example-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+.example { display: block; width: 100%; padding: 0; border: 2px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-2); cursor: pointer; }
+.example img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.example:hover:not(:disabled) { border-color: var(--fern); }
+.example:disabled { opacity: 0.5; cursor: not-allowed; }
+.photo figcaption { font-size: 0.8rem; color: var(--muted); padding: 8px 12px; line-height: 1.45; overflow-wrap: anywhere; }
+.photo figcaption a { color: inherit; }
+
+/* Plant outline (off while js/features.js has OUTLINE = false) */
+.photo-frame { position: relative; }
+#outline { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.outline-controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 12px; font-size: 0.9rem; }
+.outline-controls input { accent-color: var(--moss); width: 18px; height: 18px; vertical-align: -3px; }
