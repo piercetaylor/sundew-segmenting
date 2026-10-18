@@ -55,7 +55,7 @@ def page(title: str, description: str, body: str, *, up: str, current: str, cano
     nav = "\n".join(
         f'      <a href="{up}{href}"{cur if key == current else ""}>{label}</a>'
         for key, href, label in (("identify", "./", "Identify"), ("species", "species/", "Species"),
-                                 ("about", "notice.html", "About")))
+                                 ("about", "about.html", "About")))
     script_tags = "".join(f'\n<script type="module" src="{up}{s}"></script>' for s in scripts)
     return f"""<!doctype html>
 <!-- SPDX-License-Identifier: Apache-2.0 -->
@@ -267,7 +267,7 @@ described, and how well the identifier recognises it.</p>
 
 
 def sitemap(species: list[dict]) -> str:
-    urls = ["", "species/", "notice.html"] + [f"species/{s['slug']}.html" for s in species]
+    urls = ["", "species/", "about.html"] + [f"species/{s['slug']}.html" for s in species]
     rows = "\n".join(f"  <url><loc>{BASE_URL}{u}</loc></url>" for u in urls)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{rows}\n</urlset>\n'
 

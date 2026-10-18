@@ -18,7 +18,7 @@ const labels = JSON.parse(fs.readFileSync(path.join(ROOT, 'release/species-v1.0.
 const species = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/site/species.json'), 'utf8')).species;
 const slug = (n) => n.toLowerCase().replace(/ /g, '-');
 const read = (rel) => fs.readFileSync(path.join(SITE, rel), 'utf8');
-const pages = ['index.html', 'notice.html', 'species/index.html', ...labels.map((n) => `species/${slug(n)}.html`)];
+const pages = ['index.html', 'about.html', 'notice.html', 'species/index.html', ...labels.map((n) => `species/${slug(n)}.html`)];
 const LICENCES = new Set(['cc0', 'cc-by', 'cc-by-nc']);
 
 // [tag, attribute value] for every src/href in a page.
@@ -110,4 +110,10 @@ test('example photos: files exist, CC0 or CC BY, credited, with an expected resu
     assert.ok(credits.includes(x.source_page), `${x.file}: not in examples/ATTRIBUTION.md`);
     if (x.expected.state === 'answer') assert.ok(labels.includes(x.expected.label), `${x.file}: bad expected label`);
   }
+});
+
+test('notice.html, the old About page, redirects to about.html', () => {
+  const html = read('notice.html');
+  assert.match(html, /<meta http-equiv="refresh" content="0; url=about\.html">/);
+  assert.match(html, /<a href="about\.html">/);
 });

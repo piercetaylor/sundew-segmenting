@@ -124,7 +124,7 @@ function showResults(r) {
   again.type = 'button';
   again.addEventListener('click', () => { $('picker').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('file').focus(); });
   const about = el(actions, 'a', 'btn secondary', 'How to read this');
-  about.href = 'notice.html';
+  about.href = 'about.html#reading';
 }
 
 // example: the examples.json entry when the photo is one of the site's examples, for its credit line.
