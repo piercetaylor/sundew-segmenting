@@ -208,3 +208,14 @@ main.prose { max-width: calc(42em + 32px); }
 .sp-card img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: var(--surface-2); }
 .sp-card span { display: grid; padding: 8px 10px; gap: 2px; font-size: 0.95rem; line-height: 1.3; }
 .sp-card small { font-size: 0.8rem; }
+
+/* Identifier: example photos */
+.examples { margin-top: 20px; }
+.examples h2 { font-size: 1.05rem; margin: 0 0 10px; }
+.example-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+.example { display: block; width: 100%; padding: 0; border: 2px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-2); cursor: pointer; }
+.example img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.example:hover:not(:disabled) { border-color: var(--fern); }
+.example:disabled { opacity: 0.5; cursor: not-allowed; }
+.photo figcaption { font-size: 0.8rem; color: var(--muted); padding: 8px 12px; line-height: 1.45; overflow-wrap: anywhere; }
+.photo figcaption a { color: inherit; }

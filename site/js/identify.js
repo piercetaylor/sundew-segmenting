@@ -22,7 +22,10 @@ let run = 0; // the latest photo; results of an earlier photo that finish later 
 const setState = (s) => { document.body.dataset.state = s; };
 const say = (text) => { $('message').textContent = text; };
 const status = (text) => { $('status').textContent = text; };
-const enable = (on) => { for (const i of inputs) i.disabled = !on; };
+const enable = (on) => {
+  for (const i of inputs) i.disabled = !on;
+  for (const b of document.querySelectorAll('.example-list button')) b.disabled = !on;
+};
 
 function progress(fraction) {
   const bar = $('progress');
@@ -124,11 +127,14 @@ function showResults(r) {
   about.href = 'notice.html';
 }
 
-async function handleFile(f, source) {
+// example: the examples.json entry when the photo is one of the site's examples, for its credit line.
+async function handleFile(f, source, example = null) {
   if (!f || !engine) return;
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = URL.createObjectURL(f);
   $('preview').src = previewUrl;
+  $('preview').alt = example ? `Example photo of ${example.species}` : 'Your photo';
+  showCredit(example);
   $('result').hidden = false;
   $('results').replaceChildren();
   status('Identifying...');
@@ -160,6 +166,60 @@ async function handleFile(f, source) {
   }
 }
 
+// "Try an example": photos in img/examples/ (scripts/build_site_examples.py). A user's own photo never
+// leaves the device; an example is fetched from this site only when its button is pressed.
+function showCredit(ex) {
+  const cap = $('photo-credit');
+  cap.replaceChildren();
+  cap.hidden = !ex;
+  if (!ex) return;
+  cap.append('Example: ');
+  const sp = el(cap, 'a');
+  sp.href = speciesPage(ex.species);
+  el(sp, 'i', '', ex.species);
+  cap.append(` as identified on iNaturalist. Photo ${ex.attribution}, `);
+  el(cap, 'a', '', ex.licence).href = ex.licence_url;
+  cap.append(', ');
+  el(cap, 'a', '', 'observation').href = ex.source_page;
+  cap.append('.');
+}
+
+async function loadExamples() {
+  let list;
+  try {
+    const res = await fetch('img/examples/examples.json');
+    if (!res.ok) return;
+    list = (await res.json()).examples;
+  } catch (e) {
+    console.warn('no examples:', e);
+    return;
+  }
+  const ul = $('example-list');
+  list.forEach((ex, i) => {
+    const li = el(ul, 'li');
+    const b = el(li, 'button', 'example');
+    b.type = 'button';
+    b.disabled = !engine;
+    b.dataset.file = ex.file;
+    const img = el(b, 'img');
+    img.src = `img/examples/${ex.thumb}`;
+    img.alt = `Example ${i + 1}`; // not lazy: every request must happen before a user's own photo is chosen
+    b.addEventListener('click', async () => {
+      if (!engine) return;
+      say('Getting the example photo…');
+      try {
+        const res = await fetch(`img/examples/${ex.file}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        await handleFile(await res.blob(), 'example', ex);
+      } catch (e) {
+        console.error(e);
+        say('Could not load that example. Please try another.');
+      }
+    });
+  });
+  $('examples').hidden = false;
+}
+
 for (const input of inputs) {
   input.addEventListener('change', () => {
     handleFile(input.files[0], input.id === 'camera' ? 'camera' : 'file');
@@ -187,4 +247,5 @@ document.addEventListener('paste', (e) => {
   if (f) { e.preventDefault(); handleFile(f, 'paste'); }
 });
 
+loadExamples();
 init();

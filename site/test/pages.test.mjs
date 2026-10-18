@@ -96,3 +96,18 @@ test('internal links and images resolve', () => {
     }
   }
 });
+
+test('example photos: files exist, CC0 or CC BY, credited, with an expected result', () => {
+  const { examples } = JSON.parse(read('img/examples/examples.json'));
+  assert.ok(examples.length >= 3, 'too few examples');
+  const states = new Set(examples.map((x) => x.expected.state));
+  for (const s of ['answer', 'section', 'not-sure']) assert.ok(states.has(s), `no ${s} example`);
+  const credits = read('img/examples/ATTRIBUTION.md');
+  for (const x of examples) {
+    for (const f of [x.file, x.thumb]) assert.ok(fs.existsSync(path.join(SITE, 'img/examples', f)), `${f} missing`);
+    assert.ok(['CC0 1.0', 'CC BY 4.0'].includes(x.licence), `${x.file}: licence ${x.licence}`);
+    assert.ok(labels.includes(x.species), `${x.file}: unknown species ${x.species}`);
+    assert.ok(credits.includes(x.source_page), `${x.file}: not in examples/ATTRIBUTION.md`);
+    if (x.expected.state === 'answer') assert.ok(labels.includes(x.expected.label), `${x.file}: bad expected label`);
+  }
+});

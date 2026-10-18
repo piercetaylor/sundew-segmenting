@@ -7,6 +7,9 @@
 <title>Which sundew is this? · Sundew ID</title>
 <meta name="description" content="Identify 110 sundew (Drosera) species from a photo, in your browser. The photo is never uploaded.">
 <link rel="preload" href="fonts/source-serif-4-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+<!-- The italic is used only for a named species; load it with the page, or fetching it later would tell the
+     host that a photo got an answer (site/test/privacy-check.mjs). -->
+<link rel="preload" href="fonts/source-serif-4-latin-600-italic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/site.css">
 </head>
 <body data-state="loading">
@@ -43,8 +46,13 @@
     <p class="message" id="message" role="status" aria-live="polite">Getting the identifier ready…</p>
   </section>
 
+  <section class="examples" id="examples" hidden aria-labelledby="examples-title">
+    <h2 id="examples-title">No photo handy? Try an example</h2>
+    <ul class="example-list" id="example-list"></ul>
+  </section>
+
   <section class="result" id="result" hidden aria-label="Result">
-    <figure class="photo"><img id="preview" alt="Your photo"></figure>
+    <figure class="photo"><img id="preview" alt="Your photo"><figcaption id="photo-credit" hidden></figcaption></figure>
     <div class="card answer" id="results" tabindex="-1"></div>
   </section>
 

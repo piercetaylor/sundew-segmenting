@@ -66,7 +66,8 @@ jobs:
         with:
           node-version: "22"
       # The built site in Chrome (preinstalled on the runner): the model loads in its worker, a synthetic
-      # photo gets a result, and every request is a same-origin GET made before the photo was chosen.
+      # photo gets a result, and every request is a same-origin GET made before the photo was chosen
+      # (or, for an example photo, only that example).
       - name: Check the built site in Chrome
         run: |
           npm i --no-save --prefix "$RUNNER_TEMP/pptr" puppeteer-core@25.12.0
@@ -75,6 +76,13 @@ jobs:
           for i in $(seq 20); do curl -sf -o /dev/null http://127.0.0.1:8765/ && break; sleep 0.5; done
           PUPPETEER_CORE="$RUNNER_TEMP/pptr/node_modules/puppeteer-core" \
             node site/test/privacy-check.mjs "$(command -v google-chrome)" http://127.0.0.1:8765/ "$RUNNER_TEMP/synthetic.png"
+          # A photo that gets a confident answer: nothing (not even a font) may load because of the result.
+          answer=$(jq -r '[.examples[] | select(.expected.state == "answer")][0].file' site/img/examples/examples.json)
+          PUPPETEER_CORE="$RUNNER_TEMP/pptr/node_modules/puppeteer-core" \
+            node site/test/privacy-check.mjs "$(command -v google-chrome)" http://127.0.0.1:8765/ "site/img/examples/$answer"
+          # Every "try an example" button: only that example is fetched, and the result matches Python.
+          PUPPETEER_CORE="$RUNNER_TEMP/pptr/node_modules/puppeteer-core" \
+            node site/test/privacy-check.mjs "$(command -v google-chrome)" http://127.0.0.1:8765/ --examples
       - name: Leave the tests out of the site
         run: rm -rf site/test
       - if: github.event_name != 'pull_request'
