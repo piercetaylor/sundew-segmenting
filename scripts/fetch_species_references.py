@@ -146,10 +146,11 @@ def wikipedia(name: str) -> str | None:
 def fetch(name: str) -> dict:
     rec = species_record(name)
     if rec is None:
-        return {"name": name, "found": False}
+        return {"name": name, "found": False, "fetched": dt.date.today().isoformat()}
     time.sleep(PAUSE_S)
     detail = get(f"{API}/n/{rec['id']}")
-    out = {"name": name, "found": True, **citation(detail), "wikipedia": wikipedia(name)}
+    out = {"name": name, "found": True, "fetched": dt.date.today().isoformat(), **citation(detail),
+           "wikipedia": wikipedia(name)}
     # A combination's basionym is where the plant was first described.
     bas = detail.get("basionym")
     if isinstance(bas, list):
@@ -178,9 +179,8 @@ def main() -> int:
 
     doc = {
         "source": "International Plant Names Index (IPNI), https://www.ipni.org, via its public API",
-        "fetched": dt.date.today().isoformat(),
         "note": "Original publication (protologue) of each species name; for combinations, also the basionym. "
-                "Bibliographic facts only. Review entries flagged found=false by hand. "
+                "fetched: the date each entry was looked up (--only refreshes just the names given). Bibliographic facts only. Review entries flagged found=false by hand. "
                 "wikipedia: the English Wikipedia article if one exists (link only; no text is copied). "
                 "bhl_scan: the Biodiversity Heritage Library page that IPNI's OpenURL (bhl_page) resolves to, "
                 "when it resolves to exactly one scanned page.",

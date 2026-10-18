@@ -124,3 +124,11 @@ test('the plant outline stays off and hidden until it is switched on', () => {
   assert.match(html, /<canvas id="outline" hidden/);
   assert.match(html, /<div class="outline-controls" id="outline-controls" hidden>/);
 });
+
+test('hand-written pages share the generated pages\' header (logo and nav)', () => {
+  // index.html and about.html are written by hand; the species pages by scripts/build_site_pages.py.
+  const header = (rel, up) => read(rel).match(/<header class="site-header">[\s\S]*?<\/header>/)[0]
+    .replaceAll(` href="${up}`, ' href="').replaceAll(' href=""', ' href="./"').replace(/ aria-current="page"/g, '').replace(/\s+/g, ' ');
+  const generated = header('species/index.html', '../');
+  for (const p of ['index.html', 'about.html']) assert.equal(header(p, ''), generated, `${p} header differs from the generated pages`);
+});

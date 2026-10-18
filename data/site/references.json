@@ -1,11 +1,11 @@
 {
  "source": "International Plant Names Index (IPNI), https://www.ipni.org, via its public API",
- "fetched": "2026-10-17",
- "note": "Original publication (protologue) of each species name; for combinations, also the basionym. Bibliographic facts only. Review entries flagged found=false by hand. wikipedia: the English Wikipedia article if one exists (link only; no text is copied). bhl_scan: the Biodiversity Heritage Library page that IPNI's OpenURL (bhl_page) resolves to, when it resolves to exactly one scanned page.",
+ "note": "Original publication (protologue) of each species name; for combinations, also the basionym. fetched: the date each entry was looked up (--only refreshes just the names given). Bibliographic facts only. Review entries flagged found=false by hand. wikipedia: the English Wikipedia article if one exists (link only; no text is copied). bhl_scan: the Biodiversity Heritage Library page that IPNI's OpenURL (bhl_page) resolves to, when it resolves to exactly one scanned page.",
  "species": {
   "Drosera aberrans": {
    "name": "Drosera aberrans",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77093779-1",
    "authors": "(Lowrie & Carlquist) Lowrie & Conran",
    "citation_type": "comb. et stat. nov.",
@@ -44,6 +44,7 @@
   "Drosera admirabilis": {
    "name": "Drosera admirabilis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "933536-1",
    "authors": "Debbert",
    "citation_type": "tax. nov.",
@@ -64,6 +65,7 @@
   "Drosera alba": {
    "name": "Drosera alba",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321772-1",
    "authors": "E.Phillips",
    "citation_type": "unknown",
@@ -84,6 +86,7 @@
   "Drosera aliciae": {
    "name": "Drosera aliciae",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321775-1",
    "authors": "Raym.-Hamet",
    "citation_type": "unknown",
@@ -104,6 +107,7 @@
   "Drosera androsacea": {
    "name": "Drosera androsacea",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321779-1",
    "authors": "Diels",
    "citation_type": "unknown",
@@ -124,6 +128,7 @@
   "Drosera anglica": {
    "name": "Drosera anglica",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321780-1",
    "authors": "Huds.",
    "citation_type": "unknown",
@@ -144,6 +149,7 @@
   "Drosera aquatica": {
    "name": "Drosera aquatica",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77142013-1",
    "authors": "Lowrie",
    "citation_type": "tax. nov.",
@@ -164,6 +170,7 @@
   "Drosera arcturi": {
    "name": "Drosera arcturi",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321785-1",
    "authors": "Hook.",
    "citation_type": "unknown",
@@ -184,6 +191,7 @@
   "Drosera auriculata": {
    "name": "Drosera auriculata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321789-1",
    "authors": "Backh. ex Planch.",
    "citation_type": "unknown",
@@ -204,6 +212,7 @@
   "Drosera barbigera": {
    "name": "Drosera barbigera",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321791-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -224,6 +233,7 @@
   "Drosera binata": {
    "name": "Drosera binata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321796-1",
    "authors": "Labill.",
    "citation_type": "unknown",
@@ -244,6 +254,7 @@
   "Drosera brevicornis": {
    "name": "Drosera brevicornis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "990756-1",
    "authors": "Lowrie",
    "citation_type": "tax. nov.",
@@ -264,6 +275,7 @@
   "Drosera brevifolia": {
    "name": "Drosera brevifolia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "317690-2",
    "authors": "Pursh",
    "citation_type": "tax. nov.",
@@ -284,6 +296,7 @@
   "Drosera bulbosa": {
    "name": "Drosera bulbosa",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321800-1",
    "authors": "Hook.",
    "citation_type": "unknown",
@@ -304,6 +317,7 @@
   "Drosera burkeana": {
    "name": "Drosera burkeana",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321801-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -324,6 +338,7 @@
   "Drosera burmanni": {
    "name": "Drosera burmanni",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321803-1",
    "authors": "Vahl",
    "citation_type": "unknown",
@@ -344,6 +359,7 @@
   "Drosera capensis": {
    "name": "Drosera capensis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321806-1",
    "authors": "L.",
    "citation_type": "unknown",
@@ -364,6 +380,7 @@
   "Drosera capillaris": {
    "name": "Drosera capillaris",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321807-1",
    "authors": "Poir.",
    "citation_type": "unknown",
@@ -384,6 +401,7 @@
   "Drosera cayennensis": {
    "name": "Drosera cayennensis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "84137-2",
    "authors": "Sagot",
    "citation_type": "tax. nov.",
@@ -404,6 +422,7 @@
   "Drosera cistiflora": {
    "name": "Drosera cistiflora",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321813-1",
    "authors": "L.",
    "citation_type": "tax. nov.",
@@ -424,6 +443,7 @@
   "Drosera collina": {
    "name": "Drosera collina",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77142060-1",
    "authors": "(N.G.Marchant & Lowrie) Lowrie",
    "citation_type": "comb. nov.",
@@ -462,6 +482,7 @@
   "Drosera collinsiae": {
    "name": "Drosera collinsiae",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321814-1",
    "authors": "N.E.Br. in Burtt Davy",
    "citation_type": "unknown",
@@ -482,6 +503,7 @@
   "Drosera communis": {
    "name": "Drosera communis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "30052321-2",
    "authors": "A.St.-Hil.",
    "citation_type": "tax. nov.",
@@ -502,6 +524,7 @@
   "Drosera cuneifolia": {
    "name": "Drosera cuneifolia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77177398-1",
    "authors": "L.f.",
    "citation_type": "tax. nov.",
@@ -522,6 +545,7 @@
   "Drosera dielsiana": {
    "name": "Drosera dielsiana",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321828-1",
    "authors": "Exell & J.R.Laundon",
    "citation_type": "unknown",
@@ -542,6 +566,7 @@
   "Drosera dilatatopetiolaris": {
    "name": "Drosera dilatatopetiolaris",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "904080-1",
    "authors": "K.Kondo",
    "citation_type": "tax. nov.",
@@ -562,6 +587,7 @@
   "Drosera drummondii": {
    "name": "Drosera drummondii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321830-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -582,6 +608,7 @@
   "Drosera eneabba": {
    "name": "Drosera eneabba",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "961185-1",
    "authors": "N.G.Marchant & Lowrie",
    "citation_type": "tax. nov.",
@@ -602,6 +629,7 @@
   "Drosera eremaea": {
    "name": "Drosera eremaea",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77142064-1",
    "authors": "(N.G.Marchant & Lowrie) Lowrie & Conran",
    "citation_type": "comb. nov.",
@@ -640,6 +668,7 @@
   "Drosera ericgreenii": {
    "name": "Drosera ericgreenii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77095215-1",
    "authors": "A.Fleischm., R.P.Gibson & Rivadavia",
    "citation_type": "tax. nov.",
@@ -660,6 +689,7 @@
   "Drosera erythrogyne": {
    "name": "Drosera erythrogyne",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "961177-1",
    "authors": "N.G.Marchant & Lowrie",
    "citation_type": "tax. nov.",
@@ -680,6 +710,7 @@
   "Drosera erythrorhiza": {
    "name": "Drosera erythrorhiza",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321833-1",
    "authors": "Lindl.",
    "citation_type": "unknown",
@@ -700,6 +731,7 @@
   "Drosera esterhuyseniae": {
    "name": "Drosera esterhuyseniae",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "963489-1",
    "authors": "(Salter) Debbert",
    "citation_type": "comb. nov.",
@@ -738,6 +770,7 @@
   "Drosera filiformis": {
    "name": "Drosera filiformis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "30210809-2",
    "authors": "Raf.",
    "citation_type": "tax. nov.",
@@ -758,6 +791,7 @@
   "Drosera finlaysonii": {
    "name": "Drosera finlaysonii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "166161-3",
    "authors": "Wall. ex Arn.",
    "citation_type": "tax. nov.",
@@ -778,6 +812,7 @@
   "Drosera floridana": {
    "name": "Drosera floridana",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77393733-1",
    "authors": "(B.Rice) Juve & A.Fleischm.",
    "citation_type": "comb. et stat. nov.",
@@ -816,6 +851,7 @@
   "Drosera fulva": {
    "name": "Drosera fulva",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321848-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -836,6 +872,7 @@
   "Drosera gigantea": {
    "name": "Drosera gigantea",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321849-1",
    "authors": "Lindl.",
    "citation_type": "tax. nov.",
@@ -856,6 +893,7 @@
   "Drosera glabripes": {
    "name": "Drosera glabripes",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321850-1",
    "authors": "(Harv.) T.M.Salter",
    "citation_type": "unknown",
@@ -894,6 +932,7 @@
   "Drosera glanduligera": {
    "name": "Drosera glanduligera",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321852-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -914,6 +953,7 @@
   "Drosera gunniana": {
    "name": "Drosera gunniana",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77185594-1",
    "authors": "(Planch.) de Salas",
    "citation_type": "comb. et stat. nov.",
@@ -952,6 +992,7 @@
   "Drosera heterophylla": {
    "name": "Drosera heterophylla",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321858-1",
    "authors": "Lindl.",
    "citation_type": "unknown",
@@ -972,6 +1013,7 @@
   "Drosera hilaris": {
    "name": "Drosera hilaris",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321860-1",
    "authors": "Cham. & Schltdl.",
    "citation_type": "unknown",
@@ -992,6 +1034,7 @@
   "Drosera hirsuta": {
    "name": "Drosera hirsuta",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77142028-1",
    "authors": "Lowrie & Conran",
    "citation_type": "tax. nov.",
@@ -1012,6 +1055,7 @@
   "Drosera hookeri": {
    "name": "Drosera hookeri",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77109854-1",
    "authors": "R.P.Gibson, B.J.Conn & Conran",
    "citation_type": "nom. nov.",
@@ -1032,6 +1076,7 @@
   "Drosera huegelii": {
    "name": "Drosera huegelii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321862-1",
    "authors": "Endl.",
    "citation_type": "unknown",
@@ -1052,6 +1097,7 @@
   "Drosera humilis": {
    "name": "Drosera humilis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321864-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -1072,6 +1118,7 @@
   "Drosera hyperostigma": {
    "name": "Drosera hyperostigma",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "961189-1",
    "authors": "N.G.Marchant & Lowrie",
    "citation_type": "tax. nov.",
@@ -1092,6 +1139,7 @@
   "Drosera indica": {
    "name": "Drosera indica",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321866-1",
    "authors": "L.",
    "citation_type": "unknown",
@@ -1112,6 +1160,7 @@
   "Drosera intermedia": {
    "name": "Drosera intermedia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "30001035-2",
    "authors": "Hayne",
    "citation_type": "tax. nov.",
@@ -1132,6 +1181,7 @@
   "Drosera latifolia": {
    "name": "Drosera latifolia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77136283-1",
    "authors": "(Eichler) Gonella & Rivadavia",
    "citation_type": "comb. nov.",
@@ -1170,6 +1220,7 @@
   "Drosera linearis": {
    "name": "Drosera linearis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321879-1",
    "authors": "Goldie",
    "citation_type": "unknown",
@@ -1190,6 +1241,7 @@
   "Drosera lunata": {
    "name": "Drosera lunata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "166901-3",
    "authors": "DC.",
    "citation_type": "unknown",
@@ -1210,6 +1262,7 @@
   "Drosera macrantha": {
    "name": "Drosera macrantha",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321890-1",
    "authors": "Endl.",
    "citation_type": "unknown",
@@ -1230,6 +1283,7 @@
   "Drosera macrophylla": {
    "name": "Drosera macrophylla",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321891-1",
    "authors": "Lindl.",
    "citation_type": "unknown",
@@ -1250,6 +1304,7 @@
   "Drosera madagascariensis": {
    "name": "Drosera madagascariensis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321892-1",
    "authors": "DC.",
    "citation_type": "unknown",
@@ -1270,6 +1325,7 @@
   "Drosera magna": {
    "name": "Drosera magna",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77142070-1",
    "authors": "(N.G.Marchant & Lowrie) Lowrie",
    "citation_type": "comb. et stat. nov.",
@@ -1308,6 +1364,7 @@
   "Drosera menziesii": {
    "name": "Drosera menziesii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321897-1",
    "authors": "R.Br. ex DC.",
    "citation_type": "unknown",
@@ -1328,6 +1385,7 @@
   "Drosera micrantha": {
    "name": "Drosera micrantha",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321900-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -1348,6 +1406,7 @@
   "Drosera miniata": {
    "name": "Drosera miniata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321902-1",
    "authors": "Diels",
    "citation_type": "unknown",
@@ -1368,6 +1427,7 @@
   "Drosera minutiflora": {
    "name": "Drosera minutiflora",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321905-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -1388,6 +1448,7 @@
   "Drosera modesta": {
    "name": "Drosera modesta",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321907-1",
    "authors": "Diels",
    "citation_type": "unknown",
@@ -1408,6 +1469,7 @@
   "Drosera montana": {
    "name": "Drosera montana",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "30066479-2",
    "authors": "A.St.-Hil.",
    "citation_type": "tax. nov.",
@@ -1428,6 +1490,7 @@
   "Drosera monticola": {
    "name": "Drosera monticola",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77075862-1",
    "authors": "(Lowrie & N.G.Marchant) Lowrie",
    "citation_type": "comb. nov.",
@@ -1466,6 +1529,7 @@
   "Drosera murfetii": {
    "name": "Drosera murfetii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77146026-1",
    "authors": "Lowrie & Conran",
    "citation_type": "tax. nov.",
@@ -1486,6 +1550,7 @@
   "Drosera natalensis": {
    "name": "Drosera natalensis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321911-1",
    "authors": "Diels",
    "citation_type": "unknown",
@@ -1506,6 +1571,7 @@
   "Drosera neesii": {
    "name": "Drosera neesii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321912-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -1526,6 +1592,7 @@
   "Drosera neocaledonica": {
    "name": "Drosera neocaledonica",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321913-1",
    "authors": "Raym.-Hamet",
    "citation_type": "unknown",
@@ -1546,6 +1613,7 @@
   "Drosera nitidula": {
    "name": "Drosera nitidula",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321915-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -1566,6 +1634,7 @@
   "Drosera ordensis": {
    "name": "Drosera ordensis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "978107-1",
    "authors": "Lowrie",
    "citation_type": "tax. nov.",
@@ -1586,6 +1655,7 @@
   "Drosera pallida": {
    "name": "Drosera pallida",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321920-1",
    "authors": "Lindl.",
    "citation_type": "unknown",
@@ -1606,6 +1676,7 @@
   "Drosera pauciflora": {
    "name": "Drosera pauciflora",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321925-1",
    "authors": "Banks ex DC.",
    "citation_type": "unknown",
@@ -1626,6 +1697,7 @@
   "Drosera peltata": {
    "name": "Drosera peltata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "60449268-2",
    "authors": "Thunb.",
    "citation_type": "tax. nov.",
@@ -1646,6 +1718,7 @@
   "Drosera petiolaris": {
    "name": "Drosera petiolaris",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321931-1",
    "authors": "R.Br. ex DC.",
    "citation_type": "unknown",
@@ -1666,6 +1739,7 @@
   "Drosera planchonii": {
    "name": "Drosera planchonii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "50880-3",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -1686,6 +1760,7 @@
   "Drosera platypoda": {
    "name": "Drosera platypoda",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321935-1",
    "authors": "Turcz.",
    "citation_type": "unknown",
@@ -1706,6 +1781,7 @@
   "Drosera platystigma": {
    "name": "Drosera platystigma",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321936-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -1726,6 +1802,7 @@
   "Drosera porrecta": {
    "name": "Drosera porrecta",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321938-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -1746,6 +1823,7 @@
   "Drosera praefolia": {
    "name": "Drosera praefolia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321939-1",
    "authors": "Tepper",
    "citation_type": "unknown",
@@ -1766,6 +1844,7 @@
   "Drosera pulchella": {
    "name": "Drosera pulchella",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321944-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -1786,6 +1865,7 @@
   "Drosera purpurascens": {
    "name": "Drosera purpurascens",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321945-1",
    "authors": "Schlotthaub.",
    "citation_type": "unknown",
@@ -1806,6 +1886,7 @@
   "Drosera pygmaea": {
    "name": "Drosera pygmaea",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321949-1",
    "authors": "DC.",
    "citation_type": "unknown",
@@ -1826,6 +1907,7 @@
   "Drosera ramentacea": {
    "name": "Drosera ramentacea",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77177159-1",
    "authors": "Burch. ex DC.",
    "citation_type": "tax. nov.",
@@ -1846,6 +1928,7 @@
   "Drosera roseana": {
    "name": "Drosera roseana",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "961192-1",
    "authors": "N.G.Marchant & Lowrie",
    "citation_type": "tax. nov.",
@@ -1866,6 +1949,7 @@
   "Drosera rosulata": {
    "name": "Drosera rosulata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321957-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -1886,6 +1970,7 @@
   "Drosera rotundifolia": {
    "name": "Drosera rotundifolia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "319182-2",
    "authors": "L.",
    "citation_type": "tax. nov.",
@@ -1906,6 +1991,7 @@
   "Drosera rupicola": {
    "name": "Drosera rupicola",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77075864-1",
    "authors": "(N.G.Marchant) Lowrie",
    "citation_type": "comb. nov.",
@@ -1944,6 +2030,7 @@
   "Drosera schmutzii": {
    "name": "Drosera schmutzii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77093780-1",
    "authors": "Lowrie & Conran",
    "citation_type": "tax. nov.",
@@ -1964,6 +2051,7 @@
   "Drosera scorpioides": {
    "name": "Drosera scorpioides",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321965-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -1984,6 +2072,7 @@
   "Drosera serpens": {
    "name": "Drosera serpens",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321967-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -2004,6 +2093,7 @@
   "Drosera sessilifolia": {
    "name": "Drosera sessilifolia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321970-1",
    "authors": "A.St.-Hil.",
    "citation_type": "unknown",
@@ -2024,6 +2114,7 @@
   "Drosera slackii": {
    "name": "Drosera slackii",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "932433-1",
    "authors": "Cheek",
    "citation_type": "tax. nov.",
@@ -2044,6 +2135,7 @@
   "Drosera spatulata": {
    "name": "Drosera spatulata",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321972-1",
    "authors": "Labill.",
    "citation_type": "tax. nov.",
@@ -2064,6 +2156,7 @@
   "Drosera spilos": {
    "name": "Drosera spilos",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "961193-1",
    "authors": "N.G.Marchant & Lowrie",
    "citation_type": "tax. nov.",
@@ -2084,6 +2177,7 @@
   "Drosera squamosa": {
    "name": "Drosera squamosa",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321975-1",
    "authors": "Benth.",
    "citation_type": "unknown",
@@ -2104,6 +2198,7 @@
   "Drosera stenopetala": {
    "name": "Drosera stenopetala",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321976-1",
    "authors": "Hook.f.",
    "citation_type": "unknown",
@@ -2124,6 +2219,7 @@
   "Drosera stolonifera": {
    "name": "Drosera stolonifera",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321977-1",
    "authors": "Endl.",
    "citation_type": "unknown",
@@ -2144,6 +2240,7 @@
   "Drosera stricticaulis": {
    "name": "Drosera stricticaulis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321978-1",
    "authors": "O.H.Sarg.",
    "citation_type": "unknown",
@@ -2164,6 +2261,7 @@
   "Drosera subhirtella": {
    "name": "Drosera subhirtella",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321980-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -2184,6 +2282,7 @@
   "Drosera sulphurea": {
    "name": "Drosera sulphurea",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321981-1",
    "authors": "Lehm.",
    "citation_type": "unknown",
@@ -2204,6 +2303,7 @@
   "Drosera tomentosa": {
    "name": "Drosera tomentosa",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321985-1",
    "authors": "A.St.-Hil.",
    "citation_type": "unknown",
@@ -2224,6 +2324,7 @@
   "Drosera tracyi": {
    "name": "Drosera tracyi",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "84184-2",
    "authors": "(Diels) Macfarl.",
    "citation_type": "comb. et stat. nov.",
@@ -2262,6 +2363,7 @@
   "Drosera trinervia": {
    "name": "Drosera trinervia",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321988-1",
    "authors": "Spreng.",
    "citation_type": "unknown",
@@ -2282,6 +2384,7 @@
   "Drosera tubaestylis": {
    "name": "Drosera tubaestylis",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "961181-1",
    "authors": "N.G.Marchant & Lowrie",
    "citation_type": "tax. nov.",
@@ -2302,6 +2405,7 @@
   "Drosera uniflora": {
    "name": "Drosera uniflora",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321990-1",
    "authors": "Willd.",
    "citation_type": "unknown",
@@ -2322,6 +2426,7 @@
   "Drosera venusta": {
    "name": "Drosera venusta",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "933537-1",
    "authors": "Debbert",
    "citation_type": "tax. nov.",
@@ -2342,6 +2447,7 @@
   "Drosera whittakeri": {
    "name": "Drosera whittakeri",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321995-1",
    "authors": "Planch.",
    "citation_type": "unknown",
@@ -2362,6 +2468,7 @@
   "Drosera xerophila": {
    "name": "Drosera xerophila",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "77185978-1",
    "authors": "A.Fleischm.",
    "citation_type": "tax. nov.",
@@ -2382,6 +2489,7 @@
   "Drosera zeyheri": {
    "name": "Drosera zeyheri",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321996-1",
    "authors": "T.M.Salter",
    "citation_type": "unknown",
@@ -2402,6 +2510,7 @@
   "Drosera zonaria": {
    "name": "Drosera zonaria",
    "found": true,
+   "fetched": "2026-10-17",
    "ipni_id": "321997-1",
    "authors": "Planch.",
    "citation_type": "unknown",

@@ -9,7 +9,7 @@ Outputs: site/species/<slug>.html (one per species), site/species/index.html, si
 
 The pages are plain HTML with no scripts (the gallery loads only js/filter.js) and no
 third-party requests: photos are served from site/img/, and every outside site is only a link.
-Standard library only; the output is deterministic.
+Standard library only, Python 3.8 or later; the output is deterministic.
 
     python3 scripts/build_site_pages.py           # write the pages
     python3 scripts/build_site_pages.py --check   # fail if the committed pages are out of date
@@ -137,14 +137,14 @@ def protologue(ref: dict) -> str:
     year = ref.get("year")
     bas = ref.get("basionym")
     out = []
+    in_year = lambda y: f" in {y}" if y else ""  # noqa: E731
     if bas:
-        out.append(f'<p>First described{f" in {bas["year"]}" if bas.get("year") else ""} as '
-                   f'{italic_name(bas["name"])}:</p>')
+        out.append(f'<p>First described{in_year(bas.get("year"))} as {italic_name(bas["name"])}:</p>')
         out.append(cite(bas))
-        out.append(f'<p>Given its current name and rank{f" in {year}" if year else ""}:</p>')
+        out.append(f'<p>Given its current name and rank{in_year(year)}:</p>')
         out.append(cite(ref))
     else:
-        out.append(f'<p>First described{f" in {year}" if year else ""}:</p>')
+        out.append(f'<p>First described{in_year(year)}:</p>')
         out.append(cite(ref))
     dist = clean_distribution((bas or ref).get("distribution"))
     if dist:

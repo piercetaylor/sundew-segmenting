@@ -19,6 +19,7 @@ const inputs = [$('file'), $('camera')];
 let engine = null;
 let previewUrl = null;
 let run = 0; // the latest photo; results of an earlier photo that finish later are dropped
+let ready = false; // the model is loaded AND everything else the page loads has loaded (see init)
 
 const setState = (s) => { document.body.dataset.state = s; };
 const say = (text) => { $('message').textContent = text; };
@@ -53,11 +54,15 @@ async function init() {
   };
   try {
     engine = await createEngine(onProgress, { worker: params.get('worker') !== '0' });
+    // No request may follow a user's photo (site/test/privacy-check.mjs): finish loading the example
+    // thumbnails and the italic heading font, used only for a named species, before accepting photos.
+    await Promise.all([examplesLoaded, italicLoaded]);
     const i = engine.info;
     status(`Ready: sundew-species ${i.version}, onnxruntime-web ${i.ort}, ${i.backend}, ` +
       `${i.threads} thread(s), ${engine.inWorker ? 'in a worker' : 'in the page'}, loaded in ${(i.loadMs / 1000).toFixed(1)} s${i.fromCache ? ' (cached)' : ''}.`);
     progress(null);
     say('Ready. Choose a photo to identify.');
+    ready = true;
     enable(true);
     setState('ready');
   } catch (e) {
@@ -130,7 +135,8 @@ function showResults(r) {
 
 // example: the examples.json entry when the photo is one of the site's examples, for its credit line.
 async function handleFile(f, source, example = null) {
-  if (!f || !engine) return;
+  if (!f) return;
+  if (!ready) { say('The identifier is still getting ready. Try again in a moment.'); return; }
   if (previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl = URL.createObjectURL(f);
   $('preview').src = previewUrl;
@@ -200,6 +206,7 @@ function showCredit(ex) {
   cap.append('.');
 }
 
+// Resolves once the example list and every thumbnail have loaded (or failed); never rejects.
 async function loadExamples() {
   let list;
   try {
@@ -210,30 +217,38 @@ async function loadExamples() {
     console.warn('no examples:', e);
     return;
   }
+  const thumbs = [];
   const ul = $('example-list');
   list.forEach((ex, i) => {
     const li = el(ul, 'li');
     const b = el(li, 'button', 'example');
     b.type = 'button';
-    b.disabled = !engine;
+    b.disabled = !ready;
     b.dataset.file = ex.file;
     const img = el(b, 'img');
-    img.src = `img/examples/${ex.thumb}`;
     img.alt = `Example ${i + 1}`; // not lazy: every request must happen before a user's own photo is chosen
+    thumbs.push(new Promise((done) => { img.onload = img.onerror = done; }));
+    img.src = `img/examples/${ex.thumb}`;
     b.addEventListener('click', async () => {
-      if (!engine) return;
+      if (!ready) return;
+      // Claim the run now: if the user picks their own photo while this downloads, theirs wins.
+      const mine = ++run;
       say('Getting the example photo…');
       try {
         const res = await fetch(`img/examples/${ex.file}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        await handleFile(await res.blob(), 'example', ex);
+        const blob = await res.blob();
+        if (mine === run) await handleFile(blob, 'example', ex);
       } catch (e) {
         console.error(e);
+        if (mine !== run) return;
         say('Could not load that example. Please try another.');
+        setState('error');
       }
     });
   });
   $('examples').hidden = false;
+  await Promise.all(thumbs);
 }
 
 for (const input of inputs) {
@@ -263,5 +278,6 @@ document.addEventListener('paste', (e) => {
   if (f) { e.preventDefault(); handleFile(f, 'paste'); }
 });
 
-loadExamples();
+const examplesLoaded = loadExamples();
+const italicLoaded = document.fonts?.load('italic 600 1em "Source Serif 4"').catch(() => {}) ?? Promise.resolve();
 init();
